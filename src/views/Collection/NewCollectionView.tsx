@@ -259,28 +259,28 @@ export const NewCollectionView: FC = ({ }) => {
                                         <Label htmlFor="collection_name" value="Collection Name" />
                                     </div>
                                     <TextInput id="collection_name" type="email" placeholder="My NFTs" required color="gray"
-                                        value={collection_name} onChange={() => setCollectionName(event.target.value)} />
+                                        value={collection_name} onChange={() => setCollectionName((event.target as any).value)} />
                                 </div>
                                 <div className='px-1'>
                                     <div className="mb-2 block">
                                         <Label htmlFor="symbol" value="Symbol" />
                                     </div>
                                     <TextInput id="symbol" type="email" placeholder="MNFT" required color="gray"
-                                        value={collection_symbol} onChange={() => setCollectionSymbol(event.target.value)} />
+                                        value={collection_symbol} onChange={() => setCollectionSymbol((event.target as any).value)} />
                                 </div>
                                 <div className='px-1'>
                                     <div className="mb-2 block">
                                         <Label htmlFor="collection_description" value="Collection Description" />
                                     </div>
                                     <TextInput id="collection_description" type="email" placeholder="My collection description" required color="gray"
-                                        value={collection_description} onChange={() => setCollectionDescription(event.target.value)} />
+                                        value={collection_description} onChange={() => setCollectionDescription((event.target as any).value)} />
                                 </div>
                             </div>
                             <div className='px-1 py-2'>
                                 <div className='mb-2'>
                                     <Label htmlFor='launch_date' value='Launch Date'></Label>
                                 </div>
-                                <Datepicker id='launch_date' value={launch_date} onChange={() => setLaunchDate(event.target.value)} />
+                                <Datepicker id='launch_date' value={launch_date} onChange={() => setLaunchDate((event.target as any).value)} />
                             </div>
                             <fieldset className="flex max-w-md flex-row gap-4">
                                 <legend className="mb-4">Metadata Standard</legend>
@@ -327,14 +327,14 @@ export const NewCollectionView: FC = ({ }) => {
                                     <Label htmlFor="base_art_name" value="Base art name" />
                                 </div>
                                 <TextInput id="base_art_name" type="text" placeholder="NFT #" required color="gray" value={nfts_base_art_name}
-                                    onChange={() => setBaseArtName(event.target.value)} />
+                                    onChange={() => setBaseArtName((event.target as any).value)} />
                             </div>
                             <div className='px-1'>
                                 <div className="mb-2 block">
                                     <Label htmlFor="description" value="Description" />
                                 </div>
                                 <Textarea id="description" rows={4} required color="gray" value={nfts_description}
-                                    onChange={() => setDescription(event.target.value)} />
+                                    onChange={() => setDescription((event.target as any).value)} />
                             </div>
                             <div className='flex flex-row justify-start'>
                                 <div className='px-1'>
@@ -342,14 +342,14 @@ export const NewCollectionView: FC = ({ }) => {
                                         <Label htmlFor="Mlnt Cost" value="Mlnt Cost" />
                                     </div>
                                     <TextInput id="mlnt_cost" rightIcon={SiRust} value={nfts_mint_cost} required
-                                        onChange={() => setMintCost(event.target.value)} />
+                                        onChange={() => setMintCost((event.target as any).value)} />
                                 </div>
                                 <div className='px-1 pr-5'>
                                     <div className='mb-2 block'>
                                         <Label htmlFor='Mlnt Percent' value="Mlnt Percent" />
                                     </div>
                                     <TextInput id="mint_royalties" rightIcon={FaPercent} value={nfts_royalties} required
-                                        onChange={() => setRoyalties(event.target.value)} />
+                                        onChange={() => setRoyalties((event.target as any).value)} />
                                 </div>
                             </div>
                             <TextInput className='px-1 py-4 hidden' id="input_infor" value="Custom token minting/Whitelists/Sale Phases can be setup later" required />
