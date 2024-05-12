@@ -7,7 +7,7 @@ export const CollectionsView: FC = ({ }) => {
     return (
         <div className='flex justify-around items-center m-4'>
             {datalist.map((item, ind) => (
-                <a href='/collection_detail' key = {"collection_" + ind}>
+                <a href='/collection_detail' key = {"collections_" + ind}>
                     <Collection_Item name={item.name} description={item.description} image_url={item.image} />
                 </a>
             ))}
