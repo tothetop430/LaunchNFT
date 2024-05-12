@@ -1,9 +1,10 @@
 import { FC } from "react";
 import { AiOutlineTwitter, AiOutlineHeart, AiFillUnlock } from "react-icons/ai";
 import { Badge, Button } from "flowbite-react";
+import ItemProps  from '../interfaces/ItemProps';
 
-export const CollectionDetailView: FC = (props: any) => {
-    const { name, description, image_url } = props;
+export const CollectionDetailView: FC<ItemProps> = ({name, description, image_url}) => {
+    //const { name, description, image_url } = props;
     return (
         <div>
             <div className="flex flex-row justify-around">

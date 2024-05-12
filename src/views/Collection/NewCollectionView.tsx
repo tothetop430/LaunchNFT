@@ -462,7 +462,8 @@ export const NewCollectionView: FC = ({ }) => {
                                         <span className="font-semibold">{"Click to here or Drag n drop NFT assets folder here"}</span>
                                     </p>
                                 </div>
-                                <FileInput className='hidden' id="dropzone-file" webkitdirectory="true" multiple itemType='directory' onChange={() => handleChange(event)} />
+                                
+                                <FileInput className='hidden' id="dropzone-file" multiple itemType='directory' onChange={() => handleChange(event)} />
                             </Label>
                             {/* </DropTarget> */}
 
