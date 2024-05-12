@@ -63,27 +63,20 @@ export const AppBar: React.FC = () => {
           <div className="text-white">
             <a className="NavBar_navlink__BklVa" href="/create">Create</a>
           </div>
-          <div className="relative group">
+          <div className="text-white">
+            <a className="NavBar_navlink__BklVa" href="/admin">Admin</a>
+          </div>
+          {/* <div className="relative group">
             <button className="text-white" data-dropdown-toggle="dropdownHover" data-dropdown-trigger="hover">Tools</button>
             <div id="dropdownHover" className="absolute hidden top-full left-0 mt-2 w-48 bg-black rounded-md shadow-lg">
               <div className="flex flex-col items-start justify-center gap-2 w-full">
                 <span className="text-[var(--second-text)] text-xs leading-none">SOLANA TOOLS</span>
-                {/* <div className="text-white w-full"> */}
                 <a className="NavBar_navlink__BklVa" href="/tools/trade">Trade</a>
-                {/* </div> */}
-                {/* <div className="text-white w-full"> */}
                 <a className="NavBar_navlink__BklVa" href="/tools/send">MultiSend</a>
-                {/* </div> */}
-                {/* <div className="text-white w-full"> */}
                 <a className="NavBar_navlink__BklVa" href="/tools/update">Update NFT</a>
-                {/* </div> */}
-                {/* <div className="text-white w-full"> */}
                 <a className="NavBar_navlink__BklVa" href="/tools/mint">Mint Single NFT</a>
-                {/* </div> */}
                 <span className="text-[var(--second-text)] text-xs leading-none">BITCOIN TOOLS</span>
-                {/* <div className="text-white w-full"> */}
                 <a className="NavBar_navlink__BklVa" href="/tools/inscribe">Ordinals Creator</a>
-                {/* </div> * */}
               </div>
             </div>
           </div>
@@ -92,7 +85,7 @@ export const AppBar: React.FC = () => {
           </div>
           <div className="text-white">
             <a target="_blank" className="NavBar_navlink__BklVa" href="https://discord.gg/lmnft">Support</a>
-          </div>
+          </div> */}
         </div>
 
         {/* Wallet & Settings */}
