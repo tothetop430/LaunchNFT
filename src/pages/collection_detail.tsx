@@ -5,15 +5,15 @@ import { CollectionDetailView } from '../views/CollectionDetailView';
 const Home: NextPage = (props) => {
     return (
         <div>
-            <Head>
+            {/* <Head>
                 <title>NFT Minter</title>
                 <meta
                     name="description"
                     content="Solana Scaffold"
                 />
-            </Head>
+            </Head> */}
             <div className="flex flex-row m-4">
-                <CollectionDetailView />
+                <CollectionDetailView name="example name" description="example description" image_url="example image url"/>
             </div>
         </div>
     );
