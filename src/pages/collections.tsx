@@ -6,13 +6,13 @@ import "react-multi-carousel/lib/styles.css";
 const Home: NextPage = (props) => {
     return (
         <div>
-            <Head>
+            {/* <Head>
                 <title>NFT Minter</title>
                 <meta
                     name="description"
                     content="Solana Scaffold"
                 />
-            </Head>
+            </Head> */}
             <div className="flex flex-row m-4">
                 <CollectionsView />
             </div>

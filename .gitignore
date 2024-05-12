@@ -40,7 +40,7 @@ yarn-error.log*
 # logs
 *.log
 
-yarn.lock
-package-lock.json
+./yarn.lock
+./package-lock.json
 
 /public/uploads/*
