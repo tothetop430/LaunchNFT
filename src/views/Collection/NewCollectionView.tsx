@@ -11,6 +11,10 @@ import { SiRust } from "react-icons/si";
 import { FaPercent } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
+//ipfs
+import axios from 'axios';
+import FormData from 'form-data';
+
 // Wallet
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 
@@ -43,28 +47,185 @@ export const NewCollectionView: FC = ({ }) => {
     const [core_switch, setCoreSwitch] = useState(false);
     const [switchShowMode, setSwitchShowMode] = useState(false);
     const [tabIndex, goTab] = useState(0);
-    const [picture, setPicture] = useState('');
+    const [pictures, setPictures] = useState([]);
     const [nfts_base_art_name, setBaseArtName] = useState('NFT #');
     const [nfts_description, setDescription] = useState('{name}-Generated and deployed on LaunchMyNFT.');
     const [nfts_mint_cost, setMintCost] = useState(0.05);
     const [nfts_royalties, setRoyalties] = useState(2.5);
     const [second_royalty, setSecondRoyalty] = useState([{ share: 100, address: "EAoR5kUrSpDtU13denCHVWEYmjnW4MawFPACd1PSGA8M" }])
+    const [collection_name, setCollectionName] = useState('');
+    const [collection_symbol, setCollectionSymbol] = useState('');
+    const [collection_description, setCollectionDescription] = useState('');
+    const [launch_date, setLaunchDate] = useState('May 12, 2024');
+    const [dir_upload, setDirUpload] = useState([]);
+    const [folder_name, setFolderName] = useState('');
+
+    const REACT_APP_PINATA_API_KEY = '767f0b4ad24034363687';
+    const REACT_APP_PINATA_API_SECRET = '75f146e928ba05395e226953152f1528baaf83b86d3d9785875a9cab203810b8';
+    const image_count_in_line = 3;
 
     const handleChange = (event) => {
-        if (event.target.files.length > 0) {
-            setPicture(URL.createObjectURL(event.target.files[0]));
+        console.log(event.target.files);
+        setDirUpload([...event.target.files]);
+        const len = event.target.files.length;
+        if (len > 0) {
+            const folders = [];
+            for (let i = 0; i < len; i++) {
+                const dir = event.target.files[i].webkitRelativePath;
+                setFolderName(dir.split("/")[0]);
+                console.log(dir);
+                folders.push(dir.split('/').filter((val, ind) => ind != 0).join("/"));
+            }
+            if (folders.filter(val => val.startsWith("images/")).length == 0) {
+                alert("No Images folder. Must contain it!");
+                return;
+            }
+            const images = folders.filter(val => val.startsWith("images/"));
+
+
+            //setImageName(event.target.files[0]);
+            const newResults = [];
+            for (let i = 0; i < images.length; i += image_count_in_line) {
+                const newLines = [];
+                for (let j = 0; j < image_count_in_line && i + j < images.length; j++) {
+                    const img_name = images[i + j].split("/").filter((_, ind) => ind != 0).join("");
+                    const json_path = folders.filter(
+                        val =>
+                            val.endsWith("/" + img_name.split(".").reverse().filter((_, ind) => ind != 0).reverse().join(".") + ".json")
+                    ).join("");
+                    const nft_name = json_path === "" ? "NFT #" + (i + j) : json_path;
+                    const nft_desc = json_path === "" ? "NFT #" + (i + j) : json_path;
+                    console.log(folders.indexOf(images[i + j]));
+                    console.log(event.target.files[folders.indexOf(images[i + j])]);
+                    newLines.push({
+                        img_name: URL.createObjectURL(event.target.files[folders.indexOf(images[i + j])]),
+                        nft_name: nft_name,
+                        nft_desc: nft_desc,
+                        real_name: img_name
+                    });
+                }
+                newResults.push({ val: newLines });
+            }
+            setPictures(newResults);
+
+
+            //setPictures(event.target.files);
+            //setPicture(URL.createObjectURL(event.target.files[0]));
         }
         else {
-            setPicture('');
+            setPictures([]);
         }
     }
 
+    const loadDirectory = (item) => {
+        console.log(item);
+    }
+
+    // const mintNFT = async (tokenURI) => {
+
+
+    //     try {
+    //         await votingSystemContract.makeAnEpicNFT(tokenURI, winner.address)
+
+    //         let val = await votingSystemContract.getTokenId();
+    //         console.log(val)
+    //         setTokenID(parseInt(val._hex));
+
+
+    //     } catch (error) {
+    //         console.log("Error while minting NFT with contract")
+    //         console.log(error);
+    //     }
+
+    // }
+
+    const sendJSONtoIPFS = async (ImgHash) => {
+
+        try {
+
+            const resJSON = await axios({
+                method: "post",
+                url: "https://api.pinata.cloud/pinning/pinJsonToIPFS",
+                data: {
+                    "name": nfts_base_art_name,
+                    "description": collection_symbol,
+                    "image": ImgHash,
+                },
+                headers: {
+                    'pinata_api_key': `${REACT_APP_PINATA_API_KEY}`,
+                    'pinata_secret_api_key': `${REACT_APP_PINATA_API_SECRET}`,
+                },
+            });
+
+            console.log("final ", `ipfs://${resJSON.data.IpfsHash}`)
+            const tokenURI = `ipfs://${resJSON.data.IpfsHash}`;
+            console.log("Token URI", tokenURI);
+            //mintNFT(tokenURI, currentAccount)   // pass the winner
+
+        } catch (error) {
+            console.log("JSON to IPFS: ")
+            console.log(error);
+        }
+
+
+    }
+
+    const sendFileToIPFS = async (e) => {
+
+        e.preventDefault();
+
+        if (pictures.length > 0) {
+            try {
+
+                const formData = new FormData();
+
+                const metadata = JSON.stringify({
+                    name: folder_name,
+                });
+                formData.append("pinataMetadata", metadata);
+                dir_upload.map(dir_item => {
+                    formData.append('file', dir_item);
+                });
+
+                const options = JSON.stringify({
+                    cidVersion: 0,
+                });
+                formData.append("pinataOptions", options);
+                //formData.append("file", image_name);
+
+                const resFile = await axios({
+                    method: "post",
+                    url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
+                    data: formData,
+                    headers: {
+                        'pinata_api_key': `${REACT_APP_PINATA_API_KEY}`,
+                        'pinata_secret_api_key': `${REACT_APP_PINATA_API_SECRET}`,
+                        "Content-Type": "multipart/form-data"
+                    },
+                });
+
+                const ImgHash = `ipfs://${resFile.data.IpfsHash}`;
+                // console.log(response.data.IpfsHash);
+                sendJSONtoIPFS(ImgHash)
+
+
+            } catch (error) {
+                console.log("File to IPFS: ")
+                console.log(error)
+            }
+        }
+    }
+
+    // const onClickContinue = (event) => {
+    //     pinFileToIPFS(image_name);
+    // }
+
     const updateSecondRoyalty = (event, indexToUpdate, mod) => {
         const newData = [...second_royalty];
-        if(mod == 0){
+        if (mod == 0) {
             newData[indexToUpdate].share = event.target.value;
         }
-        else if(mod == 1){
+        else if (mod == 1) {
             newData[indexToUpdate].address = event.target.value;
         }
         setSecondRoyalty(newData);
@@ -97,26 +258,29 @@ export const NewCollectionView: FC = ({ }) => {
                                     <div className="mb-2 block">
                                         <Label htmlFor="collection_name" value="Collection Name" />
                                     </div>
-                                    <TextInput id="collection_name" type="email" placeholder="My NFTs" required color="gray" />
+                                    <TextInput id="collection_name" type="email" placeholder="My NFTs" required color="gray"
+                                        value={collection_name} onChange={() => setCollectionName(event.target.value)} />
                                 </div>
                                 <div className='px-1'>
                                     <div className="mb-2 block">
                                         <Label htmlFor="symbol" value="Symbol" />
                                     </div>
-                                    <TextInput id="symbol" type="email" placeholder="MNFT" required color="gray" />
+                                    <TextInput id="symbol" type="email" placeholder="MNFT" required color="gray"
+                                        value={collection_symbol} onChange={() => setCollectionSymbol(event.target.value)} />
                                 </div>
                                 <div className='px-1'>
                                     <div className="mb-2 block">
                                         <Label htmlFor="collection_description" value="Collection Description" />
                                     </div>
-                                    <TextInput id="collection_description" type="email" placeholder="My collection description" required color="gray" />
+                                    <TextInput id="collection_description" type="email" placeholder="My collection description" required color="gray"
+                                        value={collection_description} onChange={() => setCollectionDescription(event.target.value)} />
                                 </div>
                             </div>
                             <div className='px-1 py-2'>
                                 <div className='mb-2'>
                                     <Label htmlFor='launch_date' value='Launch Date'></Label>
                                 </div>
-                                <Datepicker id='launch_date' />
+                                <Datepicker id='launch_date' value={launch_date} onChange={() => setLaunchDate(event.target.value)} />
                             </div>
                             <fieldset className="flex max-w-md flex-row gap-4">
                                 <legend className="mb-4">Metadata Standard</legend>
@@ -201,21 +365,21 @@ export const NewCollectionView: FC = ({ }) => {
                                             <div className="mb-2 block">
                                                 <Label htmlFor="share" value="Share" />
                                             </div>
-                                            <TextInput id="share_percent" value={val.share} rightIcon={FaPercent} required color="gray" 
-                                            onChange = {() => updateSecondRoyalty(event, index, 0)}/>
+                                            <TextInput id="share_percent" value={val.share} rightIcon={FaPercent} required color="gray"
+                                                onChange={() => updateSecondRoyalty(event, index, 0)} />
                                         </div>
                                         <div className='px-1 w-full'>
                                             <div className="mb-2 block">
                                                 <Label htmlFor="address" value="Address" />
                                             </div>
-                                            <TextInput id="address" placeholder='Address' value={val.address} className='w-full' required color="gray" 
-                                            onChange = {() => updateSecondRoyalty(event, index, 1)} />
+                                            <TextInput id="address" placeholder='Address' value={val.address} className='w-full' required color="gray"
+                                                onChange={() => updateSecondRoyalty(event, index, 1)} />
                                         </div>
                                         {
                                             index != 0 &&
                                             <div className='flex flex-end justify-end flex-end inline-block mb-2'>
-                                                <MdDelete className="mr-2 h-5 w-5" 
-                                                onClick={() => setSecondRoyalty(second_royalty.filter((_, ind) => index !== ind))} />
+                                                <MdDelete className="mr-2 h-5 w-5"
+                                                    onClick={() => setSecondRoyalty(second_royalty.filter((_, ind) => index !== ind))} />
                                             </div>
                                         }
                                     </div>
@@ -274,6 +438,7 @@ export const NewCollectionView: FC = ({ }) => {
                             Meta data is optional. To include it provide JSON files with matching file names.
                         </p>
                         <div className="flex w-full items-center justify-center">
+                            {/* <DropTarget onDrop={loadDirectory}> */}
                             <Label
                                 htmlFor="dropzone-file"
                                 className="flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-600"
@@ -298,8 +463,10 @@ export const NewCollectionView: FC = ({ }) => {
                                         <span className="font-semibold">Click to here or Drag 'n' drop NFT assets folder here</span>
                                     </p>
                                 </div>
-                                <FileInput id="dropzone-file" multiple itemType='directory' className="hidden" onChange={() => handleChange(event)} />
+                                <FileInput className='hidden' id="dropzone-file" webkitdirectory="true" multiple itemType='directory' onChange={() => handleChange(event)} />
                             </Label>
+                            {/* </DropTarget> */}
+
 
                         </div>
                         <p className='text-xm text-gray-500 dark:text-gray-400'>
@@ -311,11 +478,32 @@ export const NewCollectionView: FC = ({ }) => {
                                 <Button outline gradientDuoTone="purpleToBlue" pill onClick={() => goTab(0)}>
                                     Back
                                 </Button>
-                                <Button outline gradientDuoTone="purpleToBlue" pill onClick={() => goTab(0)}>
+                                <Button outline gradientDuoTone="purpleToBlue" pill onClick={() => sendFileToIPFS(event)}>
                                     Continue
                                 </Button>
                             </div>
-                            <img className="playerProfilePic_home_tile max-w-sm pt-10" src={picture}></img>
+                            <div className='flex flex-col'>
+                                {
+                                    pictures.map(pic_in_line => (
+                                        <div className='grid grid-cols-3 gap-4'>
+                                            {
+                                                pic_in_line.val.map((pic, index) => (
+                                                    <div className='p-4 flex flex-col flex-start'>
+                                                        <img className="playerProfilePic_home_tile w-full pt-10" src={pic.img_name}></img>
+                                                        <label>{pic.nft_name}</label>
+                                                        <label>{pic.nft_desc}</label>
+                                                        <div className='flex flex-row flex-start justify-start'>
+                                                            <Button>Add</Button>
+                                                            <Button>Edit</Button>
+                                                            <Button>Del</Button>
+                                                        </div>
+                                                    </div>
+                                                ))
+                                            }
+                                        </div>
+                                    ))
+                                }
+                            </div>
                         </div>
                     </div>
 
