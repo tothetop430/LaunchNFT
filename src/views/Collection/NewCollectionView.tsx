@@ -11,6 +11,8 @@ import { SiRust } from "react-icons/si";
 import { FaPercent } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
+//ipfs
+
 // Wallet
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 
@@ -49,6 +51,10 @@ export const NewCollectionView: FC = ({ }) => {
     const [nfts_mint_cost, setMintCost] = useState(0.05);
     const [nfts_royalties, setRoyalties] = useState(2.5);
     const [second_royalty, setSecondRoyalty] = useState([{ share: 100, address: "EAoR5kUrSpDtU13denCHVWEYmjnW4MawFPACd1PSGA8M" }])
+    const [collection_name, setCollectionName] = useState('');
+    const [collection_symbol, setCollectionSymbol] = useState('');
+    const [collection_description, setCollectionDescription] = useState('');
+    const [launch_date, setLaunchDate] = useState('May 12, 2024');
 
     const handleChange = (event) => {
         if (event.target.files.length > 0) {
@@ -61,10 +67,10 @@ export const NewCollectionView: FC = ({ }) => {
 
     const updateSecondRoyalty = (event, indexToUpdate, mod) => {
         const newData = [...second_royalty];
-        if(mod == 0){
+        if (mod == 0) {
             newData[indexToUpdate].share = event.target.value;
         }
-        else if(mod == 1){
+        else if (mod == 1) {
             newData[indexToUpdate].address = event.target.value;
         }
         setSecondRoyalty(newData);
@@ -97,26 +103,29 @@ export const NewCollectionView: FC = ({ }) => {
                                     <div className="mb-2 block">
                                         <Label htmlFor="collection_name" value="Collection Name" />
                                     </div>
-                                    <TextInput id="collection_name" type="email" placeholder="My NFTs" required color="gray" />
+                                    <TextInput id="collection_name" type="email" placeholder="My NFTs" required color="gray"
+                                        value={collection_name} onChange={() => setCollectionName(event.target.value)} />
                                 </div>
                                 <div className='px-1'>
                                     <div className="mb-2 block">
                                         <Label htmlFor="symbol" value="Symbol" />
                                     </div>
-                                    <TextInput id="symbol" type="email" placeholder="MNFT" required color="gray" />
+                                    <TextInput id="symbol" type="email" placeholder="MNFT" required color="gray"
+                                        value={collection_symbol} onChange={() => setCollectionSymbol(event.target.value)} />
                                 </div>
                                 <div className='px-1'>
                                     <div className="mb-2 block">
                                         <Label htmlFor="collection_description" value="Collection Description" />
                                     </div>
-                                    <TextInput id="collection_description" type="email" placeholder="My collection description" required color="gray" />
+                                    <TextInput id="collection_description" type="email" placeholder="My collection description" required color="gray"
+                                        value={collection_description} onChange={() => setCollectionDescription(event.target.value)} />
                                 </div>
                             </div>
                             <div className='px-1 py-2'>
                                 <div className='mb-2'>
                                     <Label htmlFor='launch_date' value='Launch Date'></Label>
                                 </div>
-                                <Datepicker id='launch_date' />
+                                <Datepicker id='launch_date' value={launch_date} onChange={() => setLaunchDate(event.target.value)} />
                             </div>
                             <fieldset className="flex max-w-md flex-row gap-4">
                                 <legend className="mb-4">Metadata Standard</legend>
@@ -201,21 +210,21 @@ export const NewCollectionView: FC = ({ }) => {
                                             <div className="mb-2 block">
                                                 <Label htmlFor="share" value="Share" />
                                             </div>
-                                            <TextInput id="share_percent" value={val.share} rightIcon={FaPercent} required color="gray" 
-                                            onChange = {() => updateSecondRoyalty(event, index, 0)}/>
+                                            <TextInput id="share_percent" value={val.share} rightIcon={FaPercent} required color="gray"
+                                                onChange={() => updateSecondRoyalty(event, index, 0)} />
                                         </div>
                                         <div className='px-1 w-full'>
                                             <div className="mb-2 block">
                                                 <Label htmlFor="address" value="Address" />
                                             </div>
-                                            <TextInput id="address" placeholder='Address' value={val.address} className='w-full' required color="gray" 
-                                            onChange = {() => updateSecondRoyalty(event, index, 1)} />
+                                            <TextInput id="address" placeholder='Address' value={val.address} className='w-full' required color="gray"
+                                                onChange={() => updateSecondRoyalty(event, index, 1)} />
                                         </div>
                                         {
                                             index != 0 &&
                                             <div className='flex flex-end justify-end flex-end inline-block mb-2'>
-                                                <MdDelete className="mr-2 h-5 w-5" 
-                                                onClick={() => setSecondRoyalty(second_royalty.filter((_, ind) => index !== ind))} />
+                                                <MdDelete className="mr-2 h-5 w-5"
+                                                    onClick={() => setSecondRoyalty(second_royalty.filter((_, ind) => index !== ind))} />
                                             </div>
                                         }
                                     </div>
@@ -315,7 +324,19 @@ export const NewCollectionView: FC = ({ }) => {
                                     Continue
                                 </Button>
                             </div>
-                            <img className="playerProfilePic_home_tile max-w-sm pt-10" src={picture}></img>
+                            {
+                                picture != '' &&
+                                <div className='max-w-sm pt-10 flex flex-col'>
+                                    <img className="playerProfilePic_home_tile w-full pt-10" src={picture}></img>
+                                    <label>{nfts_base_art_name}</label>
+                                    <label>{collection_symbol}</label>
+                                    <div className='flex flex-row flex-start justify-start'>
+                                        <Button>Add</Button>
+                                        <Button>Edit</Button>
+                                        <Button>Del</Button>
+                                    </div>
+                                </div>
+                            }
                         </div>
                     </div>
 
