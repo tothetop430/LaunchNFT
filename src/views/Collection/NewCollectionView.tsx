@@ -459,7 +459,7 @@ export const NewCollectionView: FC = ({ }) => {
                                         />
                                     </svg>
                                     <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                                        <span className="font-semibold">Click to here or Drag n drop NFT assets folder here</span>
+                                        <span className="font-semibold">{"Click to here or Drag n drop NFT assets folder here"}</span>
                                     </p>
                                 </div>
                                 <FileInput className='hidden' id="dropzone-file" webkitdirectory="true" multiple itemType='directory' onChange={() => handleChange(event)} />
