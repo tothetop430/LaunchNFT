@@ -360,7 +360,7 @@ export const NewCollectionView: FC = ({ }) => {
                             </text>
                             {
                                 second_royalty.map((val, index) => (
-                                    <div className='flex flex-row items-end'>
+                                    <div className='flex flex-row items-end' key = {"second" + index}>
                                         <div className='px-1'>
                                             <div className="mb-2 block">
                                                 <Label htmlFor="share" value="Share" />
@@ -378,8 +378,7 @@ export const NewCollectionView: FC = ({ }) => {
                                         {
                                             index != 0 &&
                                             <div className='flex flex-end justify-end flex-end inline-block mb-2'>
-                                                <MdDelete className="mr-2 h-5 w-5"
-                                                    onClick={() => setSecondRoyalty(second_royalty.filter((_, ind) => index !== ind))} />
+                                                <MdDelete className='mr-2 h-5 w-5' onClick={() => setSecondRoyalty(second_royalty.filter((_, ind) => index !== ind))} />
                                             </div>
                                         }
                                     </div>
@@ -460,7 +459,7 @@ export const NewCollectionView: FC = ({ }) => {
                                         />
                                     </svg>
                                     <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                                        <span className="font-semibold">Click to here or Drag 'n' drop NFT assets folder here</span>
+                                        <span className="font-semibold">Click to here or Drag `n` drop NFT assets folder here</span>
                                     </p>
                                 </div>
                                 <FileInput className='hidden' id="dropzone-file" webkitdirectory="true" multiple itemType='directory' onChange={() => handleChange(event)} />
@@ -484,11 +483,11 @@ export const NewCollectionView: FC = ({ }) => {
                             </div>
                             <div className='flex flex-col'>
                                 {
-                                    pictures.map(pic_in_line => (
-                                        <div className='grid grid-cols-3 gap-4'>
+                                    pictures.map((pic_in_line, ind) => (
+                                        <div className='grid grid-cols-3 gap-4' key = {ind * (pic_in_line + 1)}>
                                             {
                                                 pic_in_line.val.map((pic, index) => (
-                                                    <div className='p-4 flex flex-col flex-start'>
+                                                    <div className='p-4 flex flex-col flex-start' key = {ind * (pic_in_line + 1) + index}>
                                                         <img className="playerProfilePic_home_tile w-full pt-10" src={pic.img_name}></img>
                                                         <label>{pic.nft_name}</label>
                                                         <label>{pic.nft_desc}</label>

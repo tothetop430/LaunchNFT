@@ -1,4 +1,4 @@
-import { FC, useEffect, useState } from 'react';
+import { FC} from 'react';
 import { Collection_Item } from 'components/Collection_Item';
 import datalist from '../data/CollectionsData.json';
 
