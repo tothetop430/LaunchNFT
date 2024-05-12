@@ -12,6 +12,8 @@ import { RequestAirdrop } from '../components/RequestAirdrop';
 import useUserSOLBalanceStore from '../stores/useUserSOLBalanceStore';
 import { NftMinter } from 'components/NftMinter';
 
+import { Card } from "flowbite-react";
+
 export const CreateView: FC = ({ }) => {
     const wallet = useWallet();
     const { connection } = useConnection();
