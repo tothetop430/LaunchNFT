@@ -11,7 +11,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@coral-xyz/anchor": "^0.28.0",
     "@heroicons/react": "^1.0.5",
     "@metaplex-foundation/js": "^0.18.0",
     "@metaplex-foundation/mpl-token-metadata": "^2.8.2",

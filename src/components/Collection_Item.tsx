@@ -4,13 +4,8 @@ import { Card, Carousel, Avatar, Badge, Progress } from "flowbite-react";
 import { url } from 'inspector';
 import { link } from 'fs';
 
-interface Props {
-    name : string;
-    description : string;
-    image_url : string;
-}
-
-export const Collection_Item: React.FC<Props> = ({ name, description, image_url }) => {
+export const Collection_Item: React.FC = (props: any) => {
+    const { name, description, image_url } = props;
     return (
         <div className="flex flex-col p-4 justify-center">
             <Card className="max-w-sm" imgSrc={image_url} horizontal>
