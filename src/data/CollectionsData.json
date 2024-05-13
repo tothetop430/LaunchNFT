@@ -4,7 +4,7 @@
         "symbol": "PS",
         "description": "Networking Is The Alpha",
         "seller_fee_basis_points": 690,
-        "image": "https://assets.pinit.io/6EJZzNJ36dQatQzGzKrSHUyvmpCLdcjcMMpAc3vSEUbe/56c23f1b-4caf-405b-aef5-e3f491ea66a0/1275",
+        "image": "./NFT.svg",
         "external_url": "",
         "collections": "QmWYm375WsTMYyUkTPHCjEt3fjnVZoYrN15Bn8g1GskBck",
         "attributes": [
@@ -41,7 +41,7 @@
             "category": "image",
             "creators": [
                 {
-                    "address": "example_user",
+                    "address": "example_collection",
                     "share": 100
                 }
             ]
@@ -53,7 +53,7 @@
         "collections": "QmWYm375WsTMYyUkTPHCjEt3fjnVZoYrN15Bn8g1GskBck",
         "description": "Networking Is The Alpha",
         "seller_fee_basis_points": 690,
-        "image": "https://assets.pinit.io/6EJZzNJ36dQatQzGzKrSHUyvmpCLdcjcMMpAc3vSEUbe/56c23f1b-4caf-405b-aef5-e3f491ea66a0/1275",
+        "image": "./NFT.svg",
         "external_url": "",
         "attributes": [
             {
@@ -89,7 +89,7 @@
             "category": "image",
             "creators": [
                 {
-                    "address": "example_user",
+                    "address": "example_collection",
                     "share": 100
                 }
             ]
