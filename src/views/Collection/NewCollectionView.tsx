@@ -271,6 +271,10 @@ export const NewCollectionView: FC = ({ }) => {
         setSecondRoyalty(newData);
     }
 
+    const handleDeploy = () => {
+        
+    }
+
     useEffect(() => {
         if (wallet.publicKey) {
             console.log(wallet.publicKey.toBase58())
@@ -553,6 +557,7 @@ export const NewCollectionView: FC = ({ }) => {
                 </Tabs.Item>
                 <Tabs.Item title="Deploy">
                     <p className="text-sm text-gray-500 dark:text-gray-400">Content 3</p>
+                    <Button onClick={handleDeploy}>Deploy</Button>
                 </Tabs.Item>
                 <Tabs.Item title="Success!">
                     <p className="text-sm text-gray-500 dark:text-gray-400">Content 4</p>
