@@ -12,6 +12,7 @@ import { Tabs, Label, TextInput, Datepicker, Radio, ToggleSwitch, Textarea, File
 import { SiRust } from "react-icons/si";
 import { FaPercent } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { useRouter } from 'next/router';
 
 //ipfs
 import axios from 'axios';
@@ -38,6 +39,7 @@ const WalletMultiButtonDynamic = dynamic(
 export const NewCollectionView: FC = ({ }) => {
     const wallet = useWallet();
     const { connection } = useConnection();
+    const router = useRouter();
 
     const balance = useUserSOLBalanceStore((s) => s.balance)
     const { getUserSOLBalance } = useUserSOLBalanceStore()
@@ -197,6 +199,8 @@ export const NewCollectionView: FC = ({ }) => {
             const tokenURI = `ipfs://${resJSON.data.IpfsHash}`;
             console.log("Token URI", tokenURI);
             //mintNFT(tokenURI, currentAccount)   // pass the winner
+            alert("Thanks for pushing up!!!");
+            router.push('/collections');
 
         } catch (error) {
             console.log("JSON to IPFS: ")

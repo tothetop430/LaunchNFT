@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 import { CollectionDetailView } from '../views/CollectionDetailView';
+import ItemProps  from '../interfaces/ItemProps';
 
 const Home: NextPage = (props) => {
     return (
@@ -13,7 +14,7 @@ const Home: NextPage = (props) => {
                 />
             </Head> */}
             <div className="flex flex-row m-4">
-                <CollectionDetailView name="example name" description="example description" image_url="example image url"/>
+                <CollectionDetailView name={props.name} description={props.description} image_url={props.image_url} collections = {props.collections}/>
             </div>
         </div>
     );
