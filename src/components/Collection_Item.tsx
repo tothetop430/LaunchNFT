@@ -4,10 +4,12 @@ import { Card, Carousel, Avatar, Badge, Progress } from "flowbite-react";
 import { url } from 'inspector';
 import { link } from 'fs';
 import ItemProps  from '../interfaces/ItemProps';
-
+import NFT from "./card/images/NFT.svg"
 
 export const Collection_Item: React.FC<ItemProps> = ({name, description, image_url, collections}) => {
     //const { name, description, image_url } = props;
+    // image_url = NFT;
+    // image_url = './NFT.svg';
     return (
         <div className="flex flex-row overflow-hidden item-center border border-gray-200 rounded-lg bg-gray-900 hover:bg-gray-500">
             <img className='object-cover w-1/2 h-auto' src={image_url} />
