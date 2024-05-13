@@ -6,7 +6,9 @@ import "react-multi-carousel/lib/styles.css";
 const Home: NextPage = (props) => {
     return (
         <div>
-            {/* <Head>
+            {
+                console.log(props)
+            /* <Head>
                 <title>NFT Minter</title>
                 <meta
                     name="description"
