@@ -1,9 +1,11 @@
+/* eslint-disable */
 "use client";
 // Next, React
 import { FC, useEffect, useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
+import Blob from 'node-blob';
 import { Button, Timeline } from "flowbite-react";
 import { HiArrowNarrowRight, HiCalendar } from "react-icons/hi";
 import { Tabs, Label, TextInput, Datepicker, Radio, ToggleSwitch, Textarea, FileInput } from "flowbite-react";
@@ -26,6 +28,7 @@ import useUserSOLBalanceStore from '../../stores/useUserSOLBalanceStore';
 import { NftMinter } from 'components/NftMinter';
 import { min } from 'date-fns';
 import uploadFile from 'pages/api/upload';
+import JSZip from 'jszip';
 
 const WalletMultiButtonDynamic = dynamic(
     async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
@@ -70,6 +73,39 @@ export const NewCollectionView: FC = ({ }) => {
         const len = event.target.files.length;
         if (len > 0) {
             const folders = [];
+            // if (event.target.files[0].name.endsWith(".zip")) {
+            //     const zip = new JSZip();
+            //     zip.loadAsync(event.target.files[0])
+            //         .then((res) => {
+            //             const image_names = Object.keys(res.files).filter(element => element.startsWith("images/") && element !== 'images/').sort();
+            //             const json_names = Object.keys(res.files).filter(element => element.startsWith("metadata/") && element !== "metadata/").sort();
+            //             console.log(image_names);
+            //             console.log(json_names);
+
+            //             const newResults = [];
+            //             for (let i = 0; i < image_names.length; i += image_count_in_line) {
+            //                 const newLines = [];
+            //                 for (let j = 0; j < image_count_in_line && i + j < image_names.length; j++) {
+            //                     const blob = new Blob([image_names[i + j]], {type: 'image/jpeg'});
+            //                     newLines.push({
+            //                         img_name: URL.createObjectURL(blob),
+            //                         nft_name: json_names[i + j],
+            //                         nft_desc: json_names[i + j],
+            //                         real_name: image_names[i + j]
+            //                     });
+            //                     console.log("L:" + newLines);
+
+
+            //                 }
+            //                 newResults.push({ val: newLines });
+            //                 console.log("N:" + newResults);
+            //             }
+            //             console.log("T:", newResults);
+            //             setPictures(newResults);
+            //             //setDirUpload([...(res.filter(item => item.dir === false))]);
+            //         });
+
+            // }
             for (let i = 0; i < len; i++) {
                 const dir = event.target.files[i].webkitRelativePath;
                 setFolderName(dir.split("/")[0]);
@@ -360,7 +396,7 @@ export const NewCollectionView: FC = ({ }) => {
                             </text>
                             {
                                 second_royalty.map((val, index) => (
-                                    <div className='flex flex-row items-end' key = {"second" + index}>
+                                    <div className='flex flex-row items-end' key={"second" + index}>
                                         <div className='px-1'>
                                             <div className="mb-2 block">
                                                 <Label htmlFor="share" value="Share" />
@@ -462,8 +498,11 @@ export const NewCollectionView: FC = ({ }) => {
                                         <span className="font-semibold">{"Click to here or Drag n drop NFT assets folder here"}</span>
                                     </p>
                                 </div>
-                                
-                                <FileInput className='hidden' id="dropzone-file" multiple itemType='directory' onChange={() => handleChange(event)} />
+                                {
+                                    // eslint-disable-next-line
+                                    <FileInput className='' id="dropzone-file" webkitDirectory="true" multiple itemType='directory' onChange={() => handleChange(event)} />
+                                }
+
                             </Label>
                             {/* </DropTarget> */}
 
@@ -485,10 +524,10 @@ export const NewCollectionView: FC = ({ }) => {
                             <div className='flex flex-col'>
                                 {
                                     pictures.map((pic_in_line, ind) => (
-                                        <div className='grid grid-cols-3 gap-4' key = {ind * (pic_in_line + 1)}>
+                                        <div className='grid grid-cols-3 gap-4' key={ind * (pic_in_line + 1)}>
                                             {
                                                 pic_in_line.val.map((pic, index) => (
-                                                    <div className='p-4 flex flex-col flex-start' key = {ind * (pic_in_line + 1) + index}>
+                                                    <div className='p-4 flex flex-col flex-start' key={ind * (pic_in_line + 1) + index}>
                                                         <img className="playerProfilePic_home_tile w-full pt-10" src={pic.img_name}></img>
                                                         <label>{pic.nft_name}</label>
                                                         <label>{pic.nft_desc}</label>
