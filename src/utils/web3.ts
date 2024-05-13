@@ -127,22 +127,6 @@ export async function CreateProject(
   }
 }
 
-export async function createCollectionNft(NFT_METADATA: string, WALLET: Keypair) {
-  const QUICKNODE_RPC = 'https://example.solana-devnet.quiknode.pro/0123456/';
-  const SOLANA_CONNECTION = new Connection(QUICKNODE_RPC, { commitment: 'finalized' });
-  const METAPLEX = Metaplex.make(SOLANA_CONNECTION)
-    .use(keypairIdentity(WALLET));
-  const { nft: collectionNft } = await METAPLEX.nfts().create({
-    name: "QuickNode Demo NFT Collection",
-    uri: NFT_METADATA,
-    sellerFeeBasisPoints: 0,
-    isCollection: true,
-    updateAuthority: WALLET,
-  });
-
-  console.log(`✅ - Minted Collection NFT: ${collectionNft.address.toString()}`);
-  console.log(`     https://explorer.solana.com/address/${collectionNft.address.toString()}?cluster=devnet`);
-}
 
 export async function uploadImage(filePath: string, fileName: string, WALLET: Keypair): Promise<string> {
   console.log(`Step 1 - Uploading Image`);
@@ -204,6 +188,23 @@ export async function uploadMetadata(imgUri: string, imgType: string, nftName: s
     });
   console.log('   Metadata URI:', uri);
   return uri;
+}
+
+export async function createCollectionNft(NFT_METADATA: string, WALLET: Keypair) {
+  const QUICKNODE_RPC = 'https://example.solana-devnet.quiknode.pro/0123456/';
+  const SOLANA_CONNECTION = new Connection(QUICKNODE_RPC, { commitment: 'finalized' });
+  const METAPLEX = Metaplex.make(SOLANA_CONNECTION)
+    .use(keypairIdentity(WALLET));
+  const { nft: collectionNft } = await METAPLEX.nfts().create({
+    name: "QuickNode Demo NFT Collection",
+    uri: NFT_METADATA,
+    sellerFeeBasisPoints: 0,
+    isCollection: true,
+    updateAuthority: WALLET,
+  });
+
+  console.log(`✅ - Minted Collection NFT: ${collectionNft.address.toString()}`);
+  console.log(`     https://explorer.solana.com/address/${collectionNft.address.toString()}?cluster=devnet`);
 }
 
 export async function generateCandyMachine(WALLET: Keypair, COLLECTION_NFT_MINT: string) {
