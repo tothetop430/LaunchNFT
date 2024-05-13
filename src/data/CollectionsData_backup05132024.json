@@ -1,12 +1,11 @@
 [
     {
-        "name": "PunkenStein",
+        "name": "PunkenStein #1275",
         "symbol": "PS",
         "description": "Networking Is The Alpha",
         "seller_fee_basis_points": 690,
         "image": "https://assets.pinit.io/6EJZzNJ36dQatQzGzKrSHUyvmpCLdcjcMMpAc3vSEUbe/56c23f1b-4caf-405b-aef5-e3f491ea66a0/1275",
         "external_url": "",
-        "collections": "QmWYm375WsTMYyUkTPHCjEt3fjnVZoYrN15Bn8g1GskBck",
         "attributes": [
             {
                 "trait_type": "Background",
@@ -41,16 +40,15 @@
             "category": "image",
             "creators": [
                 {
-                    "address": "example_user",
+                    "address": "6EJZzNJ36dQatQzGzKrSHUyvmpCLdcjcMMpAc3vSEUbe",
                     "share": 100
                 }
             ]
         }
     },
     {
-        "name": "LongStein",
+        "name": "PunkenStein #1275",
         "symbol": "PS",
-        "collections": "QmWYm375WsTMYyUkTPHCjEt3fjnVZoYrN15Bn8g1GskBck",
         "description": "Networking Is The Alpha",
         "seller_fee_basis_points": 690,
         "image": "https://assets.pinit.io/6EJZzNJ36dQatQzGzKrSHUyvmpCLdcjcMMpAc3vSEUbe/56c23f1b-4caf-405b-aef5-e3f491ea66a0/1275",
@@ -89,7 +87,54 @@
             "category": "image",
             "creators": [
                 {
-                    "address": "example_user",
+                    "address": "6EJZzNJ36dQatQzGzKrSHUyvmpCLdcjcMMpAc3vSEUbe",
+                    "share": 100
+                }
+            ]
+        }
+    },
+    {
+        "name": "PunkenStein #1275",
+        "symbol": "PS",
+        "description": "Networking Is The Alpha",
+        "seller_fee_basis_points": 690,
+        "image": "https://assets.pinit.io/6EJZzNJ36dQatQzGzKrSHUyvmpCLdcjcMMpAc3vSEUbe/56c23f1b-4caf-405b-aef5-e3f491ea66a0/1275",
+        "external_url": "",
+        "attributes": [
+            {
+                "trait_type": "Background",
+                "value": "Blackenstein"
+            },
+            {
+                "trait_type": "Body",
+                "value": "Ghost"
+            },
+            {
+                "trait_type": "Mouth",
+                "value": "Moustache"
+            },
+            {
+                "trait_type": "Eyes",
+                "value": "Anoyed"
+            },
+            {
+                "trait_type": "Rarity Rank",
+                "value": 1656,
+                "display_type": "number",
+                "max_value": 1800
+            }
+        ],
+        "properties": {
+            "files": [
+                {
+                    "uri": "https://assets.pinit.io/6EJZzNJ36dQatQzGzKrSHUyvmpCLdcjcMMpAc3vSEUbe/56c23f1b-4caf-405b-aef5-e3f491ea66a0/1275",
+                    "type": "image/png"
+                }
+            ],
+            "category": "image",
+            "creators": [
+                {
+                    "address": "6EJZzNJ36dQatQzGzKrSHUyvmpCLdcjcMMpAc3vSEUbe",
                     "share": 100
                 }
             ]
