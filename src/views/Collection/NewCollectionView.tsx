@@ -13,9 +13,10 @@ import { SiRust } from "react-icons/si";
 import { FaPercent } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useRouter } from 'next/router';
+import { uploadImage, uploadMetadata, createCollectionNft, generateCandyMachine, updateCandyMachine, addItems } from 'utils/web3';
 
 //ipfs
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import FormData from 'form-data';
 
 // Wallet
@@ -64,6 +65,7 @@ export const NewCollectionView: FC = ({ }) => {
     const [launch_date, setLaunchDate] = useState('May 12, 2024');
     const [dir_upload, setDirUpload] = useState([]);
     const [folder_name, setFolderName] = useState('');
+    const [uploadedRes, setUploadedRes] = useState(Object);
 
     const REACT_APP_PINATA_API_KEY = '767f0b4ad24034363687';
     const REACT_APP_PINATA_API_SECRET = '75f146e928ba05395e226953152f1528baaf83b86d3d9785875a9cab203810b8';
@@ -200,13 +202,15 @@ export const NewCollectionView: FC = ({ }) => {
             console.log("Token URI", tokenURI);
             //mintNFT(tokenURI, currentAccount)   // pass the winner
             alert("Thanks for pushing up!!!");
-            router.push('/collections');
+            setUploadedRes(resJSON.data);
+            console.log("=== resJson ===");
+            console.log(resJSON.data);
+            // router.push('/collections');
 
         } catch (error) {
             console.log("JSON to IPFS: ")
             console.log(error);
         }
-
 
     }
 
@@ -271,8 +275,16 @@ export const NewCollectionView: FC = ({ }) => {
         setSecondRoyalty(newData);
     }
 
-    const handleDeploy = () => {
-        
+    const handleDeploy = async () => {
+        const hash = uploadedRes["IpfsHash"];
+        const image_url = 'https://ivory-patient-leopard-375.mypinata.cloud/ipfs/' + hash +"/images/0.jpeg?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c";
+        // console.log("############");
+        // console.log(image_url);
+        // const uploadedUri = uploadMetadata(image_url, "image/jpeg", collection_name, collection_description, [], wallet);
+        const mintedCollectionNft = await createCollectionNft(image_url, wallet);
+        console.log("minted CollectionNFT : ", mintedCollectionNft);
+        const createdCandyMachine = await generateCandyMachine(wallet, mintedCollectionNft);
+        await updateCandyMachine(wallet, createdCandyMachine);
     }
 
     useEffect(() => {
