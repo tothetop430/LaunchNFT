@@ -5,7 +5,7 @@ import { AdminView } from '../views/AdminView';
 const Home: NextPage = (props) => {
     return (
         <div>
-            <Head>
+            <Head children={""}>
                 <title>NFT Minter</title>
                 <meta
                     name="description"
