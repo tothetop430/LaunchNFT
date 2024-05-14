@@ -532,7 +532,7 @@ export const NewCollectionView: FC = ({ }) => {
                                 </div>
                                 {
                                     // eslint-disable-next-line
-                                    <FileInput className='' id="dropzone-file" multiple itemType='directory' onChange={() => handleChange(event)} />
+                                    <FileInput className='' id="dropzone-file" webkitDirectory="true" multiple itemType='directory' onChange={(e) => handleChange(e)} />
                                 }
 
                             </Label>
