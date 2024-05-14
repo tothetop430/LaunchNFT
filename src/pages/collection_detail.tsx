@@ -6,12 +6,19 @@ import { Label, RangeSlider } from "flowbite-react";
 import Trending from "../components/trending/trending";
 import { Badge, Button } from "flowbite-react";
 import { useState, useEffect } from "react";
+import { mintNft } from "utils/web3";
+import { useWallet, useConnection } from '@solana/wallet-adapter-react';
+import useUserSOLBalanceStore from '../stores/useUserSOLBalanceStore';
 
 const Home: NextPage = (props : ItemProps) => {
 
     const [slider_value, setSliderValue] = useState<number>(1);
 
     const [data, setData] = useState(null);
+
+    const onClickMint = () => {
+        // await mintNft(wallet, updatedCandyMachineID);
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -46,7 +53,7 @@ const Home: NextPage = (props : ItemProps) => {
                             <RangeSlider id="default-range" min={1} max={100} onChange={(e) => setSliderValue(Number(e.target.value))} value={slider_value} />
                         </div>
                         <div className="flex gap-1">
-                            <Button outline>
+                            <Button outline onClick={onClickMint}>
                                 Mint
                             </Button>
                             <p className="h-5 m-3 items-center text-gray-700">{slider_value}</p>
