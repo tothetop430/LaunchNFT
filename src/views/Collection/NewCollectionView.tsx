@@ -13,7 +13,7 @@ import { SiRust } from "react-icons/si";
 import { FaPercent } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useRouter } from 'next/router';
-import { uploadImage, uploadMetadata, createCollectionNft, generateCandyMachine, updateCandyMachine, addItems } from 'utils/web3';
+import { createCollectionNft, generateCandyMachine, updateCandyMachine, mintNft } from 'utils/web3';
 
 //ipfs
 import axios, { AxiosResponse } from 'axios';
@@ -31,6 +31,7 @@ import { NftMinter } from 'components/NftMinter';
 import { min } from 'date-fns';
 import uploadFile from 'pages/api/upload';
 import JSZip from 'jszip';
+import { updateCandyMachineBuilder } from '@metaplex-foundation/js';
 
 const WalletMultiButtonDynamic = dynamic(
     async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
@@ -284,7 +285,8 @@ export const NewCollectionView: FC = ({ }) => {
         const mintedCollectionNft = await createCollectionNft(image_url, wallet);
         console.log("minted CollectionNFT : ", mintedCollectionNft);
         const createdCandyMachine = await generateCandyMachine(wallet, mintedCollectionNft);
-        await updateCandyMachine(wallet, createdCandyMachine);
+        const updatedCandyMachineID = await updateCandyMachine(wallet, createdCandyMachine);
+        mintNft(wallet, updatedCandyMachineID);
     }
 
     useEffect(() => {

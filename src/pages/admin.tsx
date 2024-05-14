@@ -13,7 +13,9 @@ const Home: NextPage = (props) => {
                 />
             </Head>
             <div className="flex flex-row mt-6">
-                <AdminView />
+                <AdminView createAdminPanel={function (): void {
+                    throw new Error("Function not implemented.");
+                } } />
             </div>
         </div>
     );

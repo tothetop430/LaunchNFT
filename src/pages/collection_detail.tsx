@@ -8,6 +8,7 @@ import { Badge, Button } from "flowbite-react";
 import { useState, useEffect } from "react";
 
 const Home: NextPage = (props) => {
+    
     const [slider_value, setSliderValue] = useState(1);
 
     const [data, setData] = useState(null);

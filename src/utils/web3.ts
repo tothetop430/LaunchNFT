@@ -240,7 +240,7 @@ export async function generateCandyMachine(WALLET: WalletContextState, COLLECTIO
   return candyMachine.address.toString();
 }
 
-export async function updateCandyMachine(WALLET: WalletContextState, CANDY_MACHINE_ID: string) {
+export async function updateCandyMachine(WALLET: WalletContextState, CANDY_MACHINE_ID: string): Promise<string> {
   console.log("############## updateCandyMachine ##################");
   const METAPLEX = Metaplex.make(SOLANA_CONNECTION)
     .use(walletAdapterIdentity(WALLET))
@@ -270,6 +270,8 @@ export async function updateCandyMachine(WALLET: WalletContextState, CANDY_MACHI
 
   console.log(`✅ - Updated Candy Machine: ${CANDY_MACHINE_ID}`);
   console.log(`     https://explorer.solana.com/tx/${response.signature}?cluster=devnet`);
+
+  return CANDY_MACHINE_ID
 }
 
 // export async function addItems(WALLET: WalletContextState, CANDY_MACHINE_ID: string, NFT_METADATA: string) {

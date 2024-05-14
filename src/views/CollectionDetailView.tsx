@@ -4,7 +4,6 @@ import { Badge, Button } from "flowbite-react";
 import ItemProps from '../interfaces/ItemProps';
 
 
-
 export const CollectionDetailView: FC<ItemProps> = ({ name, description, image_url, collections }) => {
     //const { name, description, image_url } = props;
     return (
