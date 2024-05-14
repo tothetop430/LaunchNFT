@@ -5,7 +5,6 @@ import { FC, useEffect, useState } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
-import Blob from 'node-blob';
 import { Button, Timeline } from "flowbite-react";
 import { HiArrowNarrowRight, HiCalendar } from "react-icons/hi";
 import { Tabs, Label, TextInput, Datepicker, Radio, ToggleSwitch, Textarea, FileInput } from "flowbite-react";
@@ -30,7 +29,6 @@ import useUserSOLBalanceStore from '../../stores/useUserSOLBalanceStore';
 import { NftMinter } from 'components/NftMinter';
 import { min } from 'date-fns';
 import uploadFile from 'pages/api/upload';
-import JSZip from 'jszip';
 import { updateCandyMachineBuilder } from '@metaplex-foundation/js';
 
 const WalletMultiButtonDynamic = dynamic(
@@ -522,7 +520,7 @@ export const NewCollectionView: FC = ({ }) => {
                                 </div>
                                 {
                                     // eslint-disable-next-line
-                                    <FileInput className='' id="dropzone-file" webkitDirectory="true" multiple itemType='directory' onChange={() => handleChange(event)} />
+                                    <FileInput className='' id="dropzone-file" multiple itemType='directory' onChange={() => handleChange(event)} />
                                 }
 
                             </Label>
