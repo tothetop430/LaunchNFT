@@ -196,7 +196,7 @@ export async function createCollectionNft(NFT_METADATA: string, WALLET: WalletCo
   const METAPLEX = Metaplex.make(SOLANA_CONNECTION)
     .use(walletAdapterIdentity(WALLET));
   const { nft: collectionNft } = await METAPLEX.nfts().create({
-    name: "QuickNode Demo NFT Collection",
+    name: "NFT Coll",
     uri: NFT_METADATA,
     sellerFeeBasisPoints: 0,
     isCollection: true,
@@ -225,6 +225,14 @@ export async function generateCandyMachine(WALLET: WalletContextState, COLLECTIO
       address: new PublicKey(COLLECTION_NFT_MINT), // Can replace with your own NFT or upload a new one
       updateAuthority: WALLET,
     },
+    itemSettings: {
+        type: 'configLines',
+        prefixName: 'My NFT #',
+        nameLength: 20,
+        prefixUri: '',
+        uriLength: 100,
+        isSequential: false,
+    }
   };
   const METAPLEX = Metaplex.make(SOLANA_CONNECTION)
     .use(walletAdapterIdentity(WALLET))
@@ -274,32 +282,32 @@ export async function updateCandyMachine(WALLET: WalletContextState, CANDY_MACHI
   return CANDY_MACHINE_ID
 }
 
-// export async function addItems(WALLET: WalletContextState, CANDY_MACHINE_ID: string, NFT_METADATA: string) {
-//   const METAPLEX = Metaplex.make(SOLANA_CONNECTION)
-//     .use(keypairIdentity(WALLET))
-//     .use(bundlrStorage({
-//       address: 'https://devnet.bundlr.network',
-//       providerUrl: QUICKNODE_RPC,
-//       timeout: 60000,
-//     }));
-//   const candyMachine = await METAPLEX
-//     .candyMachines()
-//     .findByAddress({ address: new PublicKey(CANDY_MACHINE_ID) });
-//   const items = [];
-//   for (let i = 0; i < 3; i++) { // Add 3 NFTs (the size of our collection)
-//     items.push({
-//       name: `QuickNode Demo NFT # ${i + 1}`,
-//       uri: NFT_METADATA
-//     })
-//   }
-//   const { response } = await METAPLEX.candyMachines().insertItems({
-//     candyMachine,
-//     items: items,
-//   }, { commitment: 'finalized' });
+export async function addItems(WALLET: WalletContextState, CANDY_MACHINE_ID: string, NFT_METADATA: string) {
+  const METAPLEX = Metaplex.make(SOLANA_CONNECTION)
+    .use(walletAdapterIdentity(WALLET))
+    .use(bundlrStorage({
+      address: 'https://devnet.bundlr.network',
+      providerUrl: QUICKNODE_RPC,
+      timeout: 60000,
+    }));
+  const candyMachine = await METAPLEX
+    .candyMachines()
+    .findByAddress({ address: new PublicKey(CANDY_MACHINE_ID) });
+  const items = [];
+  for (let i = 0; i < 3; i++) { // Add 3 NFTs (the size of our collection)
+    items.push({
+      name: `NFT#${i + 1}`,
+      uri: NFT_METADATA
+    })
+  }
+  const { response } = await METAPLEX.candyMachines().insertItems({
+    candyMachine,
+    items: items,
+  }, { commitment: 'finalized' });
 
-//   console.log(`✅ - Items added to Candy Machine: ${CANDY_MACHINE_ID}`);
-//   console.log(`     https://explorer.solana.com/tx/${response.signature}?cluster=devnet`);
-// }
+  console.log(`✅ - Items added to Candy Machine: ${CANDY_MACHINE_ID}`);
+  console.log(`     https://explorer.solana.com/tx/${response.signature}?cluster=devnet`);
+}
 
 export async function mintNft(WALLET: WalletContextState, CANDY_MACHINE_ID: string) {
   const METAPLEX = Metaplex.make(SOLANA_CONNECTION)

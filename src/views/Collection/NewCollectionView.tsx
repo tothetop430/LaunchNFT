@@ -1,19 +1,19 @@
 /* eslint-disable */
 "use client";
 // Next, React
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect, useState, useRef } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
 import Blob from 'node-blob';
 import { Button, Timeline } from "flowbite-react";
-import { HiArrowNarrowRight, HiCalendar } from "react-icons/hi";
-import { Tabs, Label, TextInput, Datepicker, Radio, ToggleSwitch, Textarea, FileInput } from "flowbite-react";
+import { HiArrowNarrowRight, HiArrowNarrowLeft, HiCalendar } from "react-icons/hi";
+import { Tabs, Label, TextInput, Datepicker, Radio, ToggleSwitch, Textarea, FileInput, TabsRef } from "flowbite-react";
 import { SiRust } from "react-icons/si";
 import { FaPercent } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useRouter } from 'next/router';
-import { createCollectionNft, generateCandyMachine, updateCandyMachine, mintNft } from 'utils/web3';
+import { createCollectionNft, generateCandyMachine, updateCandyMachine, addItems, mintNft } from 'utils/web3';
 
 //ipfs
 import axios, { AxiosResponse } from 'axios';
@@ -215,6 +215,8 @@ export const NewCollectionView: FC = ({ }) => {
 
     }
 
+    const [confirmClicked, setConfirmClicked] = useState(0);
+
     const sendFileToIPFS = async (e) => {
 
         e.preventDefault();
@@ -258,6 +260,8 @@ export const NewCollectionView: FC = ({ }) => {
                 console.log("File to IPFS: ")
                 console.log(error)
             }
+
+            setConfirmClicked(1);
         }
     }
 
@@ -278,15 +282,14 @@ export const NewCollectionView: FC = ({ }) => {
 
     const handleDeploy = async () => {
         const hash = uploadedRes["IpfsHash"];
-        const image_url = 'https://ivory-patient-leopard-375.mypinata.cloud/ipfs/' + hash +"/images/0.jpeg?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c";
+        const image_url = 'https://gateway.pinata.cloud/ipfs/' + hash + "/images/0.jpeg";
         // console.log("############");
         // console.log(image_url);
-        // const uploadedUri = uploadMetadata(image_url, "image/jpeg", collection_name, collection_description, [], wallet);
         const mintedCollectionNft = await createCollectionNft(image_url, wallet);
         console.log("minted CollectionNFT : ", mintedCollectionNft);
-        const createdCandyMachine = await generateCandyMachine(wallet, mintedCollectionNft);
-        const updatedCandyMachineID = await updateCandyMachine(wallet, createdCandyMachine);
-        mintNft(wallet, updatedCandyMachineID);
+        const createdCandyMachineID = await generateCandyMachine(wallet, mintedCollectionNft);
+        await updateCandyMachine(wallet, createdCandyMachineID);
+        await addItems(wallet, createdCandyMachineID, image_url);
     }
 
     useEffect(() => {
@@ -296,49 +299,55 @@ export const NewCollectionView: FC = ({ }) => {
         }
     }, [wallet.publicKey, connection, getUserSOLBalance])
 
+    const tabsRef = useRef<TabsRef>(null);
+    const [activeTab, setActiveTab] = useState(0);
+
     return (
-        <div className='flex pt-20 w-full items-center justify-center flex-col'>
-            <text className='mb-10 text-center' style={{ fontSize: "30px" }}>
+        <div className='flex px-20 py-16 w-1/2 items-center justify-center m-auto my-10 flex-col text-lg' style={{ backgroundColor: "rgba(100,100,100,0.3)", boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.4)" }}>
+            <h1 className='mb-6 text-center' style={{ fontSize: "40px", fontWeight: "bold" }}>
                 Lanch Collection
-            </text>
-            <Tabs aria-label="Pills" style="pills">
+            </h1>
+
+            <Tabs aria-label="Pills" style="pills" ref={tabsRef} onActiveTabChange={(tab) => setActiveTab(tab)} className='w-full'>
+
+                {/* -------------------------- Details tab ------------------------------- */}
                 <Tabs.Item active title="Details">
-                    <div className='flex flex-col' style={{ width: "800px" }}>
-                        <text className='mb-10 text-center pt-10' style={{ fontSize: "40px" }}>
+                    <div className='flex flex-col gap-3 w-full'>
+                        <span className='py-5 text-center w-full' style={{ fontSize: "35px" }}>
                             Collection Details
-                        </text>
-                        <div className='flex flex-col w-full justify-start'>
-                            <text style={{ fontSize: "35px" }}>
+                        </span>
+                        <div className='flex flex-col w-full justify-start gap-2'>
+                            <span style={{ fontSize: "30px" }}>
                                 Collection
-                            </text>
-                            <div className='flex flex-row justify-between'>
-                                <div className='px-1'>
+                            </span>
+                            <div className='flex flex-row justify-between gap-5'>
+                                <div className='px-1 w-1/3'>
                                     <div className="mb-2 block">
                                         <Label htmlFor="collection_name" value="Collection Name" />
                                     </div>
                                     <TextInput id="collection_name" type="email" placeholder="My NFTs" required color="gray"
-                                        value={collection_name} onChange={() => setCollectionName((event.target as any).value)} />
+                                        value={collection_name} onChange={(event) => setCollectionName((event.target as any).value)} />
                                 </div>
-                                <div className='px-1'>
+                                <div className='px-1 w-1/3'>
                                     <div className="mb-2 block">
                                         <Label htmlFor="symbol" value="Symbol" />
                                     </div>
                                     <TextInput id="symbol" type="email" placeholder="MNFT" required color="gray"
-                                        value={collection_symbol} onChange={() => setCollectionSymbol((event.target as any).value)} />
+                                        value={collection_symbol} onChange={(event) => setCollectionSymbol((event.target as any).value)} />
                                 </div>
-                                <div className='px-1'>
+                                <div className='px-1 w-1/3'>
                                     <div className="mb-2 block">
                                         <Label htmlFor="collection_description" value="Collection Description" />
                                     </div>
                                     <TextInput id="collection_description" type="email" placeholder="My collection description" required color="gray"
-                                        value={collection_description} onChange={() => setCollectionDescription((event.target as any).value)} />
+                                        value={collection_description} onChange={(event) => setCollectionDescription((event.target as any).value)} />
                                 </div>
                             </div>
                             <div className='px-1 py-2'>
                                 <div className='mb-2'>
                                     <Label htmlFor='launch_date' value='Launch Date'></Label>
                                 </div>
-                                <Datepicker id='launch_date' value={launch_date} onChange={() => setLaunchDate((event.target as any).value)} />
+                                <Datepicker id='launch_date' value={launch_date} onChange={(event) => setLaunchDate((event.target as any).value)} />
                             </div>
                             <fieldset className="flex max-w-md flex-row gap-4">
                                 <legend className="mb-4">Metadata Standard</legend>
@@ -353,7 +362,7 @@ export const NewCollectionView: FC = ({ }) => {
                             </fieldset>
                             {
                                 !core_switch &&
-                                <div className="flex max-w-md flex-col gap-4 pt-5">
+                                <div className="flex flex-col w-full justify-start items-start text-start gap-2 pt-5" style={{ float: "left" }}>
                                     <ToggleSwitch checked={switch1} color="blue" label="Compressed NFTs" onChange={setSwitch1} />
                                     {
                                         !switch1 && <ToggleSwitch checked={switch2} color="blue" label="Immutable" onChange={setSwitch2} />
@@ -378,8 +387,8 @@ export const NewCollectionView: FC = ({ }) => {
                             }
 
                         </div>
-                        <div className='flex flex-col justify-start'>
-                            <text style={{ fontSize: "50px" }}>NFTs</text>
+                        <div className='flex flex-col justify-start gap-2'>
+                            <span style={{ fontSize: "30px" }}>NFTs</span>
                             <div className='px-1'>
                                 <div className="mb-2 block">
                                     <Label htmlFor="base_art_name" value="Base art name" />
@@ -410,12 +419,12 @@ export const NewCollectionView: FC = ({ }) => {
                                         onChange={() => setRoyalties((event.target as any).value)} />
                                 </div>
                             </div>
-                            <TextInput className='px-1 py-4 hidden' id="input_infor" value="Custom token minting/Whitelists/Sale Phases can be setup later" required />
+                            {/* <TextInput className='px-1 py-4 hidden' id="input_infor" defaultValue="Custom token minting/Whitelists/Sale Phases can be setup later" required /> */}
                         </div>
-                        <div className='flex flex-col w-full'>
-                            <text style={{ fontSize: "30px" }}>
+                        <div className='flex flex-col py-5 w-full gap-2'>
+                            <span style={{ fontSize: "30px" }}>
                                 Secondary Royalty Split
-                            </text>
+                            </span>
                             {
                                 second_royalty.map((val, index) => (
                                     <div className='flex flex-row items-end' key={"second" + index}>
@@ -443,24 +452,24 @@ export const NewCollectionView: FC = ({ }) => {
                                 ))
                             }
 
-                            <div className='px-1 py-3 w-full'>
-                                <Button outline gradientDuoTone="purpleToBlue" className='w-full' onClick={() => setSecondRoyalty([...second_royalty, { share: 0, address: "" }])}>
+                            <div className='flex flex-row justify-center items-center px-1 py-3'>
+                                <Button outline color="gray" className='w-full' onClick={() => setSecondRoyalty([...second_royalty, { share: 0, address: "" }])}>
                                     Add split
                                 </Button>
                             </div>
                         </div>
-                        <div className='flex flex-col hidden'>
-                            <text style={{ fontSize: "20px" }}>
-                                Show Advanced
-                            </text>
-                            <ToggleSwitch checked={switchShowMode} color="blue" label="Compressed NFTs" onChange={setSwitchShowMode} />
 
+                        {/* <div className='flex flex-col hidden'>
+                            <span style={{ fontSize: "20px" }}>
+                                Show Advanced
+                            </span>
+                            <ToggleSwitch checked={switchShowMode} color="blue" label="Compressed NFTs" onChange={setSwitchShowMode} />
                             {
                                 switchShowMode &&
                                 <div className='pt-5'>
-                                    <text style={{ fontSize: "15px" }}>
+                                    <span style={{ fontSize: "15px" }}>
                                         Image Storage
-                                    </text>
+                                    </span>
                                     <fieldset className="flex max-w-md flex-row gap-4">
                                         <div className="flex items-center gap-2">
                                             <Radio id="s3" name="s3" value="s3" defaultChecked />
@@ -474,20 +483,23 @@ export const NewCollectionView: FC = ({ }) => {
                                 </div>
 
                             }
-                        </div>
-                        <div className='flex items-end justify-end mt-6'>
-                            <Button outline gradientDuoTone="purpleToBlue" pill onClick={() => goTab(1)}>
-                                Next
+                        </div> */}
+
+                        <div className='flex items-end justify-end mt-6 items-center'>
+                            <Button outline gradientDuoTone="purpleToBlue" pill onClick={() => tabsRef.current?.setActiveTab(1)} style={{ textAlign: "center" }}>
+                                Next &rarr;
                             </Button>
                         </div>
 
                     </div>
                 </Tabs.Item>
+
+                {/* -------------------------- Upload tab ------------------------------- */}
                 <Tabs.Item title="Upload">
-                    <div className='flex flex-col items-center justify-center mt-16 gap-3' style={{ width: "800px" }}>
-                        <div className='flex items-center justify-center mt-6'>
-                            <Button outline gradientDuoTone="purpleToBlue" pill onClick={() => goTab(0)}>
-                                Back
+                    <div className='flex flex-col items-center justify-center mt-10 gap-3 w-full'>
+                        <div className='flex items-center justify-center mb-4 w-full'>
+                            <Button outline gradientDuoTone="purpleToBlue" pill onClick={() => tabsRef.current?.setActiveTab(0)}>
+                                &larr;&nbsp;Back
                             </Button>
                         </div>
                         <h3>Drop your NFT assets below to launch!</h3>
@@ -522,7 +534,7 @@ export const NewCollectionView: FC = ({ }) => {
                                 </div>
                                 {
                                     // eslint-disable-next-line
-                                    <FileInput className='' id="dropzone-file" webkitDirectory="true" multiple itemType='directory' onChange={() => handleChange(event)} />
+                                    <FileInput className='' id="dropzone-file" webkitdirectory="true" multiple itemType='directory' onChange={(e) => handleChange(e)} />
                                 }
 
                             </Label>
@@ -534,26 +546,37 @@ export const NewCollectionView: FC = ({ }) => {
                             Download example input folder
                         </p>
 
-                        <div className="previewProfilePic w-full" >
-                            <div className='flex items-center justify-center mt-6'>
-                                <Button outline gradientDuoTone="purpleToBlue" pill onClick={() => goTab(0)}>
-                                    Back
+                        <div className="previewProfilePic w-full mb-5" >
+                            <div className='flex items-center justify-center mt-6 gap-4'>
+                                <Button outline gradientDuoTone="purpleToBlue" pill onClick={() => tabsRef.current?.setActiveTab(0)}>
+                                    &larr;&nbsp;Back
                                 </Button>
-                                <Button outline gradientDuoTone="purpleToBlue" pill onClick={() => sendFileToIPFS(event)}>
-                                    Continue
+                                <Button outline gradientDuoTone="purpleToBlue" pill onClick={(e) => sendFileToIPFS(e)}>
+                                    Confirm
                                 </Button>
+
+                                {
+                                    confirmClicked ?
+                                        <Button outline gradientDuoTone="purpleToBlue" pill onClick={() => tabsRef.current?.setActiveTab(2)}>
+                                            Next&nbsp;&rarr;
+                                        </Button>
+                                        :
+                                        <Button outline gradientDuoTone="purpleToBlue" pill disabled onClick={() => tabsRef.current?.setActiveTab(2)}>
+                                            Next&nbsp;&rarr;
+                                        </Button>
+                                }
                             </div>
                             <div className='flex flex-col'>
                                 {
                                     pictures.map((pic_in_line, ind) => (
-                                        <div className='grid grid-cols-3 gap-4' key={ind * (pic_in_line + 1)}>
+                                        <div className='grid grid-cols-3 gap-4' key={"pic_line_" + ind}>
                                             {
                                                 pic_in_line.val.map((pic, index) => (
-                                                    <div className='p-4 flex flex-col flex-start' key={ind * (pic_in_line + 1) + index}>
+                                                    <div className='p-4 flex flex-col flex-start' key={"pic_line_pic_" + index}>
                                                         <img className="playerProfilePic_home_tile w-full pt-10" src={pic.img_name}></img>
                                                         <label>{pic.nft_name}</label>
                                                         <label>{pic.nft_desc}</label>
-                                                        <div className='flex flex-row flex-start justify-start'>
+                                                        <div className='flex flex-row flex-start justify-around gap-3'>
                                                             <Button>Add</Button>
                                                             <Button>Edit</Button>
                                                             <Button>Del</Button>
@@ -569,14 +592,25 @@ export const NewCollectionView: FC = ({ }) => {
                     </div>
 
                 </Tabs.Item>
+
+                {/* -------------------------- Deploy tab ------------------------------- */}
                 <Tabs.Item title="Deploy">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Content 3</p>
-                    <Button onClick={handleDeploy}>Deploy</Button>
+                    <div className='flex flex-col items-center justify-start mt-10 w-full h-full'>
+                        <Button outline gradientDuoTone="purpleToBlue" pill onClick={() => handleDeploy()} style={{ width: "200px" }}>
+                            Deply!
+                        </Button>
+                    </div>
                 </Tabs.Item>
+
+                {/* -------------------------- Success tab ------------------------------- */}
                 <Tabs.Item title="Success!">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Content 4</p>
+                    <div className='flex flex-col items-center justify-start mt-10 gap-3 w-full h-full'>
+                        <p className="text-sm text-gray-500 dark:text-gray-400">Content 4</p>
+                    </div>
                 </Tabs.Item>
+
             </Tabs>
+
         </div>
 
     );
