@@ -397,14 +397,14 @@ export const NewCollectionView: FC = ({ }) => {
                             <span style={{ fontSize: "30px" }}>NFTs</span>
                             <div className='px-1'>
                                 <div className="mb-2 block">
-                                    <Label htmlFor="base_art_name" value="Base art name" />
+                                    <Label htmlFor="base_art_name" value="Base art name" style={{ color: "white" }} />
                                 </div>
                                 <TextInput id="base_art_name" type="text" placeholder="NFT #" required color="gray" value={nfts_base_art_name}
                                     onChange={() => setBaseArtName((event.target as any).value)} />
                             </div>
                             <div className='px-1'>
                                 <div className="mb-2 block">
-                                    <Label htmlFor="description" value="Description" />
+                                    <Label htmlFor="description" value="Description" style={{ color: "white" }} />
                                 </div>
                                 <Textarea id="description" rows={4} required color="gray" value={nfts_description}
                                     onChange={() => setDescription((event.target as any).value)} />
@@ -412,14 +412,14 @@ export const NewCollectionView: FC = ({ }) => {
                             <div className='flex flex-row justify-start'>
                                 <div className='px-1'>
                                     <div className="mb-2 block">
-                                        <Label htmlFor="mint_cost" value="Mint Cost" />
+                                        <Label htmlFor="mint_cost" value="Mint Cost" style={{ color: "white" }} />
                                     </div>
                                     <TextInput id="mint_cost" rightIcon={TbCurrencySolana} value={nfts_mint_cost} required
                                         onChange={(event) => setMintCost((event.target as any).value)} />
                                 </div>
                                 <div className='px-1 pr-5'>
                                     <div className='mb-2 block'>
-                                        <Label htmlFor='mint_royalties' value="Royalties" />
+                                        <Label htmlFor='mint_royalties' value="Royalties" style={{ color: "white" }} />
                                     </div>
                                     <TextInput id="mint_royalties" rightIcon={CgMathPercent} value={nfts_royalties} required
                                         onChange={(event) => setRoyalties((event.target as any).value)} />
@@ -428,7 +428,7 @@ export const NewCollectionView: FC = ({ }) => {
                             {/* <TextInput className='px-1 py-4 hidden' id="input_infor" defaultValue="Custom token minting/Whitelists/Sale Phases can be setup later" required /> */}
                         </div>
                         <div className='flex flex-col py-5 w-full gap-2'>
-                            <span style={{ fontSize: "30px" }}>
+                            <span style={{ fontSize: "30px", color: "white" }}>
                                 Secondary Royalty Split
                             </span>
                             {
@@ -436,14 +436,14 @@ export const NewCollectionView: FC = ({ }) => {
                                     <div className='flex flex-row items-end' key={"second" + index}>
                                         <div className='px-1'>
                                             <div className="mb-2 block">
-                                                <Label htmlFor="share" value="Share" />
+                                                <Label htmlFor="share" value="Share" style={{ color: "white" }} />
                                             </div>
                                             <TextInput id="share_percent" value={val.share} rightIcon={CgMathPercent} required color="gray"
                                                 onChange={(event) => updateSecondRoyalty(event, index, 0)} />
                                         </div>
                                         <div className='px-1 w-full'>
                                             <div className="mb-2 block">
-                                                <Label htmlFor="address" value="Address" />
+                                                <Label htmlFor="address" value="Address" style={{ color: "white" }} />
                                             </div>
                                             <TextInput id="address" placeholder='Address' value={val.address} className='w-full' required color="gray"
                                                 onChange={(event) => updateSecondRoyalty(event, index, 1)} />
@@ -517,6 +517,7 @@ export const NewCollectionView: FC = ({ }) => {
                             <Label
                                 htmlFor="dropzone-file"
                                 className="flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 hover:bg-gray-100 dark:border-gray-600 dark:bg-gray-700 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                                style={{ color: "white" }}
                             >
                                 <div className="flex flex-col items-center justify-center pb-6 pt-5">
                                     <svg
@@ -578,8 +579,8 @@ export const NewCollectionView: FC = ({ }) => {
                                                 pic_in_line.val.map((pic, index) => (
                                                     <div className='p-4 flex flex-col flex-start' key={"pic_line_pic_" + index}>
                                                         <img className="playerProfilePic_home_tile w-full pt-10" src={pic.img_name}></img>
-                                                        <label>{pic.nft_name}</label>
-                                                        <label>{pic.nft_desc}</label>
+                                                        <label style={{ color: "white" }}>{pic.nft_name}</label>
+                                                        <label style={{ color: "white" }}>{pic.nft_desc}</label>
                                                         <div className='flex flex-row flex-start justify-around gap-3'>
                                                             <Button>Add</Button>
                                                             <Button>Edit</Button>
