@@ -11,8 +11,8 @@ export const Collection_Item: React.FC<ItemProps> = ({name, description, image_u
             <div className='flex flex-col flex-wrap w-1/2 justify-center p-2 px-3' style={{ overflowWrap: "anywhere" }}>
                 <div className='flex flex-row w-full justify-between item-center'>
                     <Avatar  img={image_url} size="lg" />
-                    <div className='flex flex-row item-center justify-around bg-gray-600 p-2 my-auto w-100 h-10' style={{ borderRadius: "15px" }}>
-                        <img src="../../public/solana.avatar.svg" alt="" style={{ width: "20px", height: "20px", borderRadius: "5px" }} />
+                    <div className='flex flex-row items-center justify-around bg-gray-800 p-2 my-auto gap-3 w-100 h-10' style={{ borderRadius: "15px" }}>
+                        <img src="/solana-sol-logo.png" alt="" style={{ width: "20px", height: "20px", borderRadius: "5px" }} />
                         <span style={{textAlign: "center"}}>0.18</span>
                     </div>
                 </div>

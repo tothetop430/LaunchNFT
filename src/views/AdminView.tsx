@@ -30,12 +30,12 @@ export const AdminView: FC<AdminType> = ({ }) => {
         })
     }, [])
 
-    const on_click_CreateAdminWallet = async () => {
+    const onClickCreateAdminWallet = async () => {
         console.log("clicked")
         //await Initialize(wallet, connection, new PublicKey(feeWallet), feeAmount * 100);
     }
 
-    const on_click_UpdateAdminWallet = async () => {
+    const onClickUpdateAdminWallet = async () => {
         //await Update(wallet, connection, new PublicKey(feeWallet), feeAmount * 100);
     }
 
@@ -44,10 +44,10 @@ export const AdminView: FC<AdminType> = ({ }) => {
             <FloatingLabel variant="outlined" label="Fee Wallet" name='feeWallet' value={feeWallet} onChange={(e)=>setFeeWallet(e.target.value)} />
             <FloatingLabel variant="outlined" label="Fee Amount" name='feeAmount' value={feeAmount} onChange={(e)=>setFeeAmount(parseInt( e.target.value.trim()) )} />
             <div className='flex flex-row justify-center gap-4'>
-                <Button outline gradientDuoTone="greenToBlue" onClick={(e) => {on_click_CreateAdminWallet()}}>
+                <Button outline gradientDuoTone="greenToBlue" onClick={(e) => {onClickCreateAdminWallet()}}>
                     Create Admin Panel
                 </Button>
-                <Button outline gradientDuoTone="greenToBlue" onClick={(e) => on_click_UpdateAdminWallet()}>
+                <Button outline gradientDuoTone="greenToBlue" onClick={(e) => onClickUpdateAdminWallet()}>
                     Update Admin Panel
                 </Button>
             </div>
