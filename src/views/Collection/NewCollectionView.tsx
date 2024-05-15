@@ -1,15 +1,15 @@
 /* eslint-disable */
 "use client";
 // Next, React
-import { FC, useEffect, useState, useRef } from 'react';
+import { FC, useEffect, useState, useRef, ChangeEvent } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
 import { Button, Timeline } from "flowbite-react";
 import { HiArrowNarrowRight, HiArrowNarrowLeft, HiCalendar } from "react-icons/hi";
 import { Tabs, Label, TextInput, Datepicker, Radio, ToggleSwitch, Textarea, FileInput, TabsRef } from "flowbite-react";
-import { SiRust } from "react-icons/si";
-import { FaPercent } from "react-icons/fa";
+import { TbCurrencySolana } from "react-icons/tb";
+import { CgMathPercent } from "react-icons/cg";
 import { MdDelete } from "react-icons/md";
 import { useRouter } from 'next/router';
 import { createCollectionNft, generateCandyMachine, updateCandyMachine, addItems, mintNft, createCollectionCompressedNft, CreateProject } from 'utils/web3';
@@ -58,7 +58,7 @@ export const NewCollectionView: FC = ({ }) => {
     const [switch3, setSwitch3] = useState(false);
     const [switch4, setSwitch4] = useState(false);
     const [switch5, setSwitch5] = useState(false);
-    const [core_switch, setCoreSwitch] = useState(false);
+    // const [core_switch, setCoreSwitch] = useState(false);
     const [switchShowMode, setSwitchShowMode] = useState(false);
     const [tabIndex, goTab] = useState(0);
     const [pictures, setPictures] = useState([]);
@@ -81,6 +81,7 @@ export const NewCollectionView: FC = ({ }) => {
     const REACT_APP_PINATA_API_SECRET = '75f146e928ba05395e226953152f1528baaf83b86d3d9785875a9cab203810b8';
     const image_count_in_line = 3;
 
+<<<<<<< HEAD
     const parseJsonFile = async (file_name) => {
         console.log(file_name);
         return new Promise((resolve) => {
@@ -92,6 +93,10 @@ export const NewCollectionView: FC = ({ }) => {
 
     const handleChange = (event) => {
         console.log(event.target.files);
+=======
+    const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+        console.log(">>> uploaded file list : ", event.target.files);
+>>>>>>> 700567024c05a09aae133101f2bdc630e5170a5e
         setDirUpload([...event.target.files]);
         const len = event.target.files.length;
         if (len > 0) {
@@ -102,12 +107,44 @@ export const NewCollectionView: FC = ({ }) => {
             //     val.webkitRelativePath.split('/')[1] == 'metadata'
             // ).sort((a, b) => a.webkitDirectory.localeCompare(b.webkitDirectory, undefined, { sensitivity: 'base' })));
             const folders = [];
+<<<<<<< HEAD
             const temp_images = [];
             const temp_metas = [];
+=======
+            // if (event.target.files[0].name.endsWith(".zip")) {
+            //     const zip = new JSZip();
+            //     zip.loadAsync(event.target.files[0])
+            //         .then((res) => {
+            //             const image_names = Object.keys(res.files).filter(element => element.startsWith("images/") && element !== 'images/').sort();
+            //             const json_names = Object.keys(res.files).filter(element => element.startsWith("metadata/") && element !== "metadata/").sort();
+            //             console.log(image_names);
+            //             console.log(json_names);
+            //             const newResults = [];
+            //             for (let i = 0; i < image_names.length; i += image_count_in_line) {
+            //                 const newLines = [];
+            //                 for (let j = 0; j < image_count_in_line && i + j < image_names.length; j++) {
+            //                     const blob = new Blob([image_names[i + j]], {type: 'image/jpeg'});
+            //                     newLines.push({
+            //                         img_name: URL.createObjectURL(blob),
+            //                         nft_name: json_names[i + j],
+            //                         nft_desc: json_names[i + j],
+            //                         real_name: image_names[i + j]
+            //                     });
+            //                     console.log("L:" + newLines);
+            //                 }
+            //                 newResults.push({ val: newLines });
+            //                 console.log("N:" + newResults);
+            //             }
+            //             console.log("T:", newResults);
+            //             setPictures(newResults);
+            //             //setDirUpload([...(res.filter(item => item.dir === false))]);
+            //         });
+            // }
+>>>>>>> 700567024c05a09aae133101f2bdc630e5170a5e
             for (let i = 0; i < len; i++) {
                 const dir = event.target.files[i].webkitRelativePath;
                 setFolderName(dir.split("/")[0]);
-                console.log(dir);
+                console.log(">>> file dir : ", dir);
                 folders.push(dir.split('/').filter((val, ind) => ind != 0).join("/"));
                 if (dir.split('/').filter((val, ind) => ind != 0).join("/").startsWith("images/")) {
                     temp_images.push(event.target.files[i]);
@@ -129,15 +166,19 @@ export const NewCollectionView: FC = ({ }) => {
             for (let i = 0; i < images.length; i += image_count_in_line) {
                 const newLines = [];
                 for (let j = 0; j < image_count_in_line && i + j < images.length; j++) {
-                    const img_name = images[i + j].split("/").filter((_, ind) => ind != 0).join("");
+                    const img_name = images[i + j].split("/").filter((_: any, ind: number) => ind != 0).join("");
                     const json_path = folders.filter(
                         val =>
-                            val.endsWith("/" + img_name.split(".").reverse().filter((_, ind) => ind != 0).reverse().join(".") + ".json")
+                            val.endsWith("/" + img_name.split(".").reverse().filter((_: any, ind: number) => ind != 0).reverse().join(".") + ".json")
                     ).join("");
                     const nft_name = json_path === "" ? "NFT #" + (i + j) : json_path;
                     const nft_desc = json_path === "" ? "NFT #" + (i + j) : json_path;
                     // console.log(folders.indexOf(images[i + j]));
+<<<<<<< HEAD
                     // console.log(event.target.files[folders.indexOf(images[i + j])]);
+=======
+                    console.log(">>> object url : ", URL.createObjectURL(event.target.files[folders.indexOf(images[i + j])]));
+>>>>>>> 700567024c05a09aae133101f2bdc630e5170a5e
                     newLines.push({
                         img_name: URL.createObjectURL(event.target.files[folders.indexOf(images[i + j])]),
                         nft_name: nft_name,
@@ -145,10 +186,17 @@ export const NewCollectionView: FC = ({ }) => {
                         real_name: img_name
                     });
                 }
+                console.log(">>> push to newResult : ",  newLines);
                 newResults.push({ val: newLines });
             }
             setPictures(newResults);
 
+<<<<<<< HEAD
+=======
+            console.log(" >>> Pictures after uploading : ", pictures);
+
+
+>>>>>>> 700567024c05a09aae133101f2bdc630e5170a5e
             //setPictures(event.target.files);
             //setPicture(URL.createObjectURL(event.target.files[0]));
         }
@@ -157,11 +205,33 @@ export const NewCollectionView: FC = ({ }) => {
         }
     }
 
-    const loadDirectory = (item) => {
+    const loadDirectory = (item: any) => {
         console.log(item);
     }
 
+<<<<<<< HEAD
     const sendJSONtoIPFS = async (MetaHash) => {
+=======
+    // const mintNFT = async (tokenURI) => {
+
+
+    //     try {
+    //         await votingSystemContract.makeAnEpicNFT(tokenURI, winner.address)
+
+    //         let val = await votingSystemContract.getTokenId();
+    //         console.log(val)
+    //         setTokenID(parseInt(val._hex));
+
+
+    //     } catch (error) {
+    //         console.log("Error while minting NFT with contract")
+    //         console.log(error);
+    //     }
+
+    // }
+
+    const sendJSONtoIPFS = async (ImgHash: string) => {
+>>>>>>> 700567024c05a09aae133101f2bdc630e5170a5e
 
         try {
 
@@ -198,6 +268,7 @@ export const NewCollectionView: FC = ({ }) => {
 
     const [confirmClicked, setConfirmClicked] = useState(0);
 
+<<<<<<< HEAD
     const sendMetaToIPFS = async (ImgHash, len) => {
         try {
 
@@ -251,6 +322,9 @@ export const NewCollectionView: FC = ({ }) => {
     }
 
     const sendFileToIPFS = async (e) => {
+=======
+    const sendFileToIPFS = async (e: { preventDefault: () => void; }) => {
+>>>>>>> 700567024c05a09aae133101f2bdc630e5170a5e
 
         e.preventDefault();
 
@@ -306,10 +380,10 @@ export const NewCollectionView: FC = ({ }) => {
     //     pinFileToIPFS(image_name);
     // }
 
-    const updateSecondRoyalty = (event, indexToUpdate, mod) => {
+    const updateSecondRoyalty = (event: ChangeEvent<HTMLInputElement>, indexToUpdate: number, mod: number) => {
         const newData = [...second_royalty];
         if (mod == 0) {
-            newData[indexToUpdate].share = event.target.value;
+            newData[indexToUpdate].share = parseInt(event.target.value);
         }
         else if (mod == 1) {
             newData[indexToUpdate].address = event.target.value;
@@ -392,10 +466,20 @@ export const NewCollectionView: FC = ({ }) => {
     const tabsRef = useRef<TabsRef>(null);
     const [activeTab, setActiveTab] = useState(0);
 
+    const on_clicked_cntf_toggle = () => {
+        if (!switch1) {
+            setSwitch1(true);
+            setSwitch5(true);
+        } else {
+            setSwitch1(false);
+            setSwitch5(false);
+        }
+    }
+
     return (
-        <div className='flex px-20 py-16 w-1/2 items-center justify-center m-auto my-10 flex-col text-lg' style={{ backgroundColor: "rgba(100,100,100,0.3)", boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.4)" }}>
+        <div className='flex px-20 py-16 w-1/2 items-center justify-center m-auto my-10 flex-col text-lg text-white' style={{ backgroundColor: "rgba(100,100,100,0.3)", boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.4)" }}>
             <h1 className='mb-6 text-center' style={{ fontSize: "40px", fontWeight: "bold" }}>
-                Lanch Collection
+                Launch Collection
             </h1>
 
             <Tabs aria-label="Pills" style="pills" ref={tabsRef} onActiveTabChange={(tab) => setActiveTab(tab)} className='w-full'>
@@ -403,31 +487,31 @@ export const NewCollectionView: FC = ({ }) => {
                 {/* -------------------------- Details tab ------------------------------- */}
                 <Tabs.Item active title="Details">
                     <div className='flex flex-col gap-3 w-full'>
-                        <span className='py-5 text-center w-full' style={{ fontSize: "35px" }}>
+                        <span className='py-5 text-center w-full' style={{ fontSize: "35px", color: "white" }}>
                             Collection Details
                         </span>
-                        <div className='flex flex-col w-full justify-start gap-2'>
+                        <div className='flex flex-col w-full gap-2'>
                             <span style={{ fontSize: "30px" }}>
                                 Collection
                             </span>
-                            <div className='flex flex-row justify-between gap-5'>
+                            <div className='flex flex-row gap-5'>
                                 <div className='px-1 w-1/3'>
                                     <div className="mb-2 block">
-                                        <Label htmlFor="collection_name" value="Collection Name" />
+                                        <Label htmlFor="collection_name" value="Collection Name" style={{color: "white"}} />
                                     </div>
                                     <TextInput id="collection_name" type="email" placeholder="My NFTs" required color="gray"
                                         value={collection_name} onChange={(event) => setCollectionName((event.target as any).value)} />
                                 </div>
                                 <div className='px-1 w-1/3'>
                                     <div className="mb-2 block">
-                                        <Label htmlFor="symbol" value="Symbol" />
+                                        <Label htmlFor="symbol" value="Symbol" style={{color: "white"}} />
                                     </div>
                                     <TextInput id="symbol" type="email" placeholder="MNFT" required color="gray"
                                         value={collection_symbol} onChange={(event) => setCollectionSymbol((event.target as any).value)} />
                                 </div>
                                 <div className='px-1 w-1/3'>
                                     <div className="mb-2 block">
-                                        <Label htmlFor="collection_description" value="Collection Description" />
+                                        <Label htmlFor="collection_description" value="Collection Description" style={{color: "white"}} />
                                     </div>
                                     <TextInput id="collection_description" type="email" placeholder="My collection description" required color="gray"
                                         value={collection_description} onChange={(event) => setCollectionDescription((event.target as any).value)} />
@@ -435,46 +519,33 @@ export const NewCollectionView: FC = ({ }) => {
                             </div>
                             <div className='px-1 py-2'>
                                 <div className='mb-2'>
-                                    <Label htmlFor='launch_date' value='Launch Date'></Label>
+                                    <Label htmlFor='launch_date' value='Launch Date' style={{color: "white"}}></Label>
                                 </div>
                                 <Datepicker id='launch_date' value={launch_date} onChange={(event) => setLaunchDate((event.target as any).value)} />
                             </div>
-                            <fieldset className="flex max-w-md flex-row gap-4">
-                                <legend className="mb-4">Metadata Standard</legend>
-                                <div className="flex items-center gap-2">
-                                    <Radio id="metaplex" name="metadata" value="Metaplex" defaultChecked onClick={() => setCoreSwitch(false)} />
-                                    <Label htmlFor="metaplex">Metaplex</Label>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <Radio id="core" name="metadata" value="Core" onClick={() => setCoreSwitch(true)} />
-                                    <Label htmlFor="core">Core</Label>
-                                </div>
-                            </fieldset>
-                            {
-                                !core_switch &&
-                                <div className="flex flex-col w-full justify-start items-start text-start gap-2 pt-5" style={{ float: "left" }}>
-                                    <ToggleSwitch checked={switch1} color="blue" label="Compressed NFTs" onChange={setSwitch1} />
-                                    {
-                                        !switch1 && <ToggleSwitch checked={switch2} color="blue" label="Immutable" onChange={setSwitch2} />
-                                    }
-                                    {
-                                        !switch1 && <ToggleSwitch checked={switch3 && !switch1} color="blue" label="Reveal Later" onChange={setSwitch3} />
-                                    }
-                                    {
-                                        !switch1 && <ToggleSwitch checked={switch4 && !switch1} color="blue" label="Freeze Collection" onChange={setSwitch4} />
-                                    }
-                                    {
-                                        switch4 && <div className='px-1 py-2'>
-                                            <div className='mb-2'>
-                                                <Label htmlFor='unfreeze_date' value='Unfreeze Date'></Label>
-                                            </div>
-                                            <Datepicker id='unfreeze_date' />
-                                        </div>
-                                    }
 
-                                    <ToggleSwitch checked={switch5} color="blue" label="Enforce Royalties" onChange={setSwitch5} />
-                                </div>
-                            }
+                            <div className="flex flex-col w-full items-start gap-2 pl-5 text-left">
+                                <ToggleSwitch className='mr-auto' checked={switch1} color="blue" label="Compressed NFTs" onChange={on_clicked_cntf_toggle} />
+                                {                            
+                                    !switch1 && <ToggleSwitch className='mr-auto' checked={switch2} color="blue" label="Immutable" onChange={setSwitch2} />
+}
+                                {
+                                    !switch1 && <ToggleSwitch className='mr-auto' checked={switch3 && !switch1} color="blue" label="Reveal Later" onChange={setSwitch3} />
+                                }
+                                {
+                                    !switch1 && <ToggleSwitch className='mr-auto' checked={switch4 && !switch1} color="blue" label="Freeze Collection" onChange={setSwitch4} />
+                                }
+                                {
+                                    switch4 && <div className='px-1 py-2'>
+                                        <div className='mb-2'>
+                                            <Label htmlFor='unfreeze_date' value='Unfreeze Date'></Label>
+                                        </div>
+                                        <Datepicker id='unfreeze_date' />
+                                    </div>
+                                }
+
+                                <ToggleSwitch className='mr-auto' checked={switch5} color="blue" label="Enforce Royalties" onChange={setSwitch5} />
+                            </div>
 
                         </div>
                         <div className='flex flex-col justify-start gap-2'>
@@ -496,17 +567,17 @@ export const NewCollectionView: FC = ({ }) => {
                             <div className='flex flex-row justify-start'>
                                 <div className='px-1'>
                                     <div className="mb-2 block">
-                                        <Label htmlFor="Mlnt Cost" value="Mlnt Cost" />
+                                        <Label htmlFor="mint_cost" value="Mint Cost" />
                                     </div>
-                                    <TextInput id="mlnt_cost" rightIcon={SiRust} value={nfts_mint_cost} required
-                                        onChange={() => setMintCost((event.target as any).value)} />
+                                    <TextInput id="mint_cost" rightIcon={TbCurrencySolana} value={nfts_mint_cost} required
+                                        onChange={(event) => setMintCost((event.target as any).value)} />
                                 </div>
                                 <div className='px-1 pr-5'>
                                     <div className='mb-2 block'>
-                                        <Label htmlFor='Mlnt Percent' value="Mlnt Percent" />
+                                        <Label htmlFor='mint_royalties' value="Royalties" />
                                     </div>
-                                    <TextInput id="mint_royalties" rightIcon={FaPercent} value={nfts_royalties} required
-                                        onChange={() => setRoyalties((event.target as any).value)} />
+                                    <TextInput id="mint_royalties" rightIcon={CgMathPercent} value={nfts_royalties} required
+                                        onChange={(event) => setRoyalties((event.target as any).value)} />
                                 </div>
                             </div>
                             {/* <TextInput className='px-1 py-4 hidden' id="input_infor" defaultValue="Custom token minting/Whitelists/Sale Phases can be setup later" required /> */}
@@ -522,15 +593,15 @@ export const NewCollectionView: FC = ({ }) => {
                                             <div className="mb-2 block">
                                                 <Label htmlFor="share" value="Share" />
                                             </div>
-                                            <TextInput id="share_percent" value={val.share} rightIcon={FaPercent} required color="gray"
-                                                onChange={() => updateSecondRoyalty(event, index, 0)} />
+                                            <TextInput id="share_percent" value={val.share} rightIcon={CgMathPercent} required color="gray"
+                                                onChange={(event) => updateSecondRoyalty(event, index, 0)} />
                                         </div>
                                         <div className='px-1 w-full'>
                                             <div className="mb-2 block">
                                                 <Label htmlFor="address" value="Address" />
                                             </div>
                                             <TextInput id="address" placeholder='Address' value={val.address} className='w-full' required color="gray"
-                                                onChange={() => updateSecondRoyalty(event, index, 1)} />
+                                                onChange={(event) => updateSecondRoyalty(event, index, 1)} />
                                         </div>
                                         {
                                             index != 0 &&
@@ -624,7 +695,7 @@ export const NewCollectionView: FC = ({ }) => {
                                 </div>
                                 {
                                     // eslint-disable-next-line
-                                    <FileInput className='' webkitDirectory="true" id="dropzone-file" multiple itemType='directory' onChange={() => handleChange(event)} />
+                                    <FileInput className='' webkitDirectory="true" id="dropzone-file" multiple itemType='directory' onChange={(event) => handleFileInputChange(event)} />
                                 }
 
                             </Label>
@@ -639,8 +710,8 @@ export const NewCollectionView: FC = ({ }) => {
                                 <Button outline gradientDuoTone="purpleToBlue" pill onClick={() => tabsRef.current?.setActiveTab(0)}>
                                     &larr;&nbsp;Back
                                 </Button>
-                                <Button outline gradientDuoTone="purpleToBlue" pill onClick={(e) => sendFileToIPFS(e)}>
-                                    Confirm
+                                <Button outline gradientDuoTone="purpleToBlue" pill onClick={(e: { preventDefault: () => void; }) => sendFileToIPFS(e)}>
+                                    Push up
                                 </Button>
 
                                 {
