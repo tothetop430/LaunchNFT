@@ -10,6 +10,8 @@ import { useRouter } from 'next/router';
 import Notifications from '../components/Notification'
 require('@solana/wallet-adapter-react-ui/styles.css');
 require('../styles/globals.css');
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App: FC<AppProps> = ({ Component, pageProps }) => {
   const router = useRouter();
@@ -34,6 +36,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
           }
         </div>
       </ContextProvider>
+      <ToastContainer />
     </>
   );
 };

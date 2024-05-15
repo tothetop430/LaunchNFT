@@ -1,7 +1,7 @@
 /* eslint-disable */
 "use client";
 // Next, React
-import { FC, useEffect, useState, useRef, ChangeEvent } from 'react';
+import React, { FC, useEffect, useState, useRef, ChangeEvent } from 'react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 
@@ -31,6 +31,9 @@ import { NftMinter } from 'components/NftMinter';
 import { min } from 'date-fns';
 import uploadFile from 'pages/api/upload';
 import { updateCandyMachineBuilder } from '@metaplex-foundation/js';
+
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const WalletMultiButtonDynamic = dynamic(
     async () => (await import('@solana/wallet-adapter-react-ui')).WalletMultiButton,
@@ -91,7 +94,7 @@ export const NewCollectionView: FC = ({ }) => {
     }
 
     const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        console.log(">>> uploaded file list : ", event.target.files);        setDirUpload([...event.target.files]);
+        console.log(">>> uploaded file list : ", event.target.files); setDirUpload([...event.target.files]);
         const len = event.target.files.length;
         if (len > 0) {
             // setImagesToUpload(event.target.files.filter(val =>
@@ -321,7 +324,8 @@ export const NewCollectionView: FC = ({ }) => {
     const [deploySuccess, setDeploySuccess] = useState(false);
 
     const handleDeploy = async () => {
-        const hash = uploadedRes;
+        toast("Deploying is pending..") // play notification
+        const hash = uploadedRes["IpfsHash"];
 
         // if (switch1) {
         //     const image_url1 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json";
@@ -385,6 +389,7 @@ export const NewCollectionView: FC = ({ }) => {
             });
         }
 
+        toast("Deploying has been completed!") // delete notificatoin
     }
 
     useEffect(() => {

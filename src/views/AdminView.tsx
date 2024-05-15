@@ -1,4 +1,4 @@
-import { ChangeEvent, FC, useEffect, useState } from 'react';
+import React, { ChangeEvent, FC, useEffect, useState } from 'react';
 import { FloatingLabel, Button, Label, TextInput, Modal } from "flowbite-react";
 import type { CustomFlowbiteTheme } from "flowbite-react";
 // import { useConnection, useWallet } from "@solana/wallet-adapter-react";
@@ -7,6 +7,7 @@ import Initialize, { GetLaunchpad, Update } from 'utils/web3';
 import { PublicKey } from '@solana/web3.js';
 import { useConnection, useWallet } from '@solana/wallet-adapter-react';
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { toast } from 'react-toastify';
 
 interface AdminType {
     createAdminPanel: () => void;
@@ -54,6 +55,7 @@ export const AdminView: FC<AdminType> = ({ }) => {
 
     const onClickCreateAdminPanel = async () => {
         console.log("Create Btn clicked");
+        toast.info("Transaction is pending..");
         await Initialize(
             wallet,
             new PublicKey(adminWallet),
@@ -61,10 +63,13 @@ export const AdminView: FC<AdminType> = ({ }) => {
             new PublicKey(feeWallet),
             parseFloat(collectionFee) * 1000000000
         );
+        toast.success("Transation has been completed!");
     }
+
 
     const updateAdminPanel = async () => {
         console.log("Update Btn clicked", adminWallet, collectionFee);
+        toast.info("Transaction is pending..");
         await Update(
             wallet,
             new PublicKey(adminWallet),
@@ -72,13 +77,14 @@ export const AdminView: FC<AdminType> = ({ }) => {
             new PublicKey(feeWallet),
             parseFloat(collectionFee) * 1000000000
         );
+        toast.success("Transation has been completed!");
     }
 
     const [openModal, setOpenModal] = useState(false);
 
     const onClickOKAtModal = () => {
-            setOpenModal(false);
-            updateAdminPanel();
+        setOpenModal(false);
+        updateAdminPanel();
     }
 
     return (
