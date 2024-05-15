@@ -286,16 +286,15 @@ export const NewCollectionView: FC = ({ }) => {
     }
 
     const handleDeploy = async () => {
-        const hash = uploadedRes["IpfsHash"];
-        const image_url = 'https://gateway.pinata.cloud/ipfs/' + hash + "/images/0.jpeg";
-        // console.log("############");
-        // console.log(image_url);
-        const mintedCollectionNft = await createCollectionNft(image_url, wallet);
-        console.log("minted CollectionNFT : ", mintedCollectionNft);
-        const createdCandyMachineID = await generateCandyMachine(wallet, mintedCollectionNft);
-        await updateCandyMachine(wallet, createdCandyMachineID);
-        await addItems(wallet, createdCandyMachineID, image_url);
-        setActiveTab(3);
+        // const hash = uploadedRes["IpfsHash"];
+        // const image_url = 'https://gateway.pinata.cloud/ipfs/' + hash + "/images/0.jpeg";
+        // // console.log("############");
+        // // console.log(image_url);
+        // const mintedCollectionNft = await createCollectionNft(image_url, wallet);
+        // console.log("minted CollectionNFT : ", mintedCollectionNft);
+        // const createdCandyMachineID = await generateCandyMachine(wallet, mintedCollectionNft);
+        // await updateCandyMachine(wallet, createdCandyMachineID);
+        // await addItems(wallet, createdCandyMachineID, image_url);
     }
 
     useEffect(() => {
@@ -542,8 +541,6 @@ export const NewCollectionView: FC = ({ }) => {
 
                             </Label>
                             {/* </DropTarget> */}
-
-
                         </div>
                         <p className='text-xm text-gray-500 dark:text-gray-400'>
                             Download example input folder
