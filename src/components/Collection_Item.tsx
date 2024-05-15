@@ -1,10 +1,5 @@
-import { FC } from 'react';
-import { AiFillHeart, AiOutlineTwitter } from "react-icons/ai";
-import { Card, Carousel, Avatar, Badge, Progress } from "flowbite-react";
-import { url } from 'inspector';
-import { link } from 'fs';
+import { Avatar } from "flowbite-react";
 import ItemProps  from '../interfaces/ItemProps';
-import NFT from "./card/images/NFT.svg"
 
 export const Collection_Item: React.FC<ItemProps> = ({name, description, image_url, collections}) => {
     //const { name, description, image_url } = props;

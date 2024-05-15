@@ -36,6 +36,14 @@ const WalletMultiButtonDynamic = dynamic(
     { ssr: false }
 );
 
+declare module 'react' {
+    interface InputHTMLAttributes<T> extends HTMLAttributes<T> {
+      // extends React's HTMLAttributes
+      directory?: string;
+      webkitDirectory?: string;
+    }
+  }
+
 export const NewCollectionView: FC = ({ }) => {
     const wallet = useWallet();
     const { connection } = useConnection();
@@ -532,7 +540,7 @@ export const NewCollectionView: FC = ({ }) => {
                                 </div>
                                 {
                                     // eslint-disable-next-line
-                                    <FileInput className='' id="dropzone-file" webkitDirectory="true" multiple itemType='directory' onChange={(e) => handleChange(e)} />
+                                    <FileInput className='' webkitDirectory="true" id="dropzone-file" multiple itemType='directory' onChange={() => handleChange(event)} />
                                 }
 
                             </Label>
