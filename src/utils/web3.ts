@@ -2,17 +2,17 @@ import { useState } from "react";
 import { WalletContextState, useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { IDL, LaunchnftContract } from "../anchor/idl";
 import { Connection, PublicKey, Keypair } from "@solana/web3.js";
-import { AnchorProvider, Program, Wallet } from "@coral-xyz/anchor";
+import { AnchorProvider, Program, Wallet, BN } from "@coral-xyz/anchor";
 import { Metaplex, keypairIdentity, bundlrStorage, toMetaplexFile, toBigNumber, CreateCandyMachineInput, DefaultCandyGuardSettings, CandyMachineItem, toDateTime, sol, TransactionBuilder, CreateCandyMachineBuilderContext, walletAdapterIdentity } from "@metaplex-foundation/js";
 
 
 const programId = new PublicKey("HNztz1uSj4fyUfSnaJLeAtmf9pMqnmAFTJArNwBQhfqU");
 
-const QUICKNODE_RPC = 'https://api.devnet.solana.com';
-const SOLANA_CONNECTION = new Connection(QUICKNODE_RPC);
+const RPC = 'https://api.devnet.solana.com';
+const SOLANA_CONNECTION = new Connection(RPC);
 
 export function GetLaunchpadProgram(
-  wallet: WalletContextState,
+  wallet: any,
   connection: Connection,
 ) {
   const provider = new AnchorProvider(connection, wallet, {});
@@ -22,8 +22,10 @@ export function GetLaunchpadProgram(
 export default async function Initialize(
   wallet: WalletContextState,
   connection: Connection,
+  adminWallet: PublicKey,
+  backendWallet: PublicKey,
   feeWallet: PublicKey,
-  feePercent: number
+  feeCollectionSol: number
 ) {
 
 
@@ -32,11 +34,13 @@ export default async function Initialize(
   try {
     const program = GetLaunchpadProgram(wallet, connection);
 
-    // Create a transaction to invoke the increment function
+    const feeCollection = new BN(feeCollectionSol);
     const transactionSignature = await program.methods
       .initialize({
-        feeWallet: feeWallet,
-        feePercent: feePercent
+        adminWallet,
+        backendWallet,
+        feeWallet,
+        feeCollection
       })
       .accounts({
         authority: wallet.publicKey,
@@ -64,19 +68,23 @@ export async function GetLaunchpad(
 export async function Update(
   wallet: WalletContextState,
   connection: Connection,
+  adminWallet: PublicKey,
+  backendWallet: PublicKey,
   feeWallet: PublicKey,
-  feePercent: number
+  feeCollectionSol: number
 ) {
   if (!wallet.publicKey) return;
 
   try {
     const program = GetLaunchpadProgram(wallet, connection);
 
-    // Create a transaction to invoke the increment function
+    const feeCollection = new BN(feeCollectionSol);
     const transactionSignature = await program.methods
       .update({
-        feeWallet: feeWallet,
-        feePercent: feePercent
+        adminWallet,
+        backendWallet,
+        feeWallet,
+        feeCollection
       })
       .accounts({
         authority: wallet.publicKey,
@@ -98,29 +106,66 @@ export const [launchpadPda] = PublicKey.findProgramAddressSync(
   [Buffer.from("launchpad")],
   programId,
 );
-
+export const getProjectPda = (projectNumber: BN) => {
+  return PublicKey.findProgramAddressSync(
+    [Buffer.from("project"), projectNumber.toBuffer('le', 8)],
+    programId,
+  )[0]
+}
 export async function CreateProject(
   wallet: WalletContextState,
   connection: Connection,
+  isCnft: boolean
 ) {
   try {
     const program = GetLaunchpadProgram(wallet, connection);
+    const launchpadAccount = await program.account.launchpad.fetch(launchpadPda);
+    const project = getProjectPda(launchpadAccount.projectCount);
+    
+    const transactionSignature = await program.methods
+      .createProject({
+        isCnft
+      })
+      .accounts({
+          creator: wallet.publicKey,
+          payer: wallet.publicKey,
+          launchpad: launchpadPda,
+          feeWallet: launchpadAccount.feeWallet,
+          project
+      })
+      .rpc();
 
-    // Create a transaction to invoke the increment function
-    // const transactionSignature = await program.methods
-    //   .createProject({
-    //       feeWallet: feeWallet,
-    //       feePercent: feePercent
-    //   })
-    //   .accounts({
-    //       authority: wallet.publicKey,
-    //       launchpad: launchpadPda,
-    //   })
-    //   .rpc();
+    console.log(
+      `createProject tx id: ${transactionSignature}`,
+    );
+  } catch (error) {
+    console.log(error);
+  } finally {
+  }
+}
 
-    // console.log(
-    //   `initialize tx id: ${transactionSignature}`,
-    // );
+export async function SetCandyMachineId(
+  walletKeypair: Keypair,
+  connection: Connection,
+  project: PublicKey,
+  candyMachineId: PublicKey,
+) {
+  try {
+    const program = GetLaunchpadProgram(new Wallet(walletKeypair), connection);
+    
+    const transactionSignature = await program.methods
+      .setCandyMachineId({
+        candyMachineId
+      })
+      .accounts({
+          authority: walletKeypair.publicKey,
+          project
+      })
+      .rpc();
+
+    console.log(
+      `setCandyMachineId tx id: ${transactionSignature}`,
+    );
   } catch (error) {
     console.log(error);
   } finally {
@@ -134,7 +179,7 @@ export async function CreateProject(
 //     .use(walletAdapterIdentity(WALLET))
 //     .use(bundlrStorage({
 //       address: 'https://devnet.bundlr.network',
-//       providerUrl: QUICKNODE_RPC,
+//       providerUrl: RPC,
 //       timeout: 60000,
 //     }));
 //   const CONFIG = {
@@ -167,7 +212,7 @@ export async function CreateProject(
 //     .use(keypairIdentity(WALLET))
 //     .use(bundlrStorage({
 //       address: 'https://devnet.bundlr.network',
-//       providerUrl: QUICKNODE_RPC,
+//       providerUrl: RPC,
 //       timeout: 60000,
 //     }));
 //   const { uri } = await METAPLEX
@@ -280,7 +325,7 @@ export async function addItems(WALLET: Keypair, CANDY_MACHINE_ID: string, NFT_ME
     .use(keypairIdentity(WALLET))
     .use(bundlrStorage({
       address: 'https://devnet.bundlr.network',
-      providerUrl: QUICKNODE_RPC,
+      providerUrl: RPC,
       timeout: 60000,
     }));
   const candyMachine = await METAPLEX
@@ -307,7 +352,7 @@ export async function mintNft(WALLET: WalletContextState, CANDY_MACHINE_ID: stri
     .use(walletAdapterIdentity(WALLET))
     .use(bundlrStorage({
       address: 'https://devnet.bundlr.network',
-      providerUrl: QUICKNODE_RPC,
+      providerUrl: RPC,
       timeout: 60000,
     }));
   const candyMachine = await METAPLEX
