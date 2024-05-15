@@ -6,10 +6,10 @@ const Home: NextPage = (props) => {
     return (
         <div>
             <Head>
-                <title>NFT Minter</title>
+                <title>SolPad</title>
                 <meta
                     name="description"
-                    content="Solana Scaffold"
+                    content="SolPad"
                 />
             </Head>
             <div className="flex flex-row mt-6">

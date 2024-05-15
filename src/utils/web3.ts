@@ -20,7 +20,6 @@ export function GetLaunchpadProgram(
 }
 export default async function Initialize(
   wallet: WalletContextState,
-  connection: Connection,
   adminWallet: PublicKey,
   backendWallet: PublicKey,
   feeWallet: PublicKey,
@@ -88,7 +87,6 @@ export async function GetNftCollections(
 
 export async function Update(
   wallet: WalletContextState,
-  connection: Connection,
   adminWallet: PublicKey,
   backendWallet: PublicKey,
   feeWallet: PublicKey,
