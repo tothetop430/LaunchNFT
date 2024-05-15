@@ -7,9 +7,9 @@ export const CollectionsView: FC = ({ }) => {
     const [collections, setCollections] = useState([]);
     useEffect(() => {
         GetNftCollections().then((values) => {
-            setCollections(values);
-            console.log("collections===>", values)
-            
+            // setCollections(values);
+            // console.log("collections===>", values.)
+            console.log("eeeeeeeeeeee", values)
         })
     }, [])
 

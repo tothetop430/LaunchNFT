@@ -83,10 +83,12 @@ export async function GetNftCollections() {
       // console.log("good collectionNftMint", collectionNftMint);
       const collectionNft = await Metaplex.make(SOLANA_CONNECTION).nfts().findByMint({ mintAddress: collectionNftMint });
       console.log("good collectionNft", collectionNft);
-      nftCollections.push(collectionNft);
+      nftCollections.push({ uri: collectionNft.uri, name: collectionNft.name, itemsAvailable: candyMachine.itemsAvailable, itemsMinted: candyMachine.itemsMinted, startDate: candyMachine.candyGuard.guards.startDate.date, price: candyMachine.candyGuard.guards.solPayment.amount });
     } catch (err) {
       // console.log("Err in web3.ts", err);
     }
+
+    return nftCollections;
 
   }
   return nftCollections;
