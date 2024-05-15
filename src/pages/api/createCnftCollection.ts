@@ -1,27 +1,23 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { GetNftCollections, SetCandyMachineId, addItems, createCollectionNft, generateCandyMachine } from "utils/web3";
+import { GetNftCollections, SetCandyMachineId, addItems, generateCandyMachine, createCollectionCompressedNft } from "utils/web3";
 import { Keypair, PublicKey } from "@solana/web3.js";
 import * as bs58 from "bs58";
-import { it } from "node:test";
 // const secret = process.env.SECRET as string;
 const secret = "41a14iDkoRa6LMLAg8QVRyEeMd2qbneWNzw3GzEKriLdD5NGfNJ9AWJTMtLVh3gnq5i7n2LoKbSo1NN9Ud6s1n4p";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
-        const object = JSON.parse(req.body);
-        const projectId = object.projectId;
-        const nftMetaData = object.metadata;
-        const items = object.items;
+        const projectId = req.body.prjectId;
+        const nftMetaDatas = req.body.metadatas;
+        const items = req.body.items;
         const wallet = Keypair.fromSecretKey(bs58.decode(secret));
-        const collectionNftMint = await createCollectionNft(nftMetaData, wallet);
-        console.log("eeeeeee", projectId, nftMetaData, items);
-        const candyMachineId = await generateCandyMachine(wallet,collectionNftMint);
-        
+        const [collectionCnftMint, image_url] = await createCollectionCompressedNft(nftMetaDatas, wallet);
+        const candyMachineId = await generateCandyMachine(wallet,collectionCnftMint);
         await SetCandyMachineId(wallet,new PublicKey(projectId),new PublicKey(candyMachineId));
-        await addItems(wallet,candyMachineId,items);
+        // await addItems(wallet,candyMachineId,items);
+        await addItems(wallet, candyMachineId, [image_url])
         res.status(200).json({ result: candyMachineId });
     } catch (err) {
         res.status(500).json({ error: err })
     }
 }
-

@@ -7,8 +7,9 @@ const secret = process.env.SECRET as string;
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
         const wallet = Keypair.fromSecretKey(bs58.decode(secret));
-        await GetNftCollections(wallet);
-        res.status(200).json({ result: "GetNftCollections" });
+        const nftCollections = await GetNftCollections(wallet);
+        console.log("ssss",nftCollections);
+        res.status(200).json({ result: nftCollections });
     } catch (err) {
         res.status(500).json({ error: err })
     }
