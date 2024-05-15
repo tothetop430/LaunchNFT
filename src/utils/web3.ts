@@ -8,6 +8,7 @@ import { ValidDepthSizePair } from "@solana/spl-account-compression";
 import MerkleTools from 'merkle-tools';
 import crypto from 'crypto';
 
+
 const programId = new PublicKey("J15m8CpBepW7zWG73o5cao74YrLCjUBCDgtRXroFM3jw");
 
 const RPC = 'https://api.devnet.solana.com';
@@ -107,7 +108,7 @@ export async function Update(
 
   try {
     const program = GetLaunchpadProgram(wallet);
-
+console.log(">>>", feeCollectionSol);
     const feeCollection = new BN(feeCollectionSol);
     const transactionSignature = await program.methods
       .update({
