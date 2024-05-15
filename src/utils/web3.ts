@@ -8,6 +8,7 @@ import { ValidDepthSizePair } from "@solana/spl-account-compression";
 import MerkleTools from 'merkle-tools';
 import crypto from 'crypto';
 
+
 const programId = new PublicKey("J15m8CpBepW7zWG73o5cao74YrLCjUBCDgtRXroFM3jw");
 
 const RPC = 'https://api.devnet.solana.com';
@@ -22,7 +23,6 @@ export function GetLaunchpadProgram(
 }
 export default async function Initialize(
   wallet: WalletContextState,
-  connection: Connection,
   adminWallet: PublicKey,
   backendWallet: PublicKey,
   feeWallet: PublicKey,
@@ -99,7 +99,6 @@ export async function GetNftCollections(
 
 export async function Update(
   wallet: WalletContextState,
-  connection: Connection,
   adminWallet: PublicKey,
   backendWallet: PublicKey,
   feeWallet: PublicKey,
@@ -109,7 +108,7 @@ export async function Update(
 
   try {
     const program = GetLaunchpadProgram(wallet);
-
+console.log(">>>", feeCollectionSol);
     const feeCollection = new BN(feeCollectionSol);
     const transactionSignature = await program.methods
       .update({
@@ -138,6 +137,7 @@ export const [launchpadPda] = PublicKey.findProgramAddressSync(
   [Buffer.from("launchpad")],
   programId,
 );
+
 export const getProjectPda = (projectNumber: BN) => {
   return PublicKey.findProgramAddressSync(
     [Buffer.from("project"), projectNumber.toArrayLike(Buffer, "le", 8)],
@@ -342,6 +342,17 @@ export async function generateCandyMachine(WALLET: Keypair, COLLECTION_NFT_MINT:
       prefixUri: '',
       uriLength: 100,
       isSequential: false,
+    },
+    guards: {
+      startDate: { date: toDateTime("2022-10-17T16:00:00Z") },
+      mintLimit: {
+          id: 1,
+          limit: 2,
+      },
+      solPayment: {
+          amount: sol(0.1),
+          destination: WALLET.publicKey,
+      },
     }
   };
   const METAPLEX = Metaplex.make(SOLANA_CONNECTION)
