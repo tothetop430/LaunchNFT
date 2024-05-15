@@ -18,7 +18,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
   return (
     <>
       <Head>
-        <title>NFT Minter</title>
+        <title>SolPad</title>
       </Head>
 
       <ContextProvider>

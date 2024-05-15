@@ -20,7 +20,7 @@ export default RedirectPage
 //   return (
 //     <div>
 //       <Head>
-//         <title>NFT Minter</title>
+//         <title>SolPad</title>
 //         <meta
 //           name="description"
 //           content="Solana Scaffold"
