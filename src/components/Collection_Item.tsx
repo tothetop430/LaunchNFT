@@ -1,7 +1,7 @@
 import { Avatar } from "flowbite-react";
 import ItemProps  from '../interfaces/ItemProps';
 
-export const Collection_Item: React.FC<ItemProps> = ({name, description, image_url, collections}) => {
+export const Collection_Item: React.FC<ItemProps> = ({name, description, image_url, nfts}) => {
     //const { name, description, image_url } = props;
     // image_url = NFT;
     // image_url = './NFT.svg';

@@ -374,7 +374,8 @@ export const NewCollectionView: FC = ({ }) => {
             const data = {
                 metadata: 'http://gateway.pinata.cloud/ipfs/' + hash,
                 items: _items,
-                projectId: project_id
+                projectId: project_id,
+                name: collection_name
             }
             await fetch("/api/createNftCollection", {
                 method: "POST",
