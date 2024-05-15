@@ -13,7 +13,7 @@ import { FaPercent } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useRouter } from 'next/router';
 import { createCollectionNft, generateCandyMachine, updateCandyMachine, addItems, mintNft, createCollectionCompressedNft } from 'utils/web3';
-import { CallMe } from '../../compressed_zip/scripts/callMe';
+// import { CallMe } from '../../compressed_zip/scripts/callMe';
 
 //ipfs
 import axios, { AxiosResponse } from 'axios';
