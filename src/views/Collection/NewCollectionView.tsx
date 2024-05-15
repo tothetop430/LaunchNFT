@@ -12,7 +12,8 @@ import { SiRust } from "react-icons/si";
 import { FaPercent } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useRouter } from 'next/router';
-import { createCollectionNft, generateCandyMachine, updateCandyMachine, addItems, mintNft } from 'utils/web3';
+import { createCollectionNft, generateCandyMachine, updateCandyMachine, addItems, mintNft, createCollectionCompressedNft } from 'utils/web3';
+import { CallMe } from '../../compressed_zip/scripts/callMe';
 
 //ipfs
 import axios, { AxiosResponse } from 'axios';
@@ -38,11 +39,11 @@ const WalletMultiButtonDynamic = dynamic(
 
 declare module 'react' {
     interface InputHTMLAttributes<T> extends HTMLAttributes<T> {
-      // extends React's HTMLAttributes
-      directory?: string;
-      webkitDirectory?: string;
+        // extends React's HTMLAttributes
+        directory?: string;
+        webkitDirectory?: string;
     }
-  }
+}
 
 export const NewCollectionView: FC = ({ }) => {
     const wallet = useWallet();
@@ -186,7 +187,7 @@ export const NewCollectionView: FC = ({ }) => {
 
     // }
 
-    const sendJSONtoIPFS = async (ImgHash) => {
+    const sendJSONtoIPFS = async (ImgHash, length) => {
 
         try {
 
@@ -196,7 +197,9 @@ export const NewCollectionView: FC = ({ }) => {
                 data: {
                     "name": nfts_base_art_name,
                     "description": collection_symbol,
-                    "image": ImgHash,
+                    "image": ImgHash + "/images",
+                    "metadata": ImgHash + "/metadata",
+                    "number_of_nfts": length / 2,
                 },
                 headers: {
                     'pinata_api_key': `${REACT_APP_PINATA_API_KEY}`,
@@ -259,7 +262,7 @@ export const NewCollectionView: FC = ({ }) => {
 
                 const ImgHash = `ipfs://${resFile.data.IpfsHash}`;
                 // console.log(response.data.IpfsHash);
-                sendJSONtoIPFS(ImgHash)
+                sendJSONtoIPFS(ImgHash, dir_upload.length)
 
 
             } catch (error) {
@@ -288,14 +291,28 @@ export const NewCollectionView: FC = ({ }) => {
 
     const handleDeploy = async () => {
         const hash = uploadedRes["IpfsHash"];
-        const image_url = 'https://gateway.pinata.cloud/ipfs/' + hash + "/images/0.jpeg";
-        // console.log("############");
-        // console.log(image_url);
-        const mintedCollectionNft = await createCollectionNft(image_url, wallet);
-        console.log("minted CollectionNFT : ", mintedCollectionNft);
-        const createdCandyMachineID = await generateCandyMachine(wallet, mintedCollectionNft);
-        await updateCandyMachine(wallet, createdCandyMachineID);
-        await addItems(wallet, createdCandyMachineID, image_url);
+        
+        if (switch1) {
+            const image_url1 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json";
+            const image_url2 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/1.json";
+            const image_url3 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/2.json";
+            const [mintedCollectionNft, image_url] = await createCollectionCompressedNft([image_url1, image_url2, image_url3], wallet);
+
+            console.log("minted CollectionNFT : ", mintedCollectionNft);
+            const createdCandyMachineID = await generateCandyMachine(wallet, mintedCollectionNft);
+            await updateCandyMachine(wallet, createdCandyMachineID);
+            await addItems(wallet, createdCandyMachineID, image_url);
+        } else {
+            const image_url = 'https://gateway.pinata.cloud/ipfs/' + hash + "/images/0.jpeg";
+            // console.log("############");
+            // console.log(image_url);
+            const mintedCollectionNft = await createCollectionNft(image_url, wallet);
+            console.log("minted CollectionNFT : ", mintedCollectionNft);
+            const createdCandyMachineID = await generateCandyMachine(wallet, mintedCollectionNft);
+            await updateCandyMachine(wallet, createdCandyMachineID);
+            await addItems(wallet, createdCandyMachineID, image_url);
+        }
+
     }
 
     useEffect(() => {

@@ -4,7 +4,9 @@ import { IDL, LaunchnftContract } from "../anchor/idl";
 import { Connection, PublicKey, Keypair } from "@solana/web3.js";
 import { AnchorProvider, Program, Wallet, BN } from "@coral-xyz/anchor";
 import { Metaplex, keypairIdentity, bundlrStorage, toMetaplexFile, toBigNumber, CreateCandyMachineInput, DefaultCandyGuardSettings, CandyMachineItem, toDateTime, sol, TransactionBuilder, CreateCandyMachineBuilderContext, walletAdapterIdentity } from "@metaplex-foundation/js";
-
+import { ValidDepthSizePair } from "@solana/spl-account-compression";
+import MerkleTools from 'merkle-tools';
+import crypto from 'crypto';
 
 const programId = new PublicKey("HNztz1uSj4fyUfSnaJLeAtmf9pMqnmAFTJArNwBQhfqU");
 
@@ -121,17 +123,17 @@ export async function CreateProject(
     const program = GetLaunchpadProgram(wallet, connection);
     const launchpadAccount = await program.account.launchpad.fetch(launchpadPda);
     const project = getProjectPda(launchpadAccount.projectCount);
-    
+
     const transactionSignature = await program.methods
       .createProject({
         isCnft
       })
       .accounts({
-          creator: wallet.publicKey,
-          payer: wallet.publicKey,
-          launchpad: launchpadPda,
-          feeWallet: launchpadAccount.feeWallet,
-          project
+        creator: wallet.publicKey,
+        payer: wallet.publicKey,
+        launchpad: launchpadPda,
+        feeWallet: launchpadAccount.feeWallet,
+        project
       })
       .rpc();
 
@@ -152,14 +154,14 @@ export async function SetCandyMachineId(
 ) {
   try {
     const program = GetLaunchpadProgram(new Wallet(walletKeypair), connection);
-    
+
     const transactionSignature = await program.methods
       .setCandyMachineId({
         candyMachineId
       })
       .accounts({
-          authority: walletKeypair.publicKey,
-          project
+        authority: walletKeypair.publicKey,
+        project
       })
       .rpc();
 
@@ -235,7 +237,7 @@ export async function SetCandyMachineId(
 //   return uri;
 // }
 
-export async function createCollectionNft(NFT_METADATA: string, WALLET: WalletContextState) : Promise<string> {
+export async function createCollectionNft(NFT_METADATA: string, WALLET: WalletContextState): Promise<string> {
   const SOLANA_CONNECTION = new Connection(RPC, { commitment: 'finalized' });
   const METAPLEX = Metaplex.make(SOLANA_CONNECTION)
     .use(walletAdapterIdentity(WALLET));
@@ -253,7 +255,38 @@ export async function createCollectionNft(NFT_METADATA: string, WALLET: WalletCo
   return collectionNft.address.toString();
 }
 
-export async function generateCandyMachine(WALLET: WalletContextState, COLLECTION_NFT_MINT: string) : Promise<string> {
+export async function createCollectionCompressedNft(NFT_METADATAS: string[], WALLET: WalletContextState): Promise<string[]> {
+  const SOLANA_CONNECTION = new Connection(RPC, { commitment: 'finalized' });
+  const METAPLEX = Metaplex.make(SOLANA_CONNECTION).use(walletAdapterIdentity(WALLET));
+
+  const treeOptions = {
+    hashType: 'md5' //optional, defaults to 'sha256'
+  }
+  const merkleTools = new MerkleTools(treeOptions);
+  const leaves = NFT_METADATAS.map(metadata => {
+    const hash = crypto.createHash('sha256');
+    hash.update(JSON.stringify(metadata));
+    return hash.digest('hex');
+  })
+  merkleTools.addLeaves(leaves, true);
+  merkleTools.makeTree();
+
+  const { nft: collectionNft } = await METAPLEX.nfts().create({
+    name: "NFT Coll",
+    uri: merkleTools.getMerkleRoot().toString('hex'),
+    sellerFeeBasisPoints: 0,
+    isCollection: true,
+    updateAuthority: WALLET,
+  });
+
+  console.log(`✅ - Minted Collection NFT: ${collectionNft.address.toString()}`);
+  console.log(`     https://explorer.solana.com/address/${collectionNft.address.toString()}?cluster=devnet`);
+
+  return [collectionNft.address.toString(), merkleTools.getMerkleRoot().toString('hex')];
+
+}
+
+export async function generateCandyMachine(WALLET: WalletContextState, COLLECTION_NFT_MINT: string): Promise<string> {
   console.log("######### generateCandyMachine #############");
   const candyMachineSettings: CreateCandyMachineInput<DefaultCandyGuardSettings> =
   {
@@ -270,12 +303,12 @@ export async function generateCandyMachine(WALLET: WalletContextState, COLLECTIO
       updateAuthority: WALLET,
     },
     itemSettings: {
-        type: 'configLines',
-        prefixName: 'My NFT #',
-        nameLength: 20,
-        prefixUri: '',
-        uriLength: 100,
-        isSequential: false,
+      type: 'configLines',
+      prefixName: 'My NFT #',
+      nameLength: 20,
+      prefixUri: '',
+      uriLength: 100,
+      isSequential: false,
     }
   };
   const METAPLEX = Metaplex.make(SOLANA_CONNECTION)
