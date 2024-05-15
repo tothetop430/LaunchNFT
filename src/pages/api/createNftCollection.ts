@@ -11,9 +11,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const object = JSON.parse(req.body);
         const projectId = object.projectId;
         const nftMetaData = object.metadata;
+        const name = object.name;
         const items = object.items;
         const wallet = Keypair.fromSecretKey(bs58.decode(secret));
-        const collectionNftMint = await createCollectionNft(nftMetaData, wallet);
+        const collectionNftMint = await createCollectionNft(name, nftMetaData, wallet);
         console.log("eeeeeee", projectId, nftMetaData, items);
         const candyMachineId = await generateCandyMachine(wallet,collectionNftMint);
         
