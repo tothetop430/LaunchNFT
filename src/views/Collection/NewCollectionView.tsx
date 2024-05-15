@@ -81,7 +81,6 @@ export const NewCollectionView: FC = ({ }) => {
     const REACT_APP_PINATA_API_SECRET = '75f146e928ba05395e226953152f1528baaf83b86d3d9785875a9cab203810b8';
     const image_count_in_line = 3;
 
-<<<<<<< HEAD
     const parseJsonFile = async (file_name) => {
         console.log(file_name);
         return new Promise((resolve) => {
@@ -91,13 +90,8 @@ export const NewCollectionView: FC = ({ }) => {
         })
     }
 
-    const handleChange = (event) => {
-        console.log(event.target.files);
-=======
     const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-        console.log(">>> uploaded file list : ", event.target.files);
->>>>>>> 700567024c05a09aae133101f2bdc630e5170a5e
-        setDirUpload([...event.target.files]);
+        console.log(">>> uploaded file list : ", event.target.files);        setDirUpload([...event.target.files]);
         const len = event.target.files.length;
         if (len > 0) {
             // setImagesToUpload(event.target.files.filter(val =>
@@ -107,40 +101,8 @@ export const NewCollectionView: FC = ({ }) => {
             //     val.webkitRelativePath.split('/')[1] == 'metadata'
             // ).sort((a, b) => a.webkitDirectory.localeCompare(b.webkitDirectory, undefined, { sensitivity: 'base' })));
             const folders = [];
-<<<<<<< HEAD
             const temp_images = [];
             const temp_metas = [];
-=======
-            // if (event.target.files[0].name.endsWith(".zip")) {
-            //     const zip = new JSZip();
-            //     zip.loadAsync(event.target.files[0])
-            //         .then((res) => {
-            //             const image_names = Object.keys(res.files).filter(element => element.startsWith("images/") && element !== 'images/').sort();
-            //             const json_names = Object.keys(res.files).filter(element => element.startsWith("metadata/") && element !== "metadata/").sort();
-            //             console.log(image_names);
-            //             console.log(json_names);
-            //             const newResults = [];
-            //             for (let i = 0; i < image_names.length; i += image_count_in_line) {
-            //                 const newLines = [];
-            //                 for (let j = 0; j < image_count_in_line && i + j < image_names.length; j++) {
-            //                     const blob = new Blob([image_names[i + j]], {type: 'image/jpeg'});
-            //                     newLines.push({
-            //                         img_name: URL.createObjectURL(blob),
-            //                         nft_name: json_names[i + j],
-            //                         nft_desc: json_names[i + j],
-            //                         real_name: image_names[i + j]
-            //                     });
-            //                     console.log("L:" + newLines);
-            //                 }
-            //                 newResults.push({ val: newLines });
-            //                 console.log("N:" + newResults);
-            //             }
-            //             console.log("T:", newResults);
-            //             setPictures(newResults);
-            //             //setDirUpload([...(res.filter(item => item.dir === false))]);
-            //         });
-            // }
->>>>>>> 700567024c05a09aae133101f2bdc630e5170a5e
             for (let i = 0; i < len; i++) {
                 const dir = event.target.files[i].webkitRelativePath;
                 setFolderName(dir.split("/")[0]);
@@ -174,11 +136,7 @@ export const NewCollectionView: FC = ({ }) => {
                     const nft_name = json_path === "" ? "NFT #" + (i + j) : json_path;
                     const nft_desc = json_path === "" ? "NFT #" + (i + j) : json_path;
                     // console.log(folders.indexOf(images[i + j]));
-<<<<<<< HEAD
                     // console.log(event.target.files[folders.indexOf(images[i + j])]);
-=======
-                    console.log(">>> object url : ", URL.createObjectURL(event.target.files[folders.indexOf(images[i + j])]));
->>>>>>> 700567024c05a09aae133101f2bdc630e5170a5e
                     newLines.push({
                         img_name: URL.createObjectURL(event.target.files[folders.indexOf(images[i + j])]),
                         nft_name: nft_name,
@@ -191,12 +149,6 @@ export const NewCollectionView: FC = ({ }) => {
             }
             setPictures(newResults);
 
-<<<<<<< HEAD
-=======
-            console.log(" >>> Pictures after uploading : ", pictures);
-
-
->>>>>>> 700567024c05a09aae133101f2bdc630e5170a5e
             //setPictures(event.target.files);
             //setPicture(URL.createObjectURL(event.target.files[0]));
         }
@@ -209,29 +161,7 @@ export const NewCollectionView: FC = ({ }) => {
         console.log(item);
     }
 
-<<<<<<< HEAD
     const sendJSONtoIPFS = async (MetaHash) => {
-=======
-    // const mintNFT = async (tokenURI) => {
-
-
-    //     try {
-    //         await votingSystemContract.makeAnEpicNFT(tokenURI, winner.address)
-
-    //         let val = await votingSystemContract.getTokenId();
-    //         console.log(val)
-    //         setTokenID(parseInt(val._hex));
-
-
-    //     } catch (error) {
-    //         console.log("Error while minting NFT with contract")
-    //         console.log(error);
-    //     }
-
-    // }
-
-    const sendJSONtoIPFS = async (ImgHash: string) => {
->>>>>>> 700567024c05a09aae133101f2bdc630e5170a5e
 
         try {
 
@@ -268,7 +198,6 @@ export const NewCollectionView: FC = ({ }) => {
 
     const [confirmClicked, setConfirmClicked] = useState(0);
 
-<<<<<<< HEAD
     const sendMetaToIPFS = async (ImgHash, len) => {
         try {
 
@@ -322,9 +251,6 @@ export const NewCollectionView: FC = ({ }) => {
     }
 
     const sendFileToIPFS = async (e) => {
-=======
-    const sendFileToIPFS = async (e: { preventDefault: () => void; }) => {
->>>>>>> 700567024c05a09aae133101f2bdc630e5170a5e
 
         e.preventDefault();
 
