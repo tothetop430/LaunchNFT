@@ -24,12 +24,6 @@ export const CollectionDetailView: FC<ItemProps> = ({ name, description, image_u
                         <div className="items-center justify-center flex flex-row px-3">
                             <AiOutlineTwitter />Verified
                         </div>
-
-                        {/* <div className="flex flex-row">
-                            <Button outline>
-                                <AiOutlineHeart className="h-6 w-6" />
-                            </Button>
-                        </div> */}
                     </div>
                 </div>
             </div>
