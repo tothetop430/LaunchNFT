@@ -12,7 +12,7 @@ import { SiRust } from "react-icons/si";
 import { FaPercent } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useRouter } from 'next/router';
-import { createCollectionNft, generateCandyMachine, updateCandyMachine, addItems, mintNft, createCollectionCompressedNft } from 'utils/web3';
+import { createCollectionNft, generateCandyMachine, updateCandyMachine, addItems, mintNft, createCollectionCompressedNft, CreateProject } from 'utils/web3';
 // import { CallMe } from '../../compressed_zip/scripts/callMe';
 
 //ipfs
@@ -74,56 +74,49 @@ export const NewCollectionView: FC = ({ }) => {
     const [dir_upload, setDirUpload] = useState([]);
     const [folder_name, setFolderName] = useState('');
     const [uploadedRes, setUploadedRes] = useState(Object);
+    const [images_to_upload, setImagesToUpload] = useState([]);
+    const [metadatas_to_upload, setMetadatasToUpload] = useState([]);
 
     const REACT_APP_PINATA_API_KEY = '767f0b4ad24034363687';
     const REACT_APP_PINATA_API_SECRET = '75f146e928ba05395e226953152f1528baaf83b86d3d9785875a9cab203810b8';
     const image_count_in_line = 3;
+
+    const parseJsonFile = async (file_name) => {
+        console.log(file_name);
+        return new Promise((resolve) => {
+            const fileReader = new FileReader();
+            fileReader.onload = event => resolve(JSON.parse((event.target as any).result));
+            fileReader.readAsText(file_name);
+        })
+    }
 
     const handleChange = (event) => {
         console.log(event.target.files);
         setDirUpload([...event.target.files]);
         const len = event.target.files.length;
         if (len > 0) {
+            // setImagesToUpload(event.target.files.filter(val =>
+            //     val.webkitRelativePath.split('/')[1] == 'images'
+            // ).sort((a, b) => a.webkitDirectory.localeCompare(b.webkitDirectory, undefined, { sensitivity: 'base' })));
+            // setMetadatasToUpload(event.target.files.filter(val =>
+            //     val.webkitRelativePath.split('/')[1] == 'metadata'
+            // ).sort((a, b) => a.webkitDirectory.localeCompare(b.webkitDirectory, undefined, { sensitivity: 'base' })));
             const folders = [];
-            // if (event.target.files[0].name.endsWith(".zip")) {
-            //     const zip = new JSZip();
-            //     zip.loadAsync(event.target.files[0])
-            //         .then((res) => {
-            //             const image_names = Object.keys(res.files).filter(element => element.startsWith("images/") && element !== 'images/').sort();
-            //             const json_names = Object.keys(res.files).filter(element => element.startsWith("metadata/") && element !== "metadata/").sort();
-            //             console.log(image_names);
-            //             console.log(json_names);
-
-            //             const newResults = [];
-            //             for (let i = 0; i < image_names.length; i += image_count_in_line) {
-            //                 const newLines = [];
-            //                 for (let j = 0; j < image_count_in_line && i + j < image_names.length; j++) {
-            //                     const blob = new Blob([image_names[i + j]], {type: 'image/jpeg'});
-            //                     newLines.push({
-            //                         img_name: URL.createObjectURL(blob),
-            //                         nft_name: json_names[i + j],
-            //                         nft_desc: json_names[i + j],
-            //                         real_name: image_names[i + j]
-            //                     });
-            //                     console.log("L:" + newLines);
-
-
-            //                 }
-            //                 newResults.push({ val: newLines });
-            //                 console.log("N:" + newResults);
-            //             }
-            //             console.log("T:", newResults);
-            //             setPictures(newResults);
-            //             //setDirUpload([...(res.filter(item => item.dir === false))]);
-            //         });
-
-            // }
+            const temp_images = [];
+            const temp_metas = [];
             for (let i = 0; i < len; i++) {
                 const dir = event.target.files[i].webkitRelativePath;
                 setFolderName(dir.split("/")[0]);
                 console.log(dir);
                 folders.push(dir.split('/').filter((val, ind) => ind != 0).join("/"));
+                if (dir.split('/').filter((val, ind) => ind != 0).join("/").startsWith("images/")) {
+                    temp_images.push(event.target.files[i]);
+                } else if (dir.split('/').filter((val, ind) => ind != 0).join("/").startsWith("metadata/")) {
+                    temp_metas.push(event.target.files[i]);
+                }
             }
+            setImagesToUpload([...temp_images]);
+            setMetadatasToUpload([...temp_metas]);
             if (folders.filter(val => val.startsWith("images/")).length == 0) {
                 alert("No Images folder. Must contain it!");
                 return;
@@ -143,8 +136,8 @@ export const NewCollectionView: FC = ({ }) => {
                     ).join("");
                     const nft_name = json_path === "" ? "NFT #" + (i + j) : json_path;
                     const nft_desc = json_path === "" ? "NFT #" + (i + j) : json_path;
-                    console.log(folders.indexOf(images[i + j]));
-                    console.log(event.target.files[folders.indexOf(images[i + j])]);
+                    // console.log(folders.indexOf(images[i + j]));
+                    // console.log(event.target.files[folders.indexOf(images[i + j])]);
                     newLines.push({
                         img_name: URL.createObjectURL(event.target.files[folders.indexOf(images[i + j])]),
                         nft_name: nft_name,
@@ -155,7 +148,6 @@ export const NewCollectionView: FC = ({ }) => {
                 newResults.push({ val: newLines });
             }
             setPictures(newResults);
-
 
             //setPictures(event.target.files);
             //setPicture(URL.createObjectURL(event.target.files[0]));
@@ -169,25 +161,7 @@ export const NewCollectionView: FC = ({ }) => {
         console.log(item);
     }
 
-    // const mintNFT = async (tokenURI) => {
-
-
-    //     try {
-    //         await votingSystemContract.makeAnEpicNFT(tokenURI, winner.address)
-
-    //         let val = await votingSystemContract.getTokenId();
-    //         console.log(val)
-    //         setTokenID(parseInt(val._hex));
-
-
-    //     } catch (error) {
-    //         console.log("Error while minting NFT with contract")
-    //         console.log(error);
-    //     }
-
-    // }
-
-    const sendJSONtoIPFS = async (ImgHash, length) => {
+    const sendJSONtoIPFS = async (MetaHash) => {
 
         try {
 
@@ -197,9 +171,7 @@ export const NewCollectionView: FC = ({ }) => {
                 data: {
                     "name": nfts_base_art_name,
                     "description": collection_symbol,
-                    "image": ImgHash + "/images",
-                    "metadata": ImgHash + "/metadata",
-                    "number_of_nfts": length / 2,
+                    "image": MetaHash
                 },
                 headers: {
                     'pinata_api_key': `${REACT_APP_PINATA_API_KEY}`,
@@ -226,12 +198,66 @@ export const NewCollectionView: FC = ({ }) => {
 
     const [confirmClicked, setConfirmClicked] = useState(0);
 
+    const sendMetaToIPFS = async (ImgHash, len) => {
+        try {
+
+            const formData = new FormData();
+
+            const metadata = JSON.stringify({
+                name: folder_name,
+            });
+            formData.append("pinataMetadata", metadata);
+            const temp_files = [];
+            for (let i = 0; i < metadatas_to_upload.length; i++) {
+                let res = await parseJsonFile(metadatas_to_upload[i]);
+                let mut_res = Object.assign({}, res, { image: 'https://gateway.pinata.cloud/ipfs/' + ImgHash + i.toString() + ".jpeg" });
+                temp_files.push(mut_res);
+            }
+
+            temp_files.map((temp_file, index) => {
+                const jsonBlob = new Blob([JSON.stringify(temp_file)], {
+                    type: 'application/json'
+                });
+                formData.append('file', jsonBlob, folder_name + "/metadata/" + index.toString() + ".json");
+            });
+
+            const options = JSON.stringify({
+                cidVersion: 0,
+            });
+            formData.append("pinataOptions", options);
+            //formData.append("file", image_name);
+
+            const resFile = await axios({
+                method: "post",
+                url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
+                data: formData,
+                headers: {
+                    'pinata_api_key': `${REACT_APP_PINATA_API_KEY}`,
+                    'pinata_secret_api_key': `${REACT_APP_PINATA_API_SECRET}`,
+                    "Content-Type": "multipart/form-data"
+                },
+            });
+
+            // const MetaHash = `ipfs://${resFile.data.IpfsHash}`;
+            const MetaHash = resFile.data.IpfsHash;
+
+            sendJSONtoIPFS(MetaHash);
+
+
+        } catch (error) {
+            console.log("File to IPFS: ")
+            console.log(error)
+        }
+    }
+
     const sendFileToIPFS = async (e) => {
 
         e.preventDefault();
 
         if (pictures.length > 0) {
             try {
+                console.log("Images: ");
+                console.log(images_to_upload);
 
                 const formData = new FormData();
 
@@ -239,7 +265,7 @@ export const NewCollectionView: FC = ({ }) => {
                     name: folder_name,
                 });
                 formData.append("pinataMetadata", metadata);
-                dir_upload.map(dir_item => {
+                images_to_upload.map(dir_item => {
                     formData.append('file', dir_item);
                 });
 
@@ -260,9 +286,11 @@ export const NewCollectionView: FC = ({ }) => {
                     },
                 });
 
-                const ImgHash = `ipfs://${resFile.data.IpfsHash}`;
+                // const ImgHash = `ipfs://${resFile.data.IpfsHash}`;
+                const ImgHash = resFile.data.IpfsHash;
                 // console.log(response.data.IpfsHash);
-                sendJSONtoIPFS(ImgHash, dir_upload.length)
+                // sendJSONtoIPFS(ImgHash, dir_upload.length)
+                sendMetaToIPFS(ImgHash, images_to_upload.length);
 
 
             } catch (error) {
@@ -291,7 +319,7 @@ export const NewCollectionView: FC = ({ }) => {
 
     const handleDeploy = async () => {
         const hash = uploadedRes["IpfsHash"];
-        
+
         // if (switch1) {
         //     const image_url1 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json";
         //     const image_url2 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/1.json";
@@ -312,6 +340,45 @@ export const NewCollectionView: FC = ({ }) => {
         //     await updateCandyMachine(wallet, createdCandyMachineID);
         //     await addItems(wallet, createdCandyMachineID, image_url);
         // }
+
+        const project_id = await CreateProject(wallet, switch1);
+
+        if (switch1) {
+            const _items = [];
+            for (let i = 0; i < images_to_upload.length; i++) {
+                _items.push(hash + "/" + i.toString() + ".json");
+            }
+
+            const data = {
+                metadatas: _items,
+                items: [],
+                project_id: project_id
+            }
+
+            await fetch("/api/createCnftCollection", {
+                method: "POST",
+                body: JSON.stringify(data),
+            }).then(res => {
+                console.log("Great Done!!! ", res);
+            });
+
+        } else {
+            const _items = [];
+            for (let i = 0; i < images_to_upload.length; i++) {
+                _items.push({ uri : 'http://gateway.pinata.cloud/ipfs/' + hash + "/" + i.toString() + ".json", name : "ffff"});
+            }
+            const data = {
+                metadata: hash,
+                items: _items,
+                projectId: project_id
+            }
+            await fetch("/api/createNftCollection", {
+                method: "POST",
+                body: JSON.stringify(data),
+            }).then(res => {
+                console.log("Great Done!!! ", res);
+            });
+        }
 
     }
 

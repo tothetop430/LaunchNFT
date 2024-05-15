@@ -8,7 +8,7 @@ import { ValidDepthSizePair } from "@solana/spl-account-compression";
 import MerkleTools from 'merkle-tools';
 import crypto from 'crypto';
 
-const programId = new PublicKey("HNztz1uSj4fyUfSnaJLeAtmf9pMqnmAFTJArNwBQhfqU");
+const programId = new PublicKey("J15m8CpBepW7zWG73o5cao74YrLCjUBCDgtRXroFM3jw");
 
 const RPC = 'https://api.devnet.solana.com';
 const SOLANA_CONNECTION = new Connection(RPC);
@@ -74,12 +74,21 @@ export async function GetNftCollections(
   const project = await program.account.project.all();
   console.log("projects" + project.length);
   const nftCollections = [];
-  for(let i=0;i<project.length;i++){
-    const candyMachineId = project[i].account.candyMachineId;
-    const candyMachine = Metaplex.make(SOLANA_CONNECTION).candyMachines().findByAddress({ address: candyMachineId });
-    const collectionNftMint = (await candyMachine).collectionMintAddress;
-    const collectionNft = await Metaplex.make(SOLANA_CONNECTION).nfts().findByMint({ mintAddress : collectionNftMint });
-    nftCollections.push({uri:collectionNft.uri, name:collectionNft.name});
+  for (let i = 0; i < project.length; i++) {
+    try {
+      const candyMachineId = project[i].account.candyMachineId;
+      console.log("good candyMachineId", candyMachineId);
+      const candyMachine = await Metaplex.make(SOLANA_CONNECTION).candyMachines().findByAddress({ address: candyMachineId });
+      // console.log("good candyMachine", candyMachine);
+      const collectionNftMint = candyMachine.collectionMintAddress;
+      console.log("good collectionNftMint", collectionNftMint);
+      const collectionNft = await Metaplex.make(SOLANA_CONNECTION).nfts().findByMint({ mintAddress: collectionNftMint });
+      console.log("good collectionNft", collectionNft);
+      nftCollections.push({ uri: collectionNft.uri, name: collectionNft.name });
+    } catch (err) {
+      console.log("Err in web3.ts", err);
+    }
+
   }
   return nftCollections;
   // project[0].account.candyMachineId
@@ -131,7 +140,7 @@ export const [launchpadPda] = PublicKey.findProgramAddressSync(
 );
 export const getProjectPda = (projectNumber: BN) => {
   return PublicKey.findProgramAddressSync(
-    [Buffer.from("project"), projectNumber.toBuffer('le', 8)],
+    [Buffer.from("project"), projectNumber.toArrayLike(Buffer, "le", 8)],
     programId,
   )[0]
 }
@@ -162,7 +171,7 @@ export async function CreateProject(
     );
     return project.toString();
   } catch (error) {
-    console.log(error);
+    console.log("rrrrrrrrr", error);
   } finally {
   }
 }
@@ -174,7 +183,7 @@ export async function SetCandyMachineId(
 ) {
   try {
     const program = GetLaunchpadProgram(new Wallet(walletKeypair));
-    
+
     const transactionSignature = await program.methods
       .setCandyMachineId({
         candyMachineId
@@ -279,9 +288,9 @@ export async function createCollectionNft(NFT_METADATA: string, WALLET: Keypair)
   }
 }
 
-export async function createCollectionCompressedNft(NFT_METADATAS: string[], WALLET: WalletContextState): Promise<string[]> {
-  const SOLANA_CONNECTION = new Connection(RPC, { commitment: 'finalized' });
-  const METAPLEX = Metaplex.make(SOLANA_CONNECTION).use(walletAdapterIdentity(WALLET));
+export async function createCollectionCompressedNft(NFT_METADATAS: string[], WALLET: Keypair): Promise<string[]> {
+
+  const METAPLEX = Metaplex.make(SOLANA_CONNECTION).use(keypairIdentity(WALLET));
 
   const treeOptions = {
     hashType: 'md5' //optional, defaults to 'sha256'
@@ -384,10 +393,10 @@ export async function addItems(WALLET: Keypair, CANDY_MACHINE_ID: string, items:
   const candyMachine = await METAPLEX
     .candyMachines()
     .findByAddress({ address: new PublicKey(CANDY_MACHINE_ID) });
-  
+
   const { response } = await METAPLEX.candyMachines().insertItems({
     candyMachine,
-    items: items,
+    items: [...items],
   }, { commitment: 'finalized' });
 
   console.log(`✅ - Items added to Candy Machine: ${CANDY_MACHINE_ID}`);
