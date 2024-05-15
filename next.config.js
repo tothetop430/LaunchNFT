@@ -6,7 +6,7 @@ const nextConfig = {
     SECRET: process.env.SECRET,
   },
   images: {
-    domains: ['arweave.net']
+    domains: ['arweave.net', 'gateway.pinata.cloud']
   }
 }
 

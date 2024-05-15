@@ -66,9 +66,8 @@ export async function GetLaunchpad(
   return launchpad;
 }
 
-export async function GetNftCollections(
-  wallet: Keypair,
-) {
+export async function GetNftCollections() {
+  const wallet = Keypair.generate();
   const program = GetLaunchpadProgram(wallet);
   console.log("ssssss");
   const project = await program.account.project.all();
@@ -77,17 +76,19 @@ export async function GetNftCollections(
   for (let i = 0; i < project.length; i++) {
     try {
       const candyMachineId = project[i].account.candyMachineId;
-      console.log("good candyMachineId", candyMachineId);
+      // console.log("good candyMachineId", candyMachineId);
       const candyMachine = await Metaplex.make(SOLANA_CONNECTION).candyMachines().findByAddress({ address: candyMachineId });
       // console.log("good candyMachine", candyMachine);
       const collectionNftMint = candyMachine.collectionMintAddress;
-      console.log("good collectionNftMint", collectionNftMint);
+      // console.log("good collectionNftMint", collectionNftMint);
       const collectionNft = await Metaplex.make(SOLANA_CONNECTION).nfts().findByMint({ mintAddress: collectionNftMint });
       console.log("good collectionNft", collectionNft);
-      nftCollections.push({ uri: collectionNft.uri, name: collectionNft.name });
+      nftCollections.push({ uri: collectionNft.uri, name: collectionNft.name, itemsAvailable: candyMachine.itemsAvailable, itemsMinted: candyMachine.itemsMinted, startDate: candyMachine.candyGuard.guards.startDate.date, price: candyMachine.candyGuard.guards.solPayment.amount });
     } catch (err) {
-      console.log("Err in web3.ts", err);
+      // console.log("Err in web3.ts", err);
     }
+
+    return nftCollections;
 
   }
   return nftCollections;
@@ -108,7 +109,7 @@ export async function Update(
 
   try {
     const program = GetLaunchpadProgram(wallet);
-console.log(">>>", feeCollectionSol);
+    console.log(">>>", feeCollectionSol);
     const feeCollection = new BN(feeCollectionSol);
     const transactionSignature = await program.methods
       .update({
@@ -266,13 +267,13 @@ export async function SetCandyMachineId(
 //   return uri;
 // }
 
-export async function createCollectionNft(NFT_METADATA: string, WALLET: Keypair): Promise<string> {
+export async function createCollectionNft(name: string, metadataUri: string, WALLET: Keypair): Promise<string> {
   try {
     const METAPLEX = Metaplex.make(SOLANA_CONNECTION)
       .use(keypairIdentity(WALLET));
     const { nft: collectionNft } = await METAPLEX.nfts().create({
-      name: "NFT Coll",
-      uri: NFT_METADATA,
+      name: name,
+      uri: metadataUri,
       sellerFeeBasisPoints: 0,
       isCollection: true,
       updateAuthority: WALLET,
@@ -321,47 +322,55 @@ export async function createCollectionCompressedNft(NFT_METADATAS: string[], WAL
 
 export async function generateCandyMachine(WALLET: Keypair, COLLECTION_NFT_MINT: string): Promise<string> {
   console.log("######### generateCandyMachine #############");
-  const candyMachineSettings: CreateCandyMachineInput<DefaultCandyGuardSettings> =
-  {
-    itemsAvailable: toBigNumber(3), // Collection Size: 3
-    sellerFeeBasisPoints: 1000, // 10% Royalties on Collection
-    symbol: "DEMO",
-    maxEditionSupply: toBigNumber(0), // 0 reproductions of each NFT allowed
-    isMutable: true,
-    creators: [
-      { address: WALLET.publicKey, share: 100 },
-    ],
-    collection: {
-      address: new PublicKey(COLLECTION_NFT_MINT), // Can replace with your own NFT or upload a new one
-      updateAuthority: WALLET,
-    },
-    itemSettings: {
-      type: 'configLines',
-      prefixName: 'My NFT #',
-      nameLength: 20,
-      prefixUri: '',
-      uriLength: 100,
-      isSequential: false,
-    },
-    guards: {
-      startDate: { date: toDateTime("2022-10-17T16:00:00Z") },
-      mintLimit: {
+  try {
+    const candyMachineSettings: CreateCandyMachineInput<DefaultCandyGuardSettings> =
+    {
+      itemsAvailable: toBigNumber(3), // Collection Size: 3
+      sellerFeeBasisPoints: 1000, // 10% Royalties on Collection
+      symbol: "DEMO",
+      maxEditionSupply: toBigNumber(0), // 0 reproductions of each NFT allowed
+      isMutable: true,
+      creators: [
+        { address: WALLET.publicKey, share: 100 },
+      ],
+      collection: {
+        address: new PublicKey(COLLECTION_NFT_MINT), // Can replace with your own NFT or upload a new one
+        updateAuthority: WALLET,
+      },
+      itemSettings: {
+        type: 'configLines',
+        prefixName: 'My NFT #',
+        nameLength: 20,
+        prefixUri: '',
+        uriLength: 100,
+        isSequential: false,
+      },
+      guards: {
+        startDate: { date: toDateTime("2022-10-17T16:00:00Z") },
+        mintLimit: {
           id: 1,
           limit: 2,
-      },
-      solPayment: {
+        },
+        solPayment: {
           amount: sol(0.1),
           destination: WALLET.publicKey,
-      },
-    }
-  };
-  const METAPLEX = Metaplex.make(SOLANA_CONNECTION)
-    .use(keypairIdentity(WALLET));
-  const { candyMachine } = await METAPLEX.candyMachines().create(candyMachineSettings);
-  console.log(`✅ - Created Candy Machine: ${candyMachine.address.toString()}`);
-  console.log(`     https://explorer.solana.com/address/${candyMachine.address.toString()}?cluster=devnet`);
+        },
+      }
+    };
+    console.log(">>>> Before making METAPLEX");
+    const METAPLEX = Metaplex.make(SOLANA_CONNECTION)
+      .use(keypairIdentity(WALLET));
+    const { candyMachine } = await METAPLEX.candyMachines().create(candyMachineSettings);
+    console.log(`✅ - Created Candy Machine: ${candyMachine.address.toString()}`);
+    console.log(`     https://explorer.solana.com/address/${candyMachine.address.toString()}?cluster=devnet`);
+    return candyMachine.address.toString();
+  }
+  catch (e) {
+    console.log("Error in GenerateCandyMachine: ", e);
+  }
 
-  return candyMachine.address.toString();
+
+
 }
 
 export async function updateCandyMachine(WALLET: Keypair, CANDY_MACHINE_ID: string): Promise<string> {

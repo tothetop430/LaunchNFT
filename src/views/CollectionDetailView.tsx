@@ -4,7 +4,7 @@ import { Badge, Button } from "flowbite-react";
 import ItemProps from '../interfaces/ItemProps';
 
 
-export const CollectionDetailView: FC<ItemProps> = ({ name, description, image_url, collections }) => {
+export const CollectionDetailView: FC<ItemProps> = ({ name, description, image_url, creator }) => {
     //const { name, description, image_url } = props;
     return (
         <div className="w-full flex flex-row flex-start">
@@ -13,7 +13,7 @@ export const CollectionDetailView: FC<ItemProps> = ({ name, description, image_u
                 <div className="flex flex-col m-x-3 pl-5">
                     <div className="flex flex-col">
                         <p style={{ fontSize: '48px' }}>{name}</p>
-                        <caption>CREATED Tue 06 Feb by <a href={'../../profile/' + collections}>{collections.slice(0, 3) + '..' + collections.slice(collections.length - 2, collections.length)}</a> on </caption><span><img src="../../public/solana.avatar.svg" alt="" /></span>
+                        <caption>CREATED Tue 06 Feb by <a href={'../../profile/' + creator}>{creator.slice(0, 3) + '..' + creator.slice(creator.length - 2, creator.length)}</a> on </caption><span><img src="../../public/solana.avatar.svg" alt="" /></span>
                         <Badge color="red" icon={AiFillUnlock} className="w-7" />
                         <caption>{description}</caption>
                     </div>
