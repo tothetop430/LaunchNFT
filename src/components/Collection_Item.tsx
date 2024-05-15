@@ -17,8 +17,8 @@ export const Collection_Item: React.FC<ItemProps> = ({name, description, image_u
                     </div>
                 </div>
 
-                <h1 className="my-4 text-2xl font-extrabold text-gray-900 dark:text-white md:text-3xl lg:text-3xl">{name}</h1>
-                <p className="text-lg font-normal text-gray-500 lg:text-lg dark:text-gray-400">
+                <h1 className="my-4 text-2xl font-extrabold text-gray-900 dark:text-white md:text-3xl lg:text-3xl" style={{color: "white"}}>{name}</h1>
+                <p className="text-lg font-normal text-gray-500 lg:text-lg dark:text-gray-400"  style={{color: "white"}}>
                     {description}
                 </p>
                 <div className="w-full bg-gray-200 rounded-full h-2.5 mt-4 dark:bg-gray-700">

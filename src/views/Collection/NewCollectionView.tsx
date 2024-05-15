@@ -318,7 +318,7 @@ export const NewCollectionView: FC = ({ }) => {
     }
 
     return (
-        <div className='flex px-20 py-16 w-1/2 items-center justify-center m-auto my-10 flex-col text-lg' style={{ backgroundColor: "rgba(100,100,100,0.3)", boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.4)" }}>
+        <div className='flex px-20 py-16 w-1/2 items-center justify-center m-auto my-10 flex-col text-lg text-white' style={{ backgroundColor: "rgba(100,100,100,0.3)", boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.5), 0 6px 20px 0 rgba(0, 0, 0, 0.4)" }}>
             <h1 className='mb-6 text-center' style={{ fontSize: "40px", fontWeight: "bold" }}>
                 Launch Collection
             </h1>
@@ -328,7 +328,7 @@ export const NewCollectionView: FC = ({ }) => {
                 {/* -------------------------- Details tab ------------------------------- */}
                 <Tabs.Item active title="Details">
                     <div className='flex flex-col gap-3 w-full'>
-                        <span className='py-5 text-center w-full' style={{ fontSize: "35px" }}>
+                        <span className='py-5 text-center w-full' style={{ fontSize: "35px", color: "white" }}>
                             Collection Details
                         </span>
                         <div className='flex flex-col w-full gap-2'>
@@ -338,21 +338,21 @@ export const NewCollectionView: FC = ({ }) => {
                             <div className='flex flex-row gap-5'>
                                 <div className='px-1 w-1/3'>
                                     <div className="mb-2 block">
-                                        <Label htmlFor="collection_name" value="Collection Name" />
+                                        <Label htmlFor="collection_name" value="Collection Name" style={{color: "white"}} />
                                     </div>
                                     <TextInput id="collection_name" type="email" placeholder="My NFTs" required color="gray"
                                         value={collection_name} onChange={(event) => setCollectionName((event.target as any).value)} />
                                 </div>
                                 <div className='px-1 w-1/3'>
                                     <div className="mb-2 block">
-                                        <Label htmlFor="symbol" value="Symbol" />
+                                        <Label htmlFor="symbol" value="Symbol" style={{color: "white"}} />
                                     </div>
                                     <TextInput id="symbol" type="email" placeholder="MNFT" required color="gray"
                                         value={collection_symbol} onChange={(event) => setCollectionSymbol((event.target as any).value)} />
                                 </div>
                                 <div className='px-1 w-1/3'>
                                     <div className="mb-2 block">
-                                        <Label htmlFor="collection_description" value="Collection Description" />
+                                        <Label htmlFor="collection_description" value="Collection Description" style={{color: "white"}} />
                                     </div>
                                     <TextInput id="collection_description" type="email" placeholder="My collection description" required color="gray"
                                         value={collection_description} onChange={(event) => setCollectionDescription((event.target as any).value)} />
@@ -360,7 +360,7 @@ export const NewCollectionView: FC = ({ }) => {
                             </div>
                             <div className='px-1 py-2'>
                                 <div className='mb-2'>
-                                    <Label htmlFor='launch_date' value='Launch Date'></Label>
+                                    <Label htmlFor='launch_date' value='Launch Date' style={{color: "white"}}></Label>
                                 </div>
                                 <Datepicker id='launch_date' value={launch_date} onChange={(event) => setLaunchDate((event.target as any).value)} />
                             </div>

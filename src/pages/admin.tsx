@@ -12,7 +12,7 @@ const Home: NextPage = (props) => {
                     content="SolPad"
                 />
             </Head>
-            <div className="flex flex-row mt-6">
+            <div className="flex flex-row mt-6 text-white">
                 <AdminView createAdminPanel={function (): void {
                     throw new Error("Function not implemented.");
                 } } />
