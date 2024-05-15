@@ -22,9 +22,9 @@ export const AdminView: FC<AdminType> = ({ }) => {
     useEffect(() => {
         GetLaunchpad(wallet, connection).then((value)=>{
             if(value){
-                setLaunchpad(value);
-                setFeeWallet(value.feeWallet.toBase58());
-                setFeeAmount(value.feePercent / 100);
+                //setLaunchpad(value);
+                //setFeeWallet(value.feeWallet.toBase58());
+                //setFeeAmount(value.feeCollection);
             }
             
         })
@@ -32,11 +32,11 @@ export const AdminView: FC<AdminType> = ({ }) => {
 
     const on_click_CreateAdminWallet = async () => {
         console.log("clicked")
-        await Initialize(wallet, connection, new PublicKey(feeWallet), feeAmount * 100);
+        //await Initialize(wallet, connection, new PublicKey(feeWallet), feeAmount * 100);
     }
 
     const on_click_UpdateAdminWallet = async () => {
-        await Update(wallet, connection, new PublicKey(feeWallet), feeAmount * 100);
+        //await Update(wallet, connection, new PublicKey(feeWallet), feeAmount * 100);
     }
 
     return (
