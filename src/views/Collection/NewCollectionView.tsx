@@ -73,7 +73,7 @@ export const NewCollectionView: FC = ({ }) => {
     const [launch_date, setLaunchDate] = useState('May 12, 2024');
     const [dir_upload, setDirUpload] = useState([]);
     const [folder_name, setFolderName] = useState('');
-    const [uploadedRes, setUploadedRes] = useState(Object);
+    const [uploadedRes, setUploadedRes] = useState('');
     const [images_to_upload, setImagesToUpload] = useState([]);
     const [metadatas_to_upload, setMetadatasToUpload] = useState([]);
 
@@ -157,44 +157,44 @@ export const NewCollectionView: FC = ({ }) => {
         }
     }
 
-    const loadDirectory = (item: any) => {
-        console.log(item);
-    }
+    // const loadDirectory = (item: any) => {
+    //     console.log(item);
+    // }
 
-    const sendJSONtoIPFS = async (MetaHash) => {
+    // const sendJSONtoIPFS = async (MetaHash) => {
 
-        try {
+    //     try {
 
-            const resJSON = await axios({
-                method: "post",
-                url: "https://api.pinata.cloud/pinning/pinJsonToIPFS",
-                data: {
-                    "name": nfts_base_art_name,
-                    "description": collection_symbol,
-                    "image": MetaHash
-                },
-                headers: {
-                    'pinata_api_key': `${REACT_APP_PINATA_API_KEY}`,
-                    'pinata_secret_api_key': `${REACT_APP_PINATA_API_SECRET}`,
-                },
-            });
+    //         const resJSON = await axios({
+    //             method: "post",
+    //             url: "https://api.pinata.cloud/pinning/pinJsonToIPFS",
+    //             data: {
+    //                 "name": nfts_base_art_name,
+    //                 "description": collection_symbol,
+    //                 "image": MetaHash
+    //             },
+    //             headers: {
+    //                 'pinata_api_key': `${REACT_APP_PINATA_API_KEY}`,
+    //                 'pinata_secret_api_key': `${REACT_APP_PINATA_API_SECRET}`,
+    //             },
+    //         });
 
-            console.log("final ", `ipfs://${resJSON.data.IpfsHash}`)
-            const tokenURI = `ipfs://${resJSON.data.IpfsHash}`;
-            console.log("Token URI", tokenURI);
-            //mintNFT(tokenURI, currentAccount)   // pass the winner
-            alert("Thanks for pushing up!!!");
-            setUploadedRes(resJSON.data);
-            console.log("=== resJson ===");
-            console.log(resJSON.data);
-            // router.push('/collections');
+    //         console.log("final ", `ipfs://${resJSON.data.IpfsHash}`)
+    //         const tokenURI = `ipfs://${resJSON.data.IpfsHash}`;
+    //         console.log("Token URI", tokenURI);
+    //         //mintNFT(tokenURI, currentAccount)   // pass the winner
+    //         alert("Thanks for pushing up!!!");
+    //         setUploadedRes(resJSON.data);
+    //         console.log("=== resJson ===");
+    //         console.log(resJSON.data);
+    //         // router.push('/collections');
 
-        } catch (error) {
-            console.log("JSON to IPFS: ")
-            console.log(error);
-        }
+    //     } catch (error) {
+    //         console.log("JSON to IPFS: ")
+    //         console.log(error);
+    //     }
 
-    }
+    // }
 
     const [confirmClicked, setConfirmClicked] = useState(0);
 
@@ -241,7 +241,8 @@ export const NewCollectionView: FC = ({ }) => {
             // const MetaHash = `ipfs://${resFile.data.IpfsHash}`;
             const MetaHash = resFile.data.IpfsHash;
 
-            sendJSONtoIPFS(MetaHash);
+            setUploadedRes(MetaHash);
+            // sendJSONtoIPFS(MetaHash);
 
 
         } catch (error) {
@@ -320,7 +321,7 @@ export const NewCollectionView: FC = ({ }) => {
     const [deploySuccess, setDeploySuccess] = useState(false);
 
     const handleDeploy = async () => {
-        const hash = uploadedRes["IpfsHash"];
+        const hash = uploadedRes;
 
         // if (switch1) {
         //     const image_url1 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json";
@@ -365,12 +366,13 @@ export const NewCollectionView: FC = ({ }) => {
             });
 
         } else {
+
             const _items = [];
             for (let i = 0; i < images_to_upload.length; i++) {
-                _items.push({ uri : 'http://gateway.pinata.cloud/ipfs/' + hash + "/" + i.toString() + ".json", name : "ffff"});
+                _items.push({ uri : 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/" + i.toString() + ".json", name : collection_name + "#" + (i + 1).toString()});
             }
             const data = {
-                metadata: hash,
+                metadata: 'http://gateway.pinata.cloud/ipfs/' + hash,
                 items: _items,
                 projectId: project_id
             }
