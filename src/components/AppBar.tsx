@@ -20,8 +20,8 @@ export const AppBar: React.FC = () => {
         <div className="navbar-start align-items-center">
           <div className="sm:inline w-22 h-22 md:p-2 pl-10">
             <Link href="" target="_blank" rel="noopener noreferrer" passHref className="text-secondary hover:text-white">
-              <img decoding="async" width="80" height="63"
-                src="/Logo.png"
+              <img decoding="async" width="150px" height="auto"
+                src="/Solpad_logo.png"
                 className="" alt=""
                 sizes="(max-width: 800px) 100vw, 800px" />
             </Link>
@@ -29,10 +29,7 @@ export const AppBar: React.FC = () => {
           {/* <a href="https://launchmynft.io/">
             Refresh
           </a> */}
-
-          <WalletMultiButtonDynamic className="btn-ghost btn-sm relative flex md:hidden text-lg " />
         </div>
-
         {/* Nav Links */}
         <div className="flex flex-row items-center justify-center gap-10 flex-1 text-2xl">
           <div className="text-white">

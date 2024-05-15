@@ -292,26 +292,26 @@ export const NewCollectionView: FC = ({ }) => {
     const handleDeploy = async () => {
         const hash = uploadedRes["IpfsHash"];
         
-        if (switch1) {
-            const image_url1 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json";
-            const image_url2 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/1.json";
-            const image_url3 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/2.json";
-            const [mintedCollectionNft, image_url] = await createCollectionCompressedNft([image_url1, image_url2, image_url3], wallet);
+        // if (switch1) {
+        //     const image_url1 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json";
+        //     const image_url2 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/1.json";
+        //     const image_url3 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/2.json";
+        //     const [mintedCollectionNft, image_url] = await createCollectionCompressedNft([image_url1, image_url2, image_url3], wallet);
 
-            console.log("minted CollectionNFT : ", mintedCollectionNft);
-            const createdCandyMachineID = await generateCandyMachine(wallet, mintedCollectionNft);
-            await updateCandyMachine(wallet, createdCandyMachineID);
-            await addItems(wallet, createdCandyMachineID, image_url);
-        } else {
-            const image_url = 'https://gateway.pinata.cloud/ipfs/' + hash + "/images/0.jpeg";
-            // console.log("############");
-            // console.log(image_url);
-            const mintedCollectionNft = await createCollectionNft(image_url, wallet);
-            console.log("minted CollectionNFT : ", mintedCollectionNft);
-            const createdCandyMachineID = await generateCandyMachine(wallet, mintedCollectionNft);
-            await updateCandyMachine(wallet, createdCandyMachineID);
-            await addItems(wallet, createdCandyMachineID, image_url);
-        }
+        //     console.log("minted CollectionNFT : ", mintedCollectionNft);
+        //     const createdCandyMachineID = await generateCandyMachine(wallet, mintedCollectionNft);
+        //     await updateCandyMachine(wallet, createdCandyMachineID);
+        //     await addItems(wallet, createdCandyMachineID, image_url);
+        // } else {
+        //     const image_url = 'https://gateway.pinata.cloud/ipfs/' + hash + "/images/0.jpeg";
+        //     // console.log("############");
+        //     // console.log(image_url);
+        //     const mintedCollectionNft = await createCollectionNft(image_url, wallet);
+        //     console.log("minted CollectionNFT : ", mintedCollectionNft);
+        //     const createdCandyMachineID = await generateCandyMachine(wallet, mintedCollectionNft);
+        //     await updateCandyMachine(wallet, createdCandyMachineID);
+        //     await addItems(wallet, createdCandyMachineID, image_url);
+        // }
 
     }
 
@@ -562,8 +562,6 @@ export const NewCollectionView: FC = ({ }) => {
 
                             </Label>
                             {/* </DropTarget> */}
-
-
                         </div>
                         <p className='text-xm text-gray-500 dark:text-gray-400'>
                             Download example input folder

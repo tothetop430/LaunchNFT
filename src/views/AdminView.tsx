@@ -20,7 +20,7 @@ export const AdminView: FC<AdminType> = ({ }) => {
     const [launchpad, setLaunchpad] = useState({} as any);
 
     useEffect(() => {
-        GetLaunchpad(wallet, connection).then((value)=>{
+        GetLaunchpad(wallet).then((value)=>{
             if(value){
                 //setLaunchpad(value);
                 //setFeeWallet(value.feeWallet.toBase58());
