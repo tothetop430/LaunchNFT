@@ -6,7 +6,7 @@ import { AnchorProvider, Program, Wallet, BN } from "@coral-xyz/anchor";
 import { Metaplex, keypairIdentity, bundlrStorage, toMetaplexFile, toBigNumber, CreateCandyMachineInput, DefaultCandyGuardSettings, CandyMachineItem, toDateTime, sol, TransactionBuilder, CreateCandyMachineBuilderContext, walletAdapterIdentity } from "@metaplex-foundation/js";
 
 
-const programId = new PublicKey("HNztz1uSj4fyUfSnaJLeAtmf9pMqnmAFTJArNwBQhfqU");
+const programId = new PublicKey("J15m8CpBepW7zWG73o5cao74YrLCjUBCDgtRXroFM3jw");
 
 const RPC = 'https://api.devnet.solana.com';
 const SOLANA_CONNECTION = new Connection(RPC);
@@ -96,7 +96,7 @@ export async function Update(
 
   try {
     const program = GetLaunchpadProgram(wallet);
-
+console.log(">>>", feeCollectionSol);
     const feeCollection = new BN(feeCollectionSol);
     const transactionSignature = await program.methods
       .update({

@@ -18,11 +18,7 @@ export const AdminView: FC<AdminType> = ({ }) => {
     const [adminWallet, setAdminWallet] = useState('');
     const [backendWallet, setBackendWallet] = useState('');
     const [feeWallet, setFeeWallet] = useState('');
-    const [collectionFee, setCollectionFee] = useState(0);
-    const [preAdminWallet, setPreAdminWallet] = useState('');
-    const [preBackendWallet, setPreBackendWallet] = useState('');
-    const [preFeeWallet, setPreFeeWallet] = useState('');
-    const [preCollectionFee, setPreCollectionFee] = useState(0);
+    const [collectionFee, setCollectionFee] = useState('');
 
     const [launchpad, setLaunchpad] = useState({} as any);
 
@@ -30,10 +26,11 @@ export const AdminView: FC<AdminType> = ({ }) => {
         GetLaunchpad(wallet).then((value) => {
             if (value) {
                 setLaunchpad(value);
-                setPreAdminWallet(value.authority.toBase58());
-                setPreBackendWallet(value.backendWallet.toBase58());
-                setPreFeeWallet(value.feeWallet.toBase58());
-                setPreCollectionFee(value.feeCollection.toNumber() /  1000000000);
+                setAdminWallet(value.authority.toBase58());
+                setBackendWallet(value.backendWallet.toBase58());
+                setFeeWallet(value.feeWallet.toBase58());
+                setCollectionFee((value.feeCollection.toNumber() / 1000000000).toPrecision());
+                console.log(">>> collectionFee : ", collectionFee);
             }
 
         })
@@ -52,66 +49,66 @@ export const AdminView: FC<AdminType> = ({ }) => {
     }
 
     const onChangeCollectionFee = (e: ChangeEvent<HTMLInputElement>) => {
-        setCollectionFee(parseInt(e.target.value.trim()));
+        setCollectionFee(e.target.value.trim());
     }
 
-    const onClickCreateAdminWallet = async () => {
+    const onClickCreateAdminPanel = async () => {
         console.log("Create Btn clicked");
         await Initialize(
             wallet,
             new PublicKey(adminWallet),
             new PublicKey(backendWallet),
             new PublicKey(feeWallet),
-            collectionFee * 1000000000
+            parseFloat(collectionFee) * 1000000000
         );
     }
 
-    const updateAdminWallet = async () => {
-        console.log("Update Btn clicked");
+    const updateAdminPanel = async () => {
+        console.log("Update Btn clicked", adminWallet, collectionFee);
         await Update(
             wallet,
             new PublicKey(adminWallet),
             new PublicKey(backendWallet),
             new PublicKey(feeWallet),
-            collectionFee * 1000000000
+            parseFloat(collectionFee) * 1000000000
         );
     }
 
     const [openModal, setOpenModal] = useState(false);
 
     const onClickOKAtModal = () => {
-        setOpenModal(true);
-        updateAdminWallet();
+            setOpenModal(false);
+            updateAdminPanel();
     }
 
     return (
         <div className='flex flex-col justify-center items-center mx-auto my-8 p-14 w-4/5 md:w-2/3 lg:w-1/3 gap-3 bg-gray-400 bg-opacity-10 shadow-xl text-3xl text-white'>
             <div className='w-full'>
                 <div className="mb-2 block text-white">
-                    <Label htmlFor="adminWallet" defaultValue={preAdminWallet} value="Admin Wallet" style={{ color: "white" }} />
+                    <Label htmlFor="adminWallet" value="Admin Wallet" style={{ color: "white" }} />
                 </div>
-                <TextInput id="adminWallet" type="text" onChange={(e) => onChangeAdminWallet(e)} />
+                <TextInput id="adminWallet" type="text" defaultValue={adminWallet} onChange={(e) => onChangeAdminWallet(e)} />
             </div>
             <div className='w-full'>
                 <div className="mb-2 block">
-                    <Label htmlFor="backendWallet" defaultValue={preBackendWallet} value="Backend Wallet" style={{ color: "white" }} />
+                    <Label htmlFor="backendWallet" value="Backend Wallet" style={{ color: "white" }} />
                 </div>
-                <TextInput id="backendWallet" type="text" onChange={(e) => onChangeBackendWallet(e)} />
+                <TextInput id="backendWallet" type="text" defaultValue={backendWallet} onChange={(e) => onChangeBackendWallet(e)} />
             </div>
             <div className='w-full'>
                 <div className="mb-2 block">
-                    <Label htmlFor="feeWallet" defaultValue={preFeeWallet} value="Fee Wallet" style={{ color: "white" }} />
+                    <Label htmlFor="feeWallet" value="Fee Wallet" style={{ color: "white" }} />
                 </div>
-                <TextInput id="feeWallet" type="text" onChange={(e) => onChangeFeeWallet(e)} />
+                <TextInput id="feeWallet" type="text" defaultValue={feeWallet} onChange={(e) => onChangeFeeWallet(e)} />
             </div>
             <div className='w-full'>
                 <div className="mb-2 block">
-                    <Label htmlFor="collectionFee" defaultValue={preCollectionFee} value="Collection Fee" style={{ color: "white" }} />
+                    <Label htmlFor="collectionFee" value="Collection Fee" style={{ color: "white" }} />
                 </div>
-                <TextInput id="collectionFee" type="text" onChange={(e) => onChangeCollectionFee(e)} />
+                <TextInput id="collectionFee" type="text" defaultValue={collectionFee} onChange={(e) => onChangeCollectionFee(e)} />
             </div>
             <div className='flex flex-row justify-center mt-10 gap-4'>
-                <Button outline gradientDuoTone="greenToBlue" onClick={() => { onClickCreateAdminWallet() }}>
+                <Button outline gradientDuoTone="greenToBlue" onClick={() => { onClickCreateAdminPanel() }}>
                     Create Admin Panel
                 </Button>
                 <Button outline gradientDuoTone="greenToBlue" onClick={() => setOpenModal(true)}>
@@ -123,18 +120,11 @@ export const AdminView: FC<AdminType> = ({ }) => {
             <Modal show={openModal} size="md" onClose={() => setOpenModal(false)} popup>
                 <Modal.Header />
                 <Modal.Body>
-                    <div className="text-center">
+                    <div className="flex flex-col justify-center text-center">
                         <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
                         <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
                             Are you sure you want to update to current info?
                         </h3>
-                        <p>
-                            !!!
-                            {preAdminWallet}&rarr;{adminWallet}
-                            {preBackendWallet}&rarr;{backendWallet}
-                            {preFeeWallet}&rarr;{feeWallet}
-                            {preCollectionFee}&rarr;{collectionFee}
-                        </p>
                         <div className="flex justify-center gap-4">
                             <Button color="failure" onClick={() => onClickOKAtModal()}>
                                 {"Yes, I'm sure"}

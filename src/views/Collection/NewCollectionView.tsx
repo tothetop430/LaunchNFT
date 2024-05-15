@@ -147,7 +147,7 @@ export const NewCollectionView: FC = ({ }) => {
                         real_name: img_name
                     });
                 }
-                console.log(">>> push to newResult : ",  newLines);
+                console.log(">>> push to newResult : ", newLines);
                 newResults.push({ val: newLines });
             }
             setPictures(newResults);
@@ -285,7 +285,11 @@ export const NewCollectionView: FC = ({ }) => {
         setSecondRoyalty(newData);
     }
 
+    const [deploySuccess, setDeploySuccess] = useState(false);
+
     const handleDeploy = async () => {
+        setDeploySuccess(true);
+        setActiveTab(3);
         // const hash = uploadedRes["IpfsHash"];
         // const image_url = 'https://gateway.pinata.cloud/ipfs/' + hash + "/images/0.jpeg";
         // // console.log("############");
@@ -338,21 +342,21 @@ export const NewCollectionView: FC = ({ }) => {
                             <div className='flex flex-row gap-5'>
                                 <div className='px-1 w-1/3'>
                                     <div className="mb-2 block">
-                                        <Label htmlFor="collection_name" value="Collection Name" style={{color: "white"}} />
+                                        <Label htmlFor="collection_name" value="Collection Name" style={{ color: "white" }} />
                                     </div>
                                     <TextInput id="collection_name" type="email" placeholder="My NFTs" required color="gray"
                                         value={collection_name} onChange={(event) => setCollectionName((event.target as any).value)} />
                                 </div>
                                 <div className='px-1 w-1/3'>
                                     <div className="mb-2 block">
-                                        <Label htmlFor="symbol" value="Symbol" style={{color: "white"}} />
+                                        <Label htmlFor="symbol" value="Symbol" style={{ color: "white" }} />
                                     </div>
                                     <TextInput id="symbol" type="email" placeholder="MNFT" required color="gray"
                                         value={collection_symbol} onChange={(event) => setCollectionSymbol((event.target as any).value)} />
                                 </div>
                                 <div className='px-1 w-1/3'>
                                     <div className="mb-2 block">
-                                        <Label htmlFor="collection_description" value="Collection Description" style={{color: "white"}} />
+                                        <Label htmlFor="collection_description" value="Collection Description" style={{ color: "white" }} />
                                     </div>
                                     <TextInput id="collection_description" type="email" placeholder="My collection description" required color="gray"
                                         value={collection_description} onChange={(event) => setCollectionDescription((event.target as any).value)} />
@@ -360,16 +364,16 @@ export const NewCollectionView: FC = ({ }) => {
                             </div>
                             <div className='px-1 py-2'>
                                 <div className='mb-2'>
-                                    <Label htmlFor='launch_date' value='Launch Date' style={{color: "white"}}></Label>
+                                    <Label htmlFor='launch_date' value='Launch Date' style={{ color: "white" }}></Label>
                                 </div>
                                 <Datepicker id='launch_date' value={launch_date} onChange={(event) => setLaunchDate((event.target as any).value)} />
                             </div>
 
                             <div className="flex flex-col w-full items-start gap-2 pl-5 text-left">
                                 <ToggleSwitch className='mr-auto' checked={switch1} color="blue" label="Compressed NFTs" onChange={on_clicked_cntf_toggle} />
-                                {                            
+                                {
                                     !switch1 && <ToggleSwitch className='mr-auto' checked={switch2} color="blue" label="Immutable" onChange={setSwitch2} />
-}
+                                }
                                 {
                                     !switch1 && <ToggleSwitch className='mr-auto' checked={switch3 && !switch1} color="blue" label="Reveal Later" onChange={setSwitch3} />
                                 }
@@ -605,7 +609,10 @@ export const NewCollectionView: FC = ({ }) => {
                 {/* -------------------------- Success tab ------------------------------- */}
                 <Tabs.Item title="Success!">
                     <div className='flex flex-col items-center justify-start mt-10 gap-3 w-full h-full'>
-                        <p className="text-sm text-gray-500 dark:text-gray-400">Content 4</p>
+                        {
+                            deploySuccess &&
+                            <p className="text-3xl text-gray-500 dark:text-gray-800">You have deploied NFT successfully!</p>
+                        }
                     </div>
                 </Tabs.Item>
 
