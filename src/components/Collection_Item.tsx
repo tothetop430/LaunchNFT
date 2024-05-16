@@ -15,7 +15,7 @@ export const Collection_Item: React.FC<any> = ({ project }) => {
 
     
     return (
-        <div className="flex flex-row w-full overflow-hidden item-center border border-gray-200 rounded-lg bg-gray-900 hover:bg-gray-800">
+        <div className="flex flex-row w-full overflow-hidden items-center border border-gray-200 rounded-lg bg-gray-900 hover:bg-gray-800">
             <div className="flex flex-row w-1/2 h-auto bg-gray-500">
                 <img className='object-cover' src={image_url} alt="NFT Image" style={{width: "100%", height: "auto" }} />
             </div>
@@ -30,8 +30,8 @@ export const Collection_Item: React.FC<any> = ({ project }) => {
 
                 <div className="flex flex-col jsutify-center items-start overflow-y-hidden my-3">
                     <h1 className="h-10 my-4 font-extrabold text-gray-900 dark:text-white text-2xl md:text-3xl lg:text-3xl" style={{ color: "white" }}>{name}</h1>
-                    <p className="h-20 text-sm font-normal text-gray-500 lg:text-md dark:text-gray-400" style={{ color: "white" }}>
-                        {project.account.isCnft ? "cNFT" : ""}
+                    <p className="h-10 text-sm font-normal text-gray-500 lg:text-md dark:text-gray-400" style={{ color: "white" }}>
+                        {project.account.isCnft ? "cNFT" : "   "}
                     </p>
                 </div>
                 {/* <div className="w-full bg-gray-200 rounded-full h-2.5 mt-4 dark:bg-gray-700">

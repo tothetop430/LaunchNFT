@@ -59,10 +59,10 @@ export const CollectionsView: FC = ({ }) => {
 
     //All information can be find in item.image_url
     return (
-        <div className='flex flex-row w-full'>
+        <div className='flex flex-row flex-wrap justify-start items-center w-full my-10'>
             {/* {projects.length} */}
             {projects.map((item, ind) => (
-                <div className='flex flex-row flex-wrap justify-start items-center m-4 w-1/4 gap-5' key={"project_" + ind}>
+                <div className='flex flex-row flex-wrap w-1/4 p-4' key={"project_" + ind}>
                     <a className='w-full' href={"project_detail/" + item.publicKey.toString()}>
                         <Collection_Item project={item} />
                     </a>
