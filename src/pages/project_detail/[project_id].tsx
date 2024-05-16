@@ -33,6 +33,10 @@ const Home: NextPage = (props: ItemProps) => {
 
     const [mintedNfts, setMintedNfts] = useState([])
 
+    const [mintLimit, setMintLimit] = useState(0);
+    const [mintCost, setMintCost] = useState(0.0);
+    const [launchDateTime, setLaunchDateTime] = useState("Not now");
+
 
 
     // useEffect(() => {
@@ -58,7 +62,9 @@ const Home: NextPage = (props: ItemProps) => {
                     setCandyMachine(value2)
                     console.log("candyMachine", value2);
                     changeUrl(value2, value)
-                    
+                    setMintLimit(value2.candyGuard.guards.mintLimit.limit);
+                    setMintCost(parseFloat(value2.candyGuard.guards.solPayment.amount.basisPoints) / 1000000000);
+                    setLaunchDateTime(formatDateToUTC(value2.candyGuard.guards.startDate.date as number))
                 })
 
                 changeUrlForImg(value);
@@ -132,7 +138,8 @@ useEffect(() => {
 return (
     <div className="pb-10">
         <div className="flex flex-row m-4">
-            <CollectionDetailView name={project.name} description={"Created " + formatDateToUTC(project.createAt as number)} image_url={collectionImgUrl} />
+            <CollectionDetailView name={project.name} description={"Created " + formatDateToUTC(project.createAt as number)} image_url={collectionImgUrl} 
+             mint_limit = {mintLimit} mint_cost = {mintCost} launchdatetime = {launchDateTime}/>
         </div>
         <div className="w-full px-10 justify-center items-center flex flex-col">
             <h1 className="text-sm flex text-4xl">Minted NFTs</h1>
