@@ -89,7 +89,7 @@ export const AdminView: FC<AdminType> = ({ }) => {
 
     return (
         <div className='flex flex-col justify-center items-center mx-auto my-8 p-14 w-4/5 md:w-2/3 lg:w-1/3 gap-3 bg-gray-400 bg-opacity-10 shadow-xl text-3xl text-white'>
-            { (wallet.publicKey?.toBase58() != adminWallet) && <span style={{color: "red", fontSize: "17px"}}>&#8855;&nbsp;You aren not Admin!!!&nbsp;&#8855;</span> }
+            { (wallet.publicKey?.toBase58() != adminWallet) && <span style={{color: "red", fontSize: "17px"}}>&#8855;&nbsp;You are not Admin!!!&nbsp;&#8855;</span> }
             <div className='w-full'>
                 <div className="mb-2 block text-white">
                     <Label htmlFor="adminWallet" value="Admin Wallet" style={{ color: "white" }} />

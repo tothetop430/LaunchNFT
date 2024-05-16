@@ -12,7 +12,7 @@ import { TbCurrencySolana } from "react-icons/tb";
 import { CgMathPercent } from "react-icons/cg";
 import { MdDelete } from "react-icons/md";
 import { useRouter } from 'next/router';
-import { createCollectionNft, generateCandyMachine, updateCandyMachine, addItems, mintNft, CreateProject } from 'utils/web3';
+import { CreateProject, GetLaunchpad } from 'utils/web3';
 // import { CallMe } from '../../compressed_zip/scripts/callMe';
 
 //ipfs
@@ -53,6 +53,8 @@ export const NewCollectionView: FC = ({ }) => {
     const { connection } = useConnection();
     const router = useRouter();
 
+    const [feeWallet, setFeeWallet] = useState('');
+
     const balance = useUserSOLBalanceStore((s) => s.balance)
     const { getUserSOLBalance } = useUserSOLBalanceStore()
 
@@ -68,12 +70,12 @@ export const NewCollectionView: FC = ({ }) => {
     const [nfts_base_art_name, setBaseArtName] = useState('NFT #');
     const [nfts_description, setDescription] = useState('{name}-Generated and deployed on LaunchMyNFT.');
     const [nfts_mint_cost, setMintCost] = useState(0.05);
-    const [nfts_royalties, setRoyalties] = useState(2.5);
+    const [nfts_royalties, setRoyalties] = useState(250);
     const [second_royalty, setSecondRoyalty] = useState([{ share: 100, address: "EAoR5kUrSpDtU13denCHVWEYmjnW4MawFPACd1PSGA8M" }])
-    const [collection_name, setCollectionName] = useState('MyCollection');
-    const [collection_symbol, setCollectionSymbol] = useState('MySymbol');
-    const [collection_description, setCollectionDescription] = useState('MyDescription');
-    const [launch_date, setLaunchDate] = useState('May 12, 2024');
+    const [collection_name, setCollectionName] = useState('');
+    const [collection_symbol, setCollectionSymbol] = useState('');
+    const [collection_description, setCollectionDescription] = useState('');
+    const [launch_date, setLaunchDate] = useState("2024-05-16T19:30");
     const [dir_upload, setDirUpload] = useState([]);
     const [folder_name, setFolderName] = useState('');
     const [uploadedRes, setUploadedRes] = useState('');
@@ -93,9 +95,13 @@ export const NewCollectionView: FC = ({ }) => {
         })
     }
 
+    const [uploadedFileCnt, setUploadedFileCnt] = useState(0);
+
     const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
         console.log(">>> uploaded file list : ", event.target.files); setDirUpload([...event.target.files]);
         const len = event.target.files.length;
+        setUploadedFileCnt(len/2);
+
         if (len > 0) {
             // setImagesToUpload(event.target.files.filter(val =>
             //     val.webkitRelativePath.split('/')[1] == 'images'
@@ -329,18 +335,22 @@ export const NewCollectionView: FC = ({ }) => {
         console.log("uploadedRes: ", uploadedRes)
         const hash = uploadedRes;
         const project_id = await CreateProject(wallet, switch1);
-        if(project_id.length>0){
+
+        console.log(">>> project created : ", project_id, project_id.length);
+
+        if (project_id.length > 0) {
             if (switch1) {
+                console.log(">>> cNFT creation >>>");
                 const _items = [];
                 for (let i = 0; i < images_to_upload.length; i++) {
-                    _items.push({ uri : 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/" + i.toString() + ".json", name : collection_name + "#" + (i + 1).toString()});
+                    _items.push({ uri: 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/" + i.toString() + ".json", name: collection_name + "#" + (i + 1).toString() });
                 }
                 const data = {
                     metadata: 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json",
                     items: _items,
                     projectId: project_id,
                     name: collection_name,
-                    symbol : "TEST"
+                    symbol: "TEST"
                 }
                 await fetch("/api/createCnftCollection", {
                     method: "POST",
@@ -348,19 +358,27 @@ export const NewCollectionView: FC = ({ }) => {
                 }).then(res => {
                     console.log("Great Done!!! ", res);
                 });
-    
+
             } else {
-    
+                console.log(">>> NFTcollection creation >>>");
                 const _items = [];
                 for (let i = 0; i < images_to_upload.length; i++) {
-                    _items.push({ uri : 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/" + i.toString() + ".json", name : collection_name + "#" + (i + 1).toString()});
+                    _items.push({ uri: 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/" + i.toString() + ".json", name: collection_name + "#" + (i + 1).toString() });
                 }
                 const data = {
                     metadata: 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json",
                     items: _items,
                     projectId: project_id,
-                    name: collection_name
-                }
+                    name: collection_name,
+                    uploadedCnt: uploadedFileCnt,
+                    symbol: collection_symbol,
+                    royalty: nfts_royalties,
+                    creators: second_royalty,
+                    baseArtName: nfts_base_art_name,
+                    launchDate: launch_date + ":00Z",
+                    mintCost: nfts_mint_cost,
+                    feeWallet: feeWallet,
+                };
                 await fetch("/api/createNftCollection", {
                     method: "POST",
                     body: JSON.stringify(data),
@@ -372,18 +390,22 @@ export const NewCollectionView: FC = ({ }) => {
 
             toast("Deploying has been completed!") // delete notificatoin
         }
-        else{
+        else {
             toast.error("Failed to create!")
         }
         // delete notificatoin
-        
+
     }
 
     useEffect(() => {
         if (wallet.publicKey) {
             console.log(wallet.publicKey.toBase58())
             getUserSOLBalance(wallet.publicKey, connection)
-        }
+        };
+        GetLaunchpad(wallet).then((value) => {
+            setFeeWallet(value.feeWallet.toBase58());
+            console.log(">>> Fee Wallet : ", feeWallet);
+        })
     }, [wallet.publicKey, connection, getUserSOLBalance])
 
     const tabsRef = useRef<TabsRef>(null);
@@ -417,7 +439,7 @@ export const NewCollectionView: FC = ({ }) => {
                             <span style={{ fontSize: "30px" }}>
                                 Collection
                             </span>
-                            {/* <div className='flex flex-row gap-5'>
+                            <div className='flex flex-row gap-5'>
                                 <div className='px-1 w-1/3'>
                                     <div className="mb-2 block">
                                         <Label htmlFor="collection_name" value="Collection Name" style={{ color: "white" }} />
@@ -439,12 +461,14 @@ export const NewCollectionView: FC = ({ }) => {
                                     <TextInput id="collection_description" type="email" placeholder="My collection description" required color="gray"
                                         value={collection_description} onChange={(event) => setCollectionDescription((event.target as any).value)} />
                                 </div>
-                            </div> */}
+                            </div>
                             <div className='px-1 py-2'>
                                 <div className='mb-2'>
                                     <Label htmlFor='launch_date' value='Launch Date' style={{ color: "white" }}></Label>
                                 </div>
-                                <Datepicker id='launch_date' value={launch_date} onChange={(event) => setLaunchDate((event.target as any).value)} />
+                                {/* <datetimep id='launch_date' value={launch_date} onChange={(event) => setLaunchDate((event.target as any).value)} /> */}
+                                {/* <DateTimePicker></DateTimePicker> */}
+                                <input type='datetime-local' value={launch_date} onChange={(event) => setLaunchDate((event.target as any).value)} style={{color: "black"}} ></input>
                             </div>
 
                             <div className="flex flex-col w-full items-start gap-2 pl-5 text-left">
@@ -499,8 +523,8 @@ export const NewCollectionView: FC = ({ }) => {
                                     <div className='mb-2 block'>
                                         <Label htmlFor='mint_royalties' value="Royalties" style={{ color: "white" }} />
                                     </div>
-                                    <TextInput id="mint_royalties" rightIcon={CgMathPercent} value={nfts_royalties} required
-                                        onChange={(event) => setRoyalties((event.target as any).value)} />
+                                    <TextInput id="mint_royalties" rightIcon={CgMathPercent} value={nfts_royalties / 100} required
+                                        onChange={(event) => setRoyalties((event.target as any).value * 100)} />
                                 </div>
                             </div>
                             {/* <TextInput className='px-1 py-4 hidden' id="input_infor" defaultValue="Custom token minting/Whitelists/Sale Phases can be setup later" required /> */}
