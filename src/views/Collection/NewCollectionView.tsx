@@ -70,9 +70,9 @@ export const NewCollectionView: FC = ({ }) => {
     const [nfts_mint_cost, setMintCost] = useState(0.05);
     const [nfts_royalties, setRoyalties] = useState(2.5);
     const [second_royalty, setSecondRoyalty] = useState([{ share: 100, address: "EAoR5kUrSpDtU13denCHVWEYmjnW4MawFPACd1PSGA8M" }])
-    const [collection_name, setCollectionName] = useState('');
-    const [collection_symbol, setCollectionSymbol] = useState('');
-    const [collection_description, setCollectionDescription] = useState('');
+    const [collection_name, setCollectionName] = useState('MyCollection');
+    const [collection_symbol, setCollectionSymbol] = useState('MySymbol');
+    const [collection_description, setCollectionDescription] = useState('MyDescription');
     const [launch_date, setLaunchDate] = useState('May 12, 2024');
     const [dir_upload, setDirUpload] = useState([]);
     const [folder_name, setFolderName] = useState('');
@@ -213,7 +213,7 @@ export const NewCollectionView: FC = ({ }) => {
             const temp_files = [];
             for (let i = 0; i < metadatas_to_upload.length; i++) {
                 let res = await parseJsonFile(metadatas_to_upload[i]);
-                let mut_res = Object.assign({}, res, { image: 'https://gateway.pinata.cloud/ipfs/' + ImgHash + i.toString() + ".jpeg" });
+                let mut_res = Object.assign({}, res, { image: 'https://gateway.pinata.cloud/ipfs/' + ImgHash + "/images/" + i.toString() + ".jpeg" });
                 temp_files.push(mut_res);
             }
 
@@ -363,12 +363,10 @@ export const NewCollectionView: FC = ({ }) => {
                 project_id: project_id
             }
 
-            await fetch("/api/createCnftCollection", {
+            const res = await fetch("/api/createCnftCollection", {
                 method: "POST",
                 body: JSON.stringify(data),
-            }).then(res => {
-                console.log("Great Done!!! ", res);
-            });
+            })
 
         } else {
 
