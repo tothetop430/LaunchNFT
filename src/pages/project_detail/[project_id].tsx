@@ -6,7 +6,7 @@ import { Label, RangeSlider } from "flowbite-react";
 import Trending from "../../components/trending/trending";
 import { Badge, Button } from "flowbite-react";
 import { useState, useEffect } from "react";
-import { GetCandyMachine, GetMintedNfts, GetProject, mintNft } from "utils/web3";
+import { GetCandyMachine, GetMintedNfts, GetProject, mintNft, mintNftWithWallet } from "utils/web3";
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import useUserSOLBalanceStore from '../../stores/useUserSOLBalanceStore';
 import { useRouter } from "next/router";
@@ -52,8 +52,8 @@ const Home: NextPage = (props: ItemProps) => {
         
     }, [project_id])
 
-    const onClickMint = () => {
-        mintNft(wallet, candyMachineId.toString());
+    const onClickMint = async () => {
+        mintNftWithWallet(wallet, candyMachineId.toString());
     }
 
     useEffect(() => {
