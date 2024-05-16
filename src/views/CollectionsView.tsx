@@ -2,14 +2,15 @@ import { FC, useEffect, useState } from 'react';
 import { Collection_Item } from 'components/Collection_Item';
 import datalist from '../data/CollectionsData.json';
 import { GetNftCollections } from 'utils/web3';
+import Link from 'next/link';
 
 export const CollectionsView: FC = ({ }) => {
     const [collections, setCollections] = useState([]);
     useEffect(() => {
         GetNftCollections().then((values) => {
-            // setCollections(values);
+            setCollections(values.filter(val => val.uri.endsWith("/metadata/0.json")));
             // console.log("collections===>", values.)
-            console.log("eeeeeeeeeeee", values)
+            console.log("eeeeeeeeeeee", values.filter(val => val.uri.endsWith("/metadata/0.json")))
         })
     }, [])
 
@@ -29,9 +30,15 @@ export const CollectionsView: FC = ({ }) => {
                 </div>
             ))} */}
             {collections.map((item, ind) => (
-                <div key = {"collections_" + ind}>
-                    <a href = {"collections/" + item.creators[0].address + "/" + item.name}>
+                <div key={"collections_" + ind}>
+                    {/* {
+                        console.log(item.uri)
+                    } */}
+                    {/* <a href = {"collections/" + item.name + "/" + item.name}>
                         <Collection_Item name = {item.name} description='Find yourself' image_url={image_url} creator='Find yourself'/>
+                    </a> */}
+                    <a href={"collections/" + item.uri.split("/")[4] + "/" + item.name}>
+                        <Collection_Item name={item.name} description='Find yourself' image_url={image_url} creator='Find yourself' />
                     </a>
                 </div>
             ))}
