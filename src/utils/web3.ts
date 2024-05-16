@@ -271,7 +271,7 @@ export async function generateCandyMachine(WALLET: Keypair, COLLECTION_NFT_MINT:
         startDate: { date: toDateTime("2022-10-17T16:00:00Z") },
         mintLimit: {
           id: 1,
-          limit: 2,
+          limit: 20,
         },
         solPayment: {
           amount: sol(0.1),
