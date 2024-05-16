@@ -71,7 +71,7 @@ export async function GetNftCollections() {
   const program = GetLaunchpadProgram(wallet);
   console.log("ssssss");
   const project = await program.account.project.all();
-  console.log("projects" + project.length);
+  console.log("projects-->" + project.length);
   const nftCollections = [];
   for (let i = 0; i < project.length; i++) {
     try {
@@ -88,7 +88,7 @@ export async function GetNftCollections() {
       // console.log("Err in web3.ts", err);
     }
 
-    return nftCollections;
+    // return nftCollections;
 
   }
   return nftCollections;
