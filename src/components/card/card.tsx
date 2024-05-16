@@ -4,10 +4,10 @@ import NFT from "./images/NFT.svg"
 import Image from "next/image"
 
 const Card = ({
-        title, displayMode, image, floor_price
-    }:{
-        title?: string, displayMode: string, image?: string, floor_price?: string
-    }) => {
+    title, displayMode, image, floor_price
+}: {
+    title?: string, displayMode: string, image?: string, floor_price?: string
+}) => {
 
     let cardContainerClass
 
@@ -16,30 +16,15 @@ const Card = ({
     } else {
         cardContainerClass = "card--container-lm"
     }
-    
+
     return (
-        <div className={cardContainerClass}>
-            <div className="
-                self-center
-                rounded-lg
-                h-150px
-                w-150px
-            ">
-                <Image width={125} height={125} src={(image) ? image : NFT} alt="nft"/>
+        <div className="flex flex-col w-30">
+            <div className="w-full">
+                <img src={image} alt="" style={{ width: "200px", height: "200px" }} />
+                {/* <Image width={200} height={150} src={image} alt="nft"></Image> */}
             </div>
-            <div id="title">{title || "Liquid Wave"}</div>
-            <div className="info--container">
-                <div className="info">
-                    <div>Auction Time</div>
-                    <div>Current Bid</div>
-                </div>
-                <div id="bid">1.50 SOL</div>
-            </div>
-            <div className="vals">
-                <div>3h 1m 50s</div>
-                <div>{Number(floor_price) / LAMPORTS_PER_SOL || "20"} SOL</div>
-            </div>
-            <button id="bid--button">Place a Bid</button>
+            <div id="title">{title}</div>
+            <div className="vals">TTT</div>
         </div>
     )
 }
