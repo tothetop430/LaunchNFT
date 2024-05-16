@@ -4,12 +4,20 @@ import datalist from '../data/CollectionsData.json';
 import { GetNftCollections } from 'utils/web3';
 
 export const CollectionsView: FC = ({ }) => {
+
     const [collections, setCollections] = useState([]);
+
     useEffect(() => {
         GetNftCollections().then((values) => {
-            // setCollections(values);
-            // console.log("collections===>", values.)
-            console.log("eeeeeeeeeeee", values)
+            setCollections(values);
+            console.log("collections===>", values);
+            console.log(">>> ", values)
+            const dataList = [];
+            for (let i = 0; i < values.length; i++) {
+                dataList.push(values[i].uri + "/metadata/0.json");
+            }
+            console.log(">>> dataList : ", dataList);
+            setCollections(dataList);
         })
     }, [])
 
@@ -21,17 +29,10 @@ export const CollectionsView: FC = ({ }) => {
     //All information can be find in item.image_url
     return (
         <div className='flex flex-row flex-wrap justify-start items-center m-4 w-full gap-5'>
-            {/* {datalist.map((item, ind) => (
-                <div key={"collections_" + ind}>
-                    <a href={"collections/" + item.properties.creators[0].address + "/" + item.collections}>
-                        <Collection_Item name={item.name} description={item.description} image_url={item.image} collections = {item.collections} />
-                    </a>
-                </div>
-            ))} */}
             {collections.map((item, ind) => (
-                <div key = {"collections_" + ind}>
-                    <a href = {"collections/" + item.creators[0].address + "/" + item.name}>
-                        <Collection_Item name = {item.name} description='Find yourself' image_url={image_url} creator='Find yourself'/>
+                <div key={"collections_" + ind}>
+                    <a href={"/collection_detail"}>
+                        <Collection_Item name={item.name} description='Find yourself' image_url={item.image} creator='Find yourself' />
                     </a>
                 </div>
             ))}
