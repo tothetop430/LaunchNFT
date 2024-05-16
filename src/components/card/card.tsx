@@ -4,9 +4,9 @@ import NFT from "./images/NFT.svg"
 import Image from "next/image"
 
 const Card = ({
-    title, displayMode, image, floor_price
+    title, displayMode, image, floor_price, collectionName
 }: {
-    title?: string, displayMode: string, image?: string, floor_price?: string
+    title?: string, displayMode: string, image?: string, floor_price?: string, collectionName?: string,
 }) => {
 
     let cardContainerClass
@@ -24,7 +24,7 @@ const Card = ({
                 {/* <Image width={200} height={150} src={image} alt="nft"></Image> */}
             </div>
             <div id="title">{title}</div>
-            <div className="vals">TTT</div>
+            <div className="vals">{collectionName}</div>
         </div>
     )
 }

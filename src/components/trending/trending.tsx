@@ -28,6 +28,7 @@ const Trending = ({ displayMode, data }: { displayMode: string, data?: nftData }
                     image={obj.image}
                     // floor_price={obj.floorPrice}
                     floor_price={obj.seller_fee_basis_points}
+                    collectionName={obj.collectionName}
                 />
             })
     }

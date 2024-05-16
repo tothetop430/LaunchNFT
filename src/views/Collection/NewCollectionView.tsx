@@ -348,7 +348,7 @@ export const NewCollectionView: FC = ({ }) => {
                 const data = {
                     metadata: 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json",
                     items: _items,
-                    project_id: project_id,
+                    projectId: project_id,
                     name: collection_name,
                     symbol: "TEST"
                 }

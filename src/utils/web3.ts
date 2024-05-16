@@ -7,10 +7,11 @@ import {
   ValidDepthSizePair,
   getConcurrentMerkleTreeAccountSize,
 } from "@solana/spl-account-compression";
-import crypto from 'crypto';
+import crypto, { sign } from 'crypto';
 import { CreateMetadataAccountArgsV3 } from "@metaplex-foundation/mpl-token-metadata";
 import { createTree, createCollection, mintCompressedNFTIxn } from "./compression"
 import { NFTMetadata, createCompressedNFTMetadata } from "./onChainNFTs";
+import bs58 from "bs58";
 
 const programId = new PublicKey("MFuvWTr6ihjMmNrJ1Yb6wXeqgYqWQokQ8wb12SMf6XY");
 const RPC1 = 'https://endpoints.omniatech.io/v1/sol/devnet/52013a8ea3cb41299952e259357fbc3f';
@@ -30,6 +31,20 @@ export const getProjectPda = (projectNumber: BN) => {
   return PublicKey.findProgramAddressSync(
     [Buffer.from("project"), projectNumber.toArrayLike(Buffer, "le", 8)],
     programId,
+  )[0]
+}
+const META_PID = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
+export const getMetadataPda = (nftMint: PublicKey) => {
+  return PublicKey.findProgramAddressSync(
+    [Buffer.from("metadata"), META_PID.toBuffer(), nftMint.toBuffer()],
+    META_PID,
+  )[0]
+}
+
+export const getMasterEditionPda = (nftMint: PublicKey) => {
+  return PublicKey.findProgramAddressSync(
+    [Buffer.from("metadata"), META_PID.toBuffer(), nftMint.toBuffer(), Buffer.from("edition"),],
+    META_PID,
   )[0]
 }
 
@@ -145,6 +160,7 @@ export async function CreateProject(
   isCnft: boolean
 ) {
   try {
+    console.log("isCnft ->", isCnft);
     const program = GetLaunchpadProgram(wallet);
     const launchpadAccount = await program.account.launchpad.fetch(launchpadPda);
     const project = getProjectPda(launchpadAccount.projectCount);
@@ -346,29 +362,31 @@ export async function createCollectionAndMerkleTree(payer: Keypair, name: string
 
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
-  return { collectionMint: collection.mint, merkleTree: tree };
+  return {collectionMint : collection.mint.toString(), merkleTree : tree.treeAddress.toString()};
 }
 
 export async function mintCompressedNFT(
-  payer: WalletContextState,
-  receiver: PublicKey,
+  payer1: WalletContextState, 
+  receiver: PublicKey, 
   treeAddress: PublicKey,
   collectionMint: PublicKey,
-  collectionMetadataAccount: PublicKey,
-  collectionMasterEditionAccount: PublicKey,
+  // collectionMetadataAccount: PublicKey,
+  // collectionMasterEditionAccount: PublicKey,
   nftMetadata: NFTMetadata
-) {
-
-  const compressedNFTMetadata = createCompressedNFTMetadata(nftMetadata, payer);
-  const mintIxn = mintCompressedNFTIxn(
-    payer,
-    treeAddress,
-    collectionMint,
-    collectionMetadataAccount,
-    collectionMasterEditionAccount,
-    compressedNFTMetadata,
-    receiver,
-  );
+){
+  const payer = Keypair.fromSecretKey(bs58.decode("41a14iDkoRa6LMLAg8QVRyEeMd2qbneWNzw3GzEKriLdD5NGfNJ9AWJTMtLVh3gnq5i7n2LoKbSo1NN9Ud6s1n4p"));
+const compressedNFTMetadata = createCompressedNFTMetadata(nftMetadata, payer);
+const collectionMetadataAccount = getMetadataPda(collectionMint);
+const collectionMasterEditionAccount = getMasterEditionPda(collectionMint);
+const mintIxn = mintCompressedNFTIxn(
+  payer,
+  treeAddress,
+  collectionMint,
+  collectionMetadataAccount,
+  collectionMasterEditionAccount,
+  compressedNFTMetadata,
+  receiver,
+);
 
   try {
     // construct the transaction with our instructions, making the `payer` the `feePayer`
@@ -383,13 +401,14 @@ export async function mintCompressedNFT(
     );
     tx.feePayer = payer.publicKey;
 
-    // send the transaction to the cluster
-    // const txSignature = await sendAndConfirmTransaction(SOLANA_CONNECTION2, tx, [payer], {
-    //   commitment: "confirmed",
-    //   skipPreflight: true,
-    // });
-
-    const txSignature = await payer.sendTransaction(tx, SOLANA_CONNECTION1);
+  // send the transaction to the cluster
+  let blockhash = (await SOLANA_CONNECTION2.getLatestBlockhash('finalized')).blockhash;
+  tx.recentBlockhash = blockhash;
+  const txSignature = await sendAndConfirmTransaction(SOLANA_CONNECTION2, tx, [payer], {
+    commitment: "confirmed",
+    skipPreflight: true,
+  });
+  // const txSignature = await SOLANA_CONNECTION2.sendTransaction(signedTx, [collectionAuthority]);
 
     console.log("\nSuccessfully minted the compressed NFT!");
     // console.log(explorerURL({ txSignature, cluster: "mainnet-beta" }));
