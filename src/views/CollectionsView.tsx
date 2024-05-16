@@ -9,8 +9,8 @@ export const CollectionsView: FC = ({ }) => {
 
     useEffect(() => {
         GetNftCollections().then((values) => {
-            setCollections(values.filter(val => val.uri.endsWith("/metadata/0.json")));
-            console.log("eeeeeeeeeeee", collections);
+            setCollections(values.filter(val => val.uri.endsWith("/metadata/0.json") && val.candyMachineId !== null));
+            console.log("eeeeeeeeeeee", values.filter(val => val.uri.endsWith("/metadata/0.json") && val.candyMachineId !== null));
 
         })
     }, [])
@@ -25,7 +25,7 @@ export const CollectionsView: FC = ({ }) => {
         <div className='flex flex-row flex-wrap justify-start items-center m-4 w-full gap-5'>
             {collections.map((item, ind) => (
                 <div key={"collections_" + ind}>
-                    <a href={"collections/" + item.properties.creators[0].address + "/" + item.collections}>
+                    <a href={"collections/" + item.uri.split("/")[4] + "/" + item.candyMachineId}>
                         <Collection_Item name={item.name} description={item.description} image_url={item.image} />
                     </a>
                 </div>
