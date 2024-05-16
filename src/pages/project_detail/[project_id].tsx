@@ -11,7 +11,7 @@ import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import useUserSOLBalanceStore from '../../stores/useUserSOLBalanceStore';
 import { useRouter } from "next/router";
 import { formatDateToUTC } from '../../utils/formatData';
-import { convertResponseToJson, convertResponseToImageURL } from "utils/convertResponse";
+import { convertResponseToJson} from "utils/convertResponse";
 // import axios, { AxiosResponse } from 'axios';
 // import { CollectionDetailView } from "../../views/CollectionDetailView";
 
