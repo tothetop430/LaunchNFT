@@ -1,22 +1,39 @@
 import { FC, useEffect, useState } from 'react';
 import { Collection_Item } from 'components/Collection_Item';
-import { GetNftCollections } from 'utils/web3';
+import { CreateProject, GetNftCollections } from 'utils/web3';
 import Link from 'next/link';
+import { toast } from 'react-toastify';
 
 export const CollectionsView: FC = ({ }) => {
 
     const [collections, setCollections] = useState([]);
 
     useEffect(() => {
-        GetNftCollections().then((values) => {
-            setCollections(values.filter(val => val.uri.endsWith("/metadata/0.json")));
-            // console.log("collections===>", values.)
-            console.log("loaded values", values.filter(val => val.uri.endsWith("/metadata/0.json")))
+        GetNftCollections().then(async (values) => {
+            console.log(">>> nft collections : ", values);
+            let receivedData = [];
+
+            for (let i = 0; i < values.length; i++) {
+                const data = {
+                    uri: values[i].uri
+                };
+
+                await fetch("/api/getNftMetaData", {
+                    method: "POST",
+                    body: JSON.stringify(data),
+                }).then(res => {
+                    console.log("Great Done!!! ", res);
+                });
+            }
+
+
+            // setCollections(values.filter(val => val.uri.endsWith("/metadata/0.json")));
+            console.log(">>> collections : ",)
         })
     }, [])
 
     const image_url = './NFT.svg'; //have to get from url
-    const description = "GetNftCollections Err->16 UnexpectedAccountError: The account at the provided address [11111111111111111111111111111111] is not of the expected type [CandyMachine].Source: SDK Caused By: RangeError: Trying to access beyond buffer length";
+    const description = "GetNftCollections Err->16 UnexpectedAccountError: The account at the provided address [] is not of the expected type [CandyMachine].Source: SDK Caused By: RangeError: Trying to access beyond buffer length";
 
     //Read this:
 
