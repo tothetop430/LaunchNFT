@@ -11,7 +11,8 @@ import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import useUserSOLBalanceStore from '../../stores/useUserSOLBalanceStore';
 import { useRouter } from "next/router";
 import { formatDateToUTC } from '../../utils/formatData';
-import { convertResponseToJson } from "utils/convertResponse";
+import { convertResponseToJson} from "utils/convertResponse";
+import { PublicKey } from "@solana/web3.js";
 // import axios, { AxiosResponse } from 'axios';
 // import { CollectionDetailView } from "../../views/CollectionDetailView";
 
@@ -25,7 +26,7 @@ const Home: NextPage = (props: ItemProps) => {
 
     const router = useRouter();
     const { project_id } = router.query;
-    const [project, setProject] = useState<{ name: string, createAt: number }>({ name: '', createAt: 0 });
+    const [project, setProject] = useState<{ isCnft:boolean, name: string, createAt: number , candyMachineId : PublicKey, collectionMint : PublicKey}>({isCnft: false, name: '', createAt: 0, candyMachineId: null, collectionMint: null });
     const [candyMachineId, setCandyMachineId] = useState(null)
     const [candyMachine, setCandyMachine] = useState(null)
     const [collectionImgUrl, setColImgUrl] = useState('')
@@ -106,7 +107,13 @@ const Home: NextPage = (props: ItemProps) => {
     }
 
 const onClickMint = async () => {
-    mintNftWithWallet(wallet, candyMachineId.toString());
+        console.log("eeeeeeeeee", project.isCnft);
+        if(project.isCnft){
+            mintCompressedNFT(wallet,wallet.publicKey, new PublicKey(project.candyMachineId), new PublicKey(project.collectionMint) , {name: "test", uri:"https://shdw-drive.genesysgo.net/91uEGv2pFyc3nZPgya6L41FKaoD6GoTcGDHqhokHe7Hw/compressedNFT1.json", symbol:"test"});
+        }
+        else{
+        mintNftWithWallet(wallet, candyMachineId.toString());
+        }
 }
 
 useEffect(() => {
