@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import { Collection_Item } from 'components/Collection_Item';
 import datalist from '../data/CollectionsData.json';
 import { GetNftCollections } from 'utils/web3';
+import Link from 'next/link';
 
 export const CollectionsView: FC = ({ }) => {
 
@@ -9,15 +10,10 @@ export const CollectionsView: FC = ({ }) => {
 
     useEffect(() => {
         GetNftCollections().then((values) => {
-            setCollections(values);
-            console.log("collections===>", values);
-            console.log(">>> ", values)
-            const dataList = [];
-            for (let i = 0; i < values.length; i++) {
-                dataList.push(values[i].uri + "/metadata/0.json");
-            }
-            console.log(">>> dataList : ", dataList);
-            setCollections(dataList);
+            setCollections(values.filter(val => val.uri.endsWith("/metadata/0.json")));
+            // console.log("collections===>", values.)
+            console.log("eeeeeeeeeeee", values.filter(val => val.uri.endsWith("/metadata/0.json")))
+            
         })
     }, [])
 
@@ -31,8 +27,15 @@ export const CollectionsView: FC = ({ }) => {
         <div className='flex flex-row flex-wrap justify-start items-center m-4 w-full gap-5'>
             {collections.map((item, ind) => (
                 <div key={"collections_" + ind}>
-                    <a href={"/collection_detail"}>
-                        <Collection_Item name={item.name} description='Find yourself' image_url={item.image} creator='Find yourself' />
+                    <a href={"collections/" + item.properties.creators[0].address + "/" + item.collections}>
+                        <Collection_Item name={item.name} description={item.description} image_url={item.image} collections = {item.collections} />
+                    </a>
+                </div>
+            ))}
+            {collections.map((item, ind) => (
+                <div key = {"collections_" + ind}>
+                    <a href = {"collections/" + item.creators[0].address + "/" + item.name}>
+                        <Collection_Item name = {item.name} description='Find yourself' image_url={image_url} creator='Find yourself'/>
                     </a>
                 </div>
             ))}
