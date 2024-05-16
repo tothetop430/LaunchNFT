@@ -13,7 +13,7 @@ import { createTree, createCollection, mintCompressedNFTIxn } from "./compressio
 import { NFTMetadata, createCompressedNFTMetadata } from "./onChainNFTs";
 import bs58 from "bs58";
 
-const programId = new PublicKey("MFuvWTr6ihjMmNrJ1Yb6wXeqgYqWQokQ8wb12SMf6XY");
+const programId = new PublicKey("6foDgAivQKhJwiHkbW8X6gyoZ1PJi338AhffirgUA8Ym");
 const RPC1 = 'https://endpoints.omniatech.io/v1/sol/devnet/52013a8ea3cb41299952e259357fbc3f';
 const RPC2 = 'https://api.devnet.solana.com';
 const SOLANA_CONNECTION1 = new Connection(RPC1);
@@ -435,7 +435,7 @@ export async function generateCandyMachine(WALLET: Keypair, COLLECTION_NFT_MINT:
       symbol: data.symbol,
       maxEditionSupply: toBigNumber(0), // 0 reproductions of each NFT allowed
       isMutable: true,
-      creators: data.creators, // [ { address: WALLET.publicKey, share: 100 }, ],
+      creators: data.creators.map((item: any)=>{ return {address: new PublicKey(item.address), share: item.share}}), // [ { address: WALLET.publicKey, share: 100 }, ],
       collection: {
         address: new PublicKey(COLLECTION_NFT_MINT), // Can replace with your own NFT or upload a new one
         updateAuthority: WALLET,

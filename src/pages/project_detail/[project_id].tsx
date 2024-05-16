@@ -53,28 +53,32 @@ const Home: NextPage = (props: ItemProps) => {
         // const url = "https://gateway.pinata.cloud/ipfs/QmXxTEwqeG2NyKAaeKKvtMqKG9YB8iNyJ7r7RDwkFY3ssF/images/0.jpeg"
 
         if (project_id != null) {
-            GetProject(project_id as string).then((value) => {
-                setProject(value)
-                setMintedNfts([]);
-                
-                setCandyMachineId(value.candyMachineId)
-                console.log("project", value);
-                if(!value.isCnft){
-                    GetCandyMachine(value.candyMachineId).then((value2) => {
-                        setCandyMachine(value2)
-                        console.log("candyMachine", value2);
-                        changeUrl(value2, value)
-                        setMintLimit(value2.candyGuard.guards.mintLimit.limit);
-                        setMintCost(parseFloat(value2.candyGuard.guards.solPayment.amount.basisPoints.toString()) / 1000000000);
-                        setLaunchDateTime(formatDateToUTC(value2.candyGuard.guards.startDate.date.toNumber()))
-                    })
-    
-                    changeUrlForImg(value);
-                }
-            })
+            update();
         }
 
     }, [project_id])
+
+    const update = () => {
+        GetProject(project_id as string).then((value) => {
+            setProject(value)
+            setMintedNfts([]);
+            
+            setCandyMachineId(value.candyMachineId)
+            console.log("project", value);
+            if(!value.isCnft){
+                GetCandyMachine(value.candyMachineId).then((value2) => {
+                    setCandyMachine(value2)
+                    console.log("candyMachine", value2);
+                    changeUrl(value2, value)
+                    setMintLimit(value2.candyGuard.guards.mintLimit.limit);
+                    setMintCost(parseFloat(value2.candyGuard.guards.solPayment.amount.basisPoints.toString()) / 1000000000);
+                    setLaunchDateTime(formatDateToUTC(value2.candyGuard.guards.startDate.date.toNumber()))
+                })
+
+                changeUrlForImg(value);
+            }
+        })
+    }
 
     const changeUrl = async (candyMachineData, projectData) =>{
         console.log("fffff", candyMachineData.items);
@@ -111,11 +115,12 @@ const Home: NextPage = (props: ItemProps) => {
 const onClickMint = async () => {
         console.log("eeeeeeeeee", project.isCnft);
         if(project.isCnft){
-            mintCompressedNFT(wallet,wallet.publicKey, new PublicKey(project.candyMachineId), new PublicKey(project.collectionMint) , {name: "test", uri:"https://shdw-drive.genesysgo.net/91uEGv2pFyc3nZPgya6L41FKaoD6GoTcGDHqhokHe7Hw/compressedNFT1.json", symbol:"test"});
+            await mintCompressedNFT(wallet,wallet.publicKey, new PublicKey(project.candyMachineId), new PublicKey(project.collectionMint) , {name: "test", uri:"https://shdw-drive.genesysgo.net/91uEGv2pFyc3nZPgya6L41FKaoD6GoTcGDHqhokHe7Hw/compressedNFT1.json", symbol:"test"});
         }
         else{
-        mintNftWithWallet(wallet, candyMachineId.toString());
+            await mintNftWithWallet(wallet, candyMachineId.toString());
         }
+        update();
 }
 
 useEffect(() => {
@@ -140,7 +145,7 @@ useEffect(() => {
 return (
     <div className="pb-10">
         <div className="flex flex-row m-4">
-            <CollectionDetailView name={project.name} description={"Created " + formatDateToUTC(project.createAt as number)} image_url={collectionImgUrl} 
+            <CollectionDetailView name={project?.name} description={"Created " + formatDateToUTC(project?.createAt as number)} image_url={collectionImgUrl} 
              mint_limit = {mintLimit} mint_cost = {mintCost} launchdatetime = {launchDateTime}/>
         </div>
         <div className="w-full px-10 justify-center items-center flex flex-col">
