@@ -6,11 +6,13 @@ import { toast } from 'react-toastify';
 
 export const CollectionsView: FC = ({ }) => {
 
+    console.log(" ############# CollectionsView component ##############");
+
     const [projects, setProjects] = useState([]);
 
     useEffect(() => {
         GetNftCollections().then(async (values) => {
-            console.log(">>> projects : ", values);
+            console.log(">>>raw projects : ", values);
 
             for (let i = 0; i < values.length; i++) {
                 const value = values[i]
@@ -32,7 +34,7 @@ export const CollectionsView: FC = ({ }) => {
                     }
                     else{
                         try{
-                            const result = await fetch(uri, {mode: 'no-cors'});
+                            const result = await fetch(uri);
                             res = await result.json()
                         }
                         catch(e){
@@ -50,9 +52,8 @@ export const CollectionsView: FC = ({ }) => {
                 
             }
 
+            console.log(">>> projects, len : ", projects.length, projects);
 
-            // setCollections(values.filter(val => val.uri.endsWith("/metadata/0.json")));
-            console.log(">>> collections : ",)
         })
     }, [])
 
@@ -62,25 +63,16 @@ export const CollectionsView: FC = ({ }) => {
 
     //All information can be find in item.image_url
     return (
-        <div className='flex flex-row flex-wrap justify-start items-center m-4 w-full gap-5'>
-            {projects.length}
+        <div className='flex flex-row w-full'>
+            {/* {projects.length} */}
             {projects.map((item, ind) => (
-                <div key={"project_" + ind}>
-                    <a href={"project_detail/" + item.publicKey.toString()}>
+                <div className='flex flex-row flex-wrap justify-start items-center m-4 w-1/4 gap-5' key={"project_" + ind}>
+                    <a className='w-full' href={"project_detail/" + item.publicKey.toString()}>
                         <Collection_Item project={item} />
                     </a>
                 </div>
             ))}
 
-            {/* <Collection_Item name={"item.name"} description={description} image_url={"item.image"} price={0} sold={0} /> */}
-
-            {/* {collections.map((item, ind) => (
-                <div key = {"collections_" + ind}>
-                    <a href = {"collections/" + item.creators[0].address + "/" + item.name}>
-                        <Collection_Item name = {item.name} description='Find yourself' image_url={image_url} creator='Find yourself'/>
-                    </a>
-                </div>
-            ))} */}
         </div>
     );
 };

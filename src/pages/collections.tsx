@@ -6,7 +6,7 @@ import "react-multi-carousel/lib/styles.css";
 const Home: NextPage = (props) => {
     return (
         <div>
-            <div className="flex flex-row m-4">
+            <div className="flex flex-row w-full">
                 <CollectionsView />
             </div>
         </div>
