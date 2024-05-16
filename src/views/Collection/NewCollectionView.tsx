@@ -12,7 +12,7 @@ import { TbCurrencySolana } from "react-icons/tb";
 import { CgMathPercent } from "react-icons/cg";
 import { MdDelete } from "react-icons/md";
 import { useRouter } from 'next/router';
-import { createCollectionNft, generateCandyMachine, updateCandyMachine, addItems, mintNft, createCollectionCompressedNft, CreateProject } from 'utils/web3';
+import { createCollectionNft, generateCandyMachine, updateCandyMachine, addItems, mintNft, CreateProject } from 'utils/web3';
 // import { CallMe } from '../../compressed_zip/scripts/callMe';
 
 //ipfs
@@ -329,26 +329,6 @@ export const NewCollectionView: FC = ({ }) => {
         console.log("uploadedRes: ", uploadedRes)
         const hash = uploadedRes;
 
-        // if (switch1) {
-        //     const image_url1 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json";
-        //     const image_url2 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/1.json";
-        //     const image_url3 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/2.json";
-        //     const [mintedCollectionNft, image_url] = await createCollectionCompressedNft([image_url1, image_url2, image_url3], wallet);
-
-        //     console.log("minted CollectionNFT : ", mintedCollectionNft);
-        //     const createdCandyMachineID = await generateCandyMachine(wallet, mintedCollectionNft);
-        //     await updateCandyMachine(wallet, createdCandyMachineID);
-        //     await addItems(wallet, createdCandyMachineID, image_url);
-        // } else {
-        //     const image_url = 'https://gateway.pinata.cloud/ipfs/' + hash + "/images/0.jpeg";
-        //     // console.log("############");
-        //     // console.log(image_url);
-        //     const mintedCollectionNft = await createCollectionNft(image_url, wallet);
-        //     console.log("minted CollectionNFT : ", mintedCollectionNft);
-        //     const createdCandyMachineID = await generateCandyMachine(wallet, mintedCollectionNft);
-        //     await updateCandyMachine(wallet, createdCandyMachineID);
-        //     await addItems(wallet, createdCandyMachineID, image_url);
-        // }
 
         const project_id = await CreateProject(wallet, switch1);
         if(project_id.length>0){
@@ -363,7 +343,6 @@ export const NewCollectionView: FC = ({ }) => {
                     items: [],
                     project_id: project_id
                 }
-    
                 await fetch("/api/createCnftCollection", {
                     method: "POST",
                     body: JSON.stringify(data),

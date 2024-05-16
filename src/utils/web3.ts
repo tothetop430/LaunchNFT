@@ -403,36 +403,6 @@ try {
 }
 }
 
-export async function createCollectionCompressedNft(NFT_METADATAS: string[], WALLET: Keypair): Promise<string[]> {
-
-  const METAPLEX = Metaplex.make(SOLANA_CONNECTION2).use(keypairIdentity(WALLET));
-
-  const treeOptions = {
-    hashType: 'md5' //optional, defaults to 'sha256'
-  }
-  const merkleTools = new MerkleTools(treeOptions);
-  const leaves = NFT_METADATAS.map(metadata => {
-    const hash = crypto.createHash('sha256');
-    hash.update(JSON.stringify(metadata));
-    return hash.digest('hex');
-  })
-  merkleTools.addLeaves(leaves, true);
-  merkleTools.makeTree();
-
-  const { nft: collectionNft } = await METAPLEX.nfts().create({
-    name: "NFT Coll",
-    uri: merkleTools.getMerkleRoot().toString('hex'),
-    sellerFeeBasisPoints: 0,
-    isCollection: true,
-    updateAuthority: WALLET,
-  });
-
-  console.log(`✅ - Minted Collection NFT: ${collectionNft.address.toString()}`);
-  console.log(`     https://explorer.solana.com/address/${collectionNft.address.toString()}?cluster=devnet`);
-
-  return [collectionNft.address.toString(), merkleTools.getMerkleRoot().toString('hex')];
-
-}
 
 export async function generateCandyMachine(WALLET: Keypair, COLLECTION_NFT_MINT: string): Promise<string> {
   try {
