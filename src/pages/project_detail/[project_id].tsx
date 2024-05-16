@@ -11,6 +11,7 @@ import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import useUserSOLBalanceStore from '../../stores/useUserSOLBalanceStore';
 import { useRouter } from "next/router";
 import { formatDateToUTC } from '../../utils/formatData';
+import { convertResponseToJson } from "utils/convertResponseToJson";
 // import axios, { AxiosResponse } from 'axios';
 // import { CollectionDetailView } from "../../views/CollectionDetailView";
 
@@ -24,7 +25,7 @@ const Home: NextPage = (props: ItemProps) => {
 
     const router = useRouter();
     const { project_id } = router.query;
-    const [project, setProject] = useState<{name : string, createAt: Date}>();
+    const [project, setProject] = useState<{ name: string, createAt: Date }>({ name: '', createAt: new Date() });
     const [candyMachineId, setCandyMachineId] = useState(null)
     const [candyMachine, setCandyMachine] = useState(null)
     const [collectionImgUrl, setColImgUrl] = useState('');
@@ -60,8 +61,12 @@ const Home: NextPage = (props: ItemProps) => {
                     method: "POST",
                     body: JSON.stringify(data),
                 }).then(res => {
-                    console.log("json:", res.json());
-                })
+                    convertResponseToJson(res).then(jsonRes => {
+                        // console.log(jsonRes);
+                        setColImgUrl(jsonRes.result.image)
+                    });
+                });
+
             })
         }
 
@@ -91,7 +96,7 @@ const Home: NextPage = (props: ItemProps) => {
     return (
         <div className="pb-10">
             <div className="flex flex-row m-4">
-                <CollectionDetailView name={project.name} description={"Created " + formatDateToUTC(project.createAt as Date)} image_url={"./NFT.svg"} />
+                <CollectionDetailView name={project.name} description={"Created " + formatDateToUTC(project.createAt as Date)} image_url={collectionImgUrl} />
             </div>
             <div className="w-full px-10 justify-center items-center flex flex-col">
                 <h1 className="text-sm flex text-4xl">Minted NFTs</h1>

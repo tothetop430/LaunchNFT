@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import axios, { AxiosResponse } from 'axios';
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse){
     try {
         const object = JSON.parse(req.body);
         // console.log("object", object);
@@ -12,6 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // console.log("getUrl:", resJson.data);
         res.status(200).json({ result: resJson.data})
     } catch (err) {
+        // throw new Error(`Fetching data failed: ${err.message}`);
         res.status(500).json({ error: err })
     }
 }
