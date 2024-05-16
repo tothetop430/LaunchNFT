@@ -43,20 +43,24 @@ const Home: NextPage = (props: ItemProps) => {
                 <CollectionDetailView name={props.name} description={props.description} image_url={data && data.image} />
             </div>
             <div className="w-full px-10 justify-center items-center flex flex-col">
-                <h1 className="text-sm flex">Minted NFTs</h1>
+                <h1 className="text-sm flex text-4xl">Minted NFTs</h1>
                 <div className="flex">
                     <Trending displayMode={'dark'} data={data && [data, data, data, data, data, data]} />
                 </div>
-                <div className="fixed bottom-10 z-40 flex flex-col gap-2 justify-center items-center bg-gray-50 px-6 py-3 rounded-lg bg-gray-700">
-
-                    <div>
+                <div className="fixed bottom-10 z-40 flex flex-col w-30 gap-2 justify-center items-center bg-gray-50 px-6 py-3 rounded-lg bg-gray-600 shadow-xl border border-gray-500">
+                    <div className="flex w-full">
                         <RangeSlider id="default-range" min={1} max={100} onChange={(e) => setSliderValue(Number(e.target.value))} value={slider_value} />
                     </div>
-                    <div className="flex gap-1">
-                        <Button outline onClick={onClickMint}>
-                            Mint
-                        </Button>
-                        <p className="h-5 m-3 items-center text-gray-700">{slider_value}</p>
+                    <div className="flex flex-row w-full justify-center items-center">
+                        <div className="flex flex-row justify-center w-3/4">
+                            <Button outline onClick={onClickMint}>
+                                Mint
+                            </Button>
+                        </div>
+                        <div className="flex flex-row justify-center w-1/4">
+                            <p className="h-5 m-3 items-center text-white">{slider_value}</p>
+
+                        </div>
                     </div>
 
                 </div>
