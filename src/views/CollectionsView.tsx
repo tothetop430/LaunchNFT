@@ -30,7 +30,7 @@ export const CollectionsView: FC = ({ }) => {
                     let res;
                     try{
                         const temp_url = uri.replace("gateway.pinata.cloud", "ivory-patient-leopard-375.mypinata.cloud") + '?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c';
-                        const result = await fetch(temp_url, {mode: 'no-cors'});
+                        const result = await fetch(temp_url);
                         res = await result.json()
                     }
                     catch(e){
