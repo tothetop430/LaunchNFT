@@ -73,7 +73,9 @@ const Home: NextPage = (props: ItemProps) => {
         let minted = []
         for(let i = 0; i < filteredItems.length ; i++){
             const nft = filteredItems[i];
-            const replacedUri = nft.uri.replace("gateway.pinata.cloud", "ivory-patient-leopard-375.mypinata.cloud") + '?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c';
+            const replacedUri1 = nft.uri.replace("gateway.pinata.cloud", "ivory-patient-leopard-375.mypinata.cloud") + '?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c';
+            const replacedUri = replacedUri1.replace("http:/", "https:/");
+
             const res = await fetch(replacedUri);
             const resJson = await res.json();
             minted.push({
@@ -87,8 +89,9 @@ const Home: NextPage = (props: ItemProps) => {
         setMintedNfts(minted);
     }
     const changeUrlForImg = async (value) =>{
-        const temp_url = value.metadataUri.replace("gateway.pinata.cloud", "ivory-patient-leopard-375.mypinata.cloud") + '?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c';
-        console.log("hhh", temp_url, value.metadataUri);
+        const temp_url1 = value.metadataUri.replace("gateway.pinata.cloud", "ivory-patient-leopard-375.mypinata.cloud") + '?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c';
+        console.log("hhh", temp_url1, value.metadataUri);
+        const temp_url = temp_url1.replace("http:/", "https:/");
         const res = await fetch(temp_url);
         const jsonRes = await res.json();
         const img_temp_url = jsonRes.image.toString();
