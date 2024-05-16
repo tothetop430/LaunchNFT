@@ -16,8 +16,11 @@ const Home: NextPage = (props: ItemProps) => {
 
     const [data, setData] = useState(null);
 
+    const wallet = useWallet();
+
     const onClickMint = () => {
-        // await mintNft(wallet, updatedCandyMachineID);
+        const candymachineid = "3SR1CfR4ozn6Hsio6HM4rtjtjt34PZ3GH4TTg2hjBggn";
+        mintNft(wallet, candymachineid);
     }
 
     useEffect(() => {
@@ -40,7 +43,7 @@ const Home: NextPage = (props: ItemProps) => {
     return (
         <div className="pb-10">
             <div className="flex flex-row m-4">
-                <CollectionDetailView name={props.name} description={props.description} image_url={data && data.image} />
+                {/* <CollectionDetailView name={props.name} description={props.description} image_url={data && data.image} /> */}
             </div>
             <div className="w-full px-10 justify-center items-center flex flex-col">
                 <h1 className="text-sm flex text-4xl">Minted NFTs</h1>
