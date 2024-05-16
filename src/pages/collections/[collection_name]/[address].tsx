@@ -49,7 +49,7 @@ const CollectionDetail: NextPage = (props) => {
     <div>
       <div className="flex flex-row">
         <div className="flex flex-row m-4">
-          <CollectionDetailView name={"dd"} description={"dd"} image_url={data && data.image} collections={[]} />
+          <CollectionDetailView name={"dd"} description={"dd"} image_url={data && data.image} />
         </div>
         <div className="w-full flex flex-row flex-start">
           <div className="flex flex-row w-full">
