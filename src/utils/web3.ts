@@ -2,7 +2,7 @@ import { WalletContextState } from "@solana/wallet-adapter-react";
 import { IDL, LaunchnftContract } from "../anchor/idl";
 import { Connection, PublicKey, Keypair } from "@solana/web3.js";
 import { AnchorProvider, Program, Wallet, BN } from "@coral-xyz/anchor";
-import { Metaplex, keypairIdentity, toBigNumber, CreateCandyMachineInput, DefaultCandyGuardSettings, CandyMachineItem, toDateTime, sol, TransactionBuilder, CreateCandyMachineBuilderContext, walletAdapterIdentity } from "@metaplex-foundation/js";
+import { Metaplex, keypairIdentity, toBigNumber, CreateCandyMachineInput, DefaultCandyGuardSettings, toDateTime, sol, walletAdapterIdentity } from "@metaplex-foundation/js";
 import MerkleTools from 'merkle-tools';
 import crypto from 'crypto';
 
@@ -11,6 +11,18 @@ const RPC1 = 'https://endpoints.omniatech.io/v1/sol/devnet/52013a8ea3cb41299952e
 const RPC2 = 'https://api.devnet.solana.com';
 const SOLANA_CONNECTION1 = new Connection(RPC1);
 const SOLANA_CONNECTION2 = new Connection(RPC2);
+
+export const [launchpadPda] = PublicKey.findProgramAddressSync(
+  [Buffer.from("launchpad")],
+  programId,
+);
+
+export const getProjectPda = (projectNumber: BN) => {
+  return PublicKey.findProgramAddressSync(
+    [Buffer.from("project"), projectNumber.toArrayLike(Buffer, "le", 8)],
+    programId,
+  )[0]
+}
 
 export function GetLaunchpadProgram(
   wallet: any,
@@ -48,16 +60,23 @@ export default async function Initialize(
       `initialize tx id: ${transactionSignature}`,
     );
   } catch (error) {
-    console.log(error);
+    console.log("Initialize Error-> ",error);
   } finally {
   }
 }
+
 export async function GetLaunchpad(
   wallet: WalletContextState,
 ) {
-  const program = GetLaunchpadProgram(wallet);
-  const launchpad = await program.account.launchpad.fetchNullable(launchpadPda);
-  return launchpad;
+  try{
+    const program = GetLaunchpadProgram(wallet);
+    const launchpad = await program.account.launchpad.fetchNullable(launchpadPda);
+    return launchpad;
+  }
+  catch(error){
+    console.log("GetLaunchpad Error-> ",error);
+    return null;
+  }
 }
 
 export async function GetNftCollections() {
@@ -72,7 +91,7 @@ export async function GetNftCollections() {
       const collectionNftMint = candyMachine.collectionMintAddress;
       const collectionNft = await Metaplex.make(SOLANA_CONNECTION2).nfts().findByMint({ mintAddress: collectionNftMint });
       console.log("collectionNft" + i, collectionNft);
-      nftCollections.push({ uri: collectionNft.uri, name: collectionNft.name, itemsAvailable: candyMachine.itemsAvailable, itemsMinted: candyMachine.itemsMinted, startDate: candyMachine.candyGuard.guards.startDate.date, price: candyMachine.candyGuard.guards.solPayment.amount , candyMachineId : candyMachineId.toString()});
+      nftCollections.push({ uri: collectionNft.uri, name: collectionNft.name, itemsAvailable: candyMachine.itemsAvailable, itemsMinted: candyMachine.itemsMinted, startDate: candyMachine.candyGuard.guards.startDate.date, price: candyMachine.candyGuard.guards.solPayment.amount, candyMachineId: candyMachineId.toString() });
     } catch (err) {
       console.log("GetNftCollections Err->" + i, err);
     }
@@ -109,21 +128,7 @@ export async function Update(
     );
   } catch (error) {
     console.log("Update Error->", error);
-  } finally {
-
   }
-}
-
-export const [launchpadPda] = PublicKey.findProgramAddressSync(
-  [Buffer.from("launchpad")],
-  programId,
-);
-
-export const getProjectPda = (projectNumber: BN) => {
-  return PublicKey.findProgramAddressSync(
-    [Buffer.from("project"), projectNumber.toArrayLike(Buffer, "le", 8)],
-    programId,
-  )[0]
 }
 
 export async function CreateProject(
@@ -153,7 +158,7 @@ export async function CreateProject(
     return project.toString();
   } catch (error) {
     console.log("createProject : error->", error);
-  } finally {
+    return "";
   }
 }
 
@@ -177,10 +182,10 @@ export async function SetCandyMachineId(
     console.log(
       `setCandyMachineId tx id: ${transactionSignature}`,
     );
+    return true;
   } catch (error) {
     console.log("SetCandyMachineId Error->", error);
-  } finally {
-
+    return false;
   }
 }
 
@@ -322,6 +327,7 @@ export async function addItems(WALLET: Keypair, CANDY_MACHINE_ID: string, items:
       .candyMachines()
       .findByAddress({ address: new PublicKey(CANDY_MACHINE_ID) });
 
+    console.log("additems->", items);
     const { response } = await METAPLEX.candyMachines().insertItems({
       candyMachine,
       items: [...items],
