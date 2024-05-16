@@ -11,7 +11,7 @@ import crypto from 'crypto';
 
 const programId = new PublicKey("J15m8CpBepW7zWG73o5cao74YrLCjUBCDgtRXroFM3jw");
 
-const RPC = 'https://api.devnet.solana.com';
+const RPC = 'https://endpoints.omniatech.io/v1/sol/devnet/52013a8ea3cb41299952e259357fbc3f';
 const SOLANA_CONNECTION = new Connection(RPC);
 
 export function GetLaunchpadProgram(
@@ -172,7 +172,7 @@ export async function CreateProject(
     );
     return project.toString();
   } catch (error) {
-    console.log("rrrrrrrrr", error);
+    console.log("createProject : error->", error);
   } finally {
   }
 }
@@ -285,6 +285,7 @@ export async function createCollectionNft(name: string, metadataUri: string, WAL
     return collectionNft.address.toString();
   }
   catch (err) {
+    console.log("CreateCollectionNft error->",err);
     return "failed";
   }
 }
