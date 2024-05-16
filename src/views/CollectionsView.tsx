@@ -7,13 +7,13 @@ import { toast } from 'react-toastify';
 export const CollectionsView: FC = ({ }) => {
 
     console.log(" ############# CollectionsView component ##############");
-
+    
     const [projects, setProjects] = useState([]);
 
     useEffect(() => {
         GetNftCollections().then(async (values) => {
             console.log(">>>raw projects : ", values);
-
+            let temp_projects = [];
             for (let i = 0; i < values.length; i++) {
                 const value = values[i]
                 let uri = value.account.metadataUri
@@ -24,32 +24,28 @@ export const CollectionsView: FC = ({ }) => {
                 }
                 
                 try{
-                    const baseUrl = window.location.origin;
                     let res;
-                    if(baseUrl.includes("localhost")){
+                    try{
+                        const temp_url = uri.replace("gateway.pinata.cloud", "ivory-patient-leopard-375.mypinata.cloud") + '?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c';
+                        const result = await fetch(temp_url, {mode: 'no-cors'});
+                        res = await result.json()
+                    }
+                    catch(e){
                         res = JSON.parse('{"name":"NFT #0","symbol":"123123123","description":"NFT #0 - Generated and deployed on LaunchMyNFT.","attributes":[{"trait_type":"Accessory","value":"Tear Tattoo Red"},{"trait_type":"Background","value":"Black"},{"trait_type":"Face","value":"Round Aqua"},{"trait_type":"Left Eye","value":"Swirl Purple"},{"trait_type":"Mouth","value":"Grin Pink"},{"trait_type":"Right Eye","value":"Swirl Pink"},{"trait_type":"Rarity Rank","value":48,"display_type":"number","max_value":100}],"image":"https://gateway.pinata.cloud/ipfs/QmYA2eiJ4AiaMtgXz965bTuARgJt8eAEX4Yhew4G8RmLAX/images/0.jpeg"}') as any;
                     }
-                    else{
-                        try{
-                            const result = await fetch(uri);
-                            res = await result.json()
-                        }
-                        catch(e){
-                            res = JSON.parse('{"name":"NFT #0","symbol":"123123123","description":"NFT #0 - Generated and deployed on LaunchMyNFT.","attributes":[{"trait_type":"Accessory","value":"Tear Tattoo Red"},{"trait_type":"Background","value":"Black"},{"trait_type":"Face","value":"Round Aqua"},{"trait_type":"Left Eye","value":"Swirl Purple"},{"trait_type":"Mouth","value":"Grin Pink"},{"trait_type":"Right Eye","value":"Swirl Pink"},{"trait_type":"Rarity Rank","value":48,"display_type":"number","max_value":100}],"image":"https://gateway.pinata.cloud/ipfs/QmYA2eiJ4AiaMtgXz965bTuARgJt8eAEX4Yhew4G8RmLAX/images/0.jpeg"}') as any;
-                        }
-                    }
-                    
-                    setProjects([...projects, {
+                    const temp_img_url = res.image.replace("gateway.pinata.cloud", "ivory-patient-leopard-375.mypinata.cloud") + '?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c';
+                        
+                    temp_projects.push({
                         ...value,
-                        imageUri: res.image
-                    }]);
+                        imageUri: temp_img_url
+                    });
                     console.log("Great Done!!! ", res.image); // this should print the url to console
+
+                    console.log(">>> projects, len : ", projects.length, projects);
                 }
                 catch(e){}
-                
             }
-
-            console.log(">>> projects, len : ", projects.length, projects);
+            setProjects(temp_projects)
 
         })
     }, [])

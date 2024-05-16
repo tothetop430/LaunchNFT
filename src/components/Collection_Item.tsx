@@ -31,7 +31,7 @@ export const Collection_Item: React.FC<any> = ({ project }) => {
                 <div className="flex flex-col jsutify-center items-start overflow-y-hidden my-3">
                     <h1 className="h-10 my-4 font-extrabold text-gray-900 dark:text-white text-2xl md:text-3xl lg:text-3xl" style={{ color: "white" }}>{name}</h1>
                     <p className="h-20 text-sm font-normal text-gray-500 lg:text-md dark:text-gray-400" style={{ color: "white" }}>
-                        {""}
+                        {project.account.isCnft ? "cNFT" : ""}
                     </p>
                 </div>
                 {/* <div className="w-full bg-gray-200 rounded-full h-2.5 mt-4 dark:bg-gray-700">
