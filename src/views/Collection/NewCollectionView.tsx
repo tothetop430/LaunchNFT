@@ -387,13 +387,16 @@ export const NewCollectionView: FC = ({ }) => {
                     body: JSON.stringify(data),
                 }).then(res => {
                     console.log("Great Done!!! ", res);
+                    setActiveTab(3);
                 });
             }
 
             toast("Deploying has been completed!") // delete notificatoin
         }
-        
-        toast.error("Failed to create project!") // delete notificatoin
+        else{
+            toast.error("Failed to create!")
+        }
+        // delete notificatoin
         
     }
 

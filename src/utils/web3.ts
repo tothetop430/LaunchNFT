@@ -60,7 +60,7 @@ export default async function Initialize(
       `initialize tx id: ${transactionSignature}`,
     );
   } catch (error) {
-    console.log("Initialize Error-> ",error);
+    console.log("Initialize Error-> ", error);
   } finally {
   }
 }
@@ -68,13 +68,13 @@ export default async function Initialize(
 export async function GetLaunchpad(
   wallet: WalletContextState,
 ) {
-  try{
+  try {
     const program = GetLaunchpadProgram(wallet);
     const launchpad = await program.account.launchpad.fetchNullable(launchpadPda);
     return launchpad;
   }
-  catch(error){
-    console.log("GetLaunchpad Error-> ",error);
+  catch (error) {
+    console.log("GetLaunchpad Error-> ", error);
     return null;
   }
 }
@@ -90,7 +90,7 @@ export async function GetNftCollections() {
       const candyMachine = await Metaplex.make(SOLANA_CONNECTION2).candyMachines().findByAddress({ address: candyMachineId });
       const collectionNftMint = candyMachine.collectionMintAddress;
       const collectionNft = await Metaplex.make(SOLANA_CONNECTION2).nfts().findByMint({ mintAddress: collectionNftMint });
-      console.log("collectionNft" + i, collectionNft);
+      // console.log("collectionNft" + i, collectionNft.uri);
       nftCollections.push({ uri: collectionNft.uri, name: collectionNft.name, itemsAvailable: candyMachine.itemsAvailable, itemsMinted: candyMachine.itemsMinted, startDate: candyMachine.candyGuard.guards.startDate.date, price: candyMachine.candyGuard.guards.solPayment.amount, candyMachineId: candyMachineId.toString() });
     } catch (err) {
       console.log("GetNftCollections Err->" + i, err);

@@ -10,7 +10,7 @@ export const CollectionsView: FC = ({ }) => {
         GetNftCollections().then((values) => {
             setCollections(values.filter(val => val.uri.endsWith("/metadata/0.json")));
             // console.log("collections===>", values.)
-            console.log("eeeeeeeeeeee", values.filter(val => val.uri.endsWith("/metadata/0.json")))
+            console.log("loaded values", values.filter(val => val.uri.endsWith("/metadata/0.json")))
         })
     }, [])
 
