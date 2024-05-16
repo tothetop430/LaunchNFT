@@ -13,9 +13,9 @@ export const CollectionDetailView: FC<ItemProps> = ({ name, description, image_u
                     <img src={image_url} alt="" className="w-40 h-40" />
                 </div>
                 <div className="flex flex-col justify-center items-start gap-5 w-2/5 mx-3 pl-5">
-                    <h1 style={{ fontSize: '50px', fontWeight: "bold" }}>PunkenStein</h1>
+                    <h1 style={{ fontSize: '50px', fontWeight: "bold" }}>{name}</h1>
                     <div className="flex flex-row justify-start items-center">
-                        <p>CREATED Tue 06 Feb by on </p>
+                        <p>{description}</p>
                         &nbsp;
                         <img src="/solana-sol-logo.png" alt="" style={{ width: "20px", height: "20px" }} />
                     </div>

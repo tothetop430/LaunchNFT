@@ -18,29 +18,25 @@ const Card = ({
     }
     
     return (
-        <div className={cardContainerClass}>
-            <div className="
-                self-center
-                rounded-lg
-                h-150px
-                w-150px
-            ">
-                <Image width={125} height={125} src={(image) ? image : NFT} alt="nft"/>
+        <div className="flex flex-col w-30">
+            <div className="w-full">
+                <Image width={200} height={150} src={'./NFT.svg'} alt="nft"></Image>
             </div>
-            <div id="title">{title || "Liquid Wave"}</div>
-            <div className="info--container">
-                <div className="info">
-                    <div>Auction Time</div>
-                    <div>Current Bid</div>
-                </div>
-                <div id="bid">1.50 SOL</div>
-            </div>
-            <div className="vals">
-                <div>3h 1m 50s</div>
-                <div>{Number(floor_price) / LAMPORTS_PER_SOL || "20"} SOL</div>
-            </div>
-            <button id="bid--button">Place a Bid</button>
+            <div id = "title">{title}</div>
+            <div className="vals">TTT</div>
         </div>
+        // <div className={cardContainerClass}>
+        //     <div className="
+        //         self-center
+        //         rounded-lg
+        //         h-150px
+        //         w-150px
+        //     ">
+        //         <Image width={125} height={125} src={(image) ? image : NFT} alt="nft"/>
+        //     </div>
+        //     <div id="title">{title}</div>
+        //     <div className="vals">TTT</div>
+        // </div>
     )
 }
 

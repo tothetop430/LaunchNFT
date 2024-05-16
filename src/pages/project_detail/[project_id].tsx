@@ -10,6 +10,9 @@ import { GetCandyMachine, GetMintedNfts, GetProject, mintNft } from "utils/web3"
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import useUserSOLBalanceStore from '../../stores/useUserSOLBalanceStore';
 import { useRouter } from "next/router";
+import { formatDateToUTC } from '../../utils/formatData';
+// import axios, { AxiosResponse } from 'axios';
+// import { CollectionDetailView } from "../../views/CollectionDetailView";
 
 const Home: NextPage = (props: ItemProps) => {
 
@@ -24,32 +27,44 @@ const Home: NextPage = (props: ItemProps) => {
     const [project, setProject] = useState({})
     const [candyMachineId, setCandyMachineId] = useState(null)
     const [candyMachine, setCandyMachine] = useState(null)
+    const [collectionImgUrl, setColImgUrl] = useState('');
 
     const [mintedNfts, setMintedNfts] = useState([])
 
-    useEffect(()=>{
-        if(candyMachineId != null ){
-            GetMintedNfts(candyMachineId).then((values)=>{
+    useEffect(() => {
+        if (candyMachineId != null) {
+            GetMintedNfts(candyMachineId).then((values) => {
                 setMintedNfts(values)
                 console.log("mintedNFTs", values)
-             })
+            })
         }
-         
-    },[candyMachineId, project, candyMachine])
 
-    useEffect(()=>{
-        if(project_id != null){
-            GetProject(project_id as string).then((value)=>{
+    }, [candyMachineId, project, candyMachine])
+
+    useEffect(() => {
+        if (project_id != null) {
+            GetProject(project_id as string).then((value) => {
                 setProject(value)
                 setCandyMachineId(value.candyMachineId)
                 console.log("project", value);
-                GetCandyMachine(value.candyMachineId).then((value2)=>{
+                GetCandyMachine(value.candyMachineId).then((value2) => {
                     setCandyMachine(value2)
                     console.log("candyMachine", value2);
                 })
+
+                //to get img_url of collection
+                const data = {
+                    url: value.metadataUri
+                }
+                fetch("/api/getCollectionImgUrl", {
+                    method: "POST",
+                    body: JSON.stringify(data),
+                }).then(res => {
+                    console.log("json:", res.json());
+                })
             })
         }
-        
+
     }, [project_id])
 
     const onClickMint = () => {
@@ -76,7 +91,7 @@ const Home: NextPage = (props: ItemProps) => {
     return (
         <div className="pb-10">
             <div className="flex flex-row m-4">
-                {/* <CollectionDetailView name={props.name} description={props.description} image_url={data && data.image} /> */}
+                <CollectionDetailView name={project.name} description={"Created " + formatDateToUTC(project.createAt as Date)} image_url={"./NFT.svg"} />
             </div>
             <div className="w-full px-10 justify-center items-center flex flex-col">
                 <h1 className="text-sm flex text-4xl">Minted NFTs</h1>
@@ -84,7 +99,7 @@ const Home: NextPage = (props: ItemProps) => {
                     <Trending displayMode={'dark'} data={data && [data, data, data, data, data, data]} />
                 </div>
                 <div className="fixed bottom-10 z-40 flex flex-col w-30 gap-2 justify-center items-center bg-gray-50 px-6 py-3 rounded-lg bg-gray-600 shadow-xl border border-gray-500">
-                    
+
                     <div className="flex flex-row w-full justify-center items-center">
                         <div className="flex flex-row justify-center w-3/4">
                             <Button outline onClick={onClickMint}>
