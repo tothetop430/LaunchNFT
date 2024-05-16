@@ -1,16 +1,25 @@
 import { WalletContextState } from "@solana/wallet-adapter-react";
 import { IDL, LaunchnftContract } from "../anchor/idl";
-import { Connection, PublicKey, Keypair } from "@solana/web3.js";
+import { Connection, PublicKey, Keypair, Transaction, SystemProgram, sendAndConfirmTransaction } from "@solana/web3.js";
 import { AnchorProvider, Program, Wallet, BN } from "@coral-xyz/anchor";
 import { Metaplex, keypairIdentity, toBigNumber, CreateCandyMachineInput, DefaultCandyGuardSettings, toDateTime, sol, walletAdapterIdentity } from "@metaplex-foundation/js";
-import MerkleTools from 'merkle-tools';
+import {
+  ValidDepthSizePair,
+  getConcurrentMerkleTreeAccountSize,
+} from "@solana/spl-account-compression";
 import crypto from 'crypto';
+import { CreateMetadataAccountArgsV3 } from "@metaplex-foundation/mpl-token-metadata";
+import {createTree, createCollection, mintCompressedNFTIxn} from "./compression"
+import { NFTMetadata, createCompressedNFTMetadata } from "./onChainNFTs";
 
 const programId = new PublicKey("MFuvWTr6ihjMmNrJ1Yb6wXeqgYqWQokQ8wb12SMf6XY");
 const RPC1 = 'https://endpoints.omniatech.io/v1/sol/devnet/52013a8ea3cb41299952e259357fbc3f';
 const RPC2 = 'https://api.devnet.solana.com';
 const SOLANA_CONNECTION1 = new Connection(RPC1);
 const SOLANA_CONNECTION2 = new Connection(RPC2);
+
+const RECEIVER_MINIMUM_LAMPORTS = 1_000_000;
+
 
 export const [launchpadPda] = PublicKey.findProgramAddressSync(
   [Buffer.from("launchpad")],
@@ -84,19 +93,6 @@ export async function GetNftCollections() {
   const wallet = Keypair.generate();
   const program = GetLaunchpadProgram(wallet);
   const projects = await program.account.project.all();
-  // const nftCollections = [];
-  // for (let i = 0; i < project.length; i++) {
-  //   try {
-  //     const candyMachineId = project[i].account.candyMachineId;
-  //     const candyMachine = await Metaplex.make(SOLANA_CONNECTION2).candyMachines().findByAddress({ address: candyMachineId });
-  //     const collectionNftMint = candyMachine.collectionMintAddress;
-  //     const collectionNft = await Metaplex.make(SOLANA_CONNECTION2).nfts().findByMint({ mintAddress: collectionNftMint });
-  //     // console.log("collectionNft" + i, collectionNft.uri);
-  //     nftCollections.push({ uri: collectionNft.uri, name: collectionNft.name, itemsAvailable: candyMachine.itemsAvailable, itemsMinted: candyMachine.itemsMinted, startDate: candyMachine.candyGuard.guards.startDate.date, price: candyMachine.candyGuard.guards.solPayment.amount, candyMachineId: candyMachineId.toString() });
-  //   } catch (err) {
-  //     console.log("GetNftCollections Err->" + i, err);
-  //   }
-  // }
   return projects;
 }
 export async function GetCandyMachine(candyMachineId){
@@ -230,37 +226,183 @@ export async function createCollectionNft(name: string, metadataUri: string, WAL
     return "";
   }
 }
+export async function createCollectionAndMerkleTree(payer: Keypair, name: string, symbol: string, uri: string){
+  console.log("Payer address:", payer.publicKey.toBase58());
+ 
+  const connection = SOLANA_CONNECTION2;
+  /*
+    Define our tree size parameters
+  */
+  const maxDepthSizePair: ValidDepthSizePair = {
+    // max=8 nodes
+    maxDepth: 3,
+    maxBufferSize: 8,
 
-export async function createCollectionCompressedNft(NFT_METADATAS: string[], WALLET: Keypair): Promise<string[]> {
+    // max=16,384 nodes
+   //  maxDepth: 14,
+   //  maxBufferSize: 64,
 
-  const METAPLEX = Metaplex.make(SOLANA_CONNECTION2).use(keypairIdentity(WALLET));
+    // max=131,072 nodes
+    // maxDepth: 17,
+    // maxBufferSize: 64,
 
-  const treeOptions = {
-    hashType: 'md5' //optional, defaults to 'sha256'
-  }
-  const merkleTools = new MerkleTools(treeOptions);
-  const leaves = NFT_METADATAS.map(metadata => {
-    const hash = crypto.createHash('sha256');
-    hash.update(JSON.stringify(metadata));
-    return hash.digest('hex');
-  })
-  merkleTools.addLeaves(leaves, true);
-  merkleTools.makeTree();
+    // max=1,048,576 nodes
+    // maxDepth: 20,
+    // maxBufferSize: 256,
 
-  const { nft: collectionNft } = await METAPLEX.nfts().create({
-    name: "NFT Coll",
-    uri: merkleTools.getMerkleRoot().toString('hex'),
-    sellerFeeBasisPoints: 0,
-    isCollection: true,
-    updateAuthority: WALLET,
+    // max=1,073,741,824 nodes
+    // maxDepth: 30,
+    // maxBufferSize: 2048,
+  };
+  const canopyDepth = maxDepthSizePair.maxDepth - 3;
+
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+
+  /*
+    For demonstration purposes, we can compute how much space our tree will 
+    need to allocate to store all the records. As well as the cost to allocate 
+    this space (aka minimum balance to be rent exempt)
+    ---
+    NOTE: These are performed automatically when using the `createAllocTreeIx` 
+    function to ensure enough space is allocated, and rent paid.
+  */
+
+  // calculate the space available in the tree
+  const requiredSpace = getConcurrentMerkleTreeAccountSize(
+    maxDepthSizePair.maxDepth,
+    maxDepthSizePair.maxBufferSize,
+    canopyDepth,
+  );
+
+  // const storageCost = await connection.getMinimumBalanceForRentExemption(requiredSpace);
+
+  // // demonstrate data points for compressed NFTs
+  // console.log("Space to allocate:", numberFormatter(requiredSpace), "bytes");
+  // console.log("Estimated cost to allocate space:", numberFormatter(storageCost / LAMPORTS_PER_SOL));
+  // console.log(
+  //   "Max compressed NFTs for collection:",
+  //   numberFormatter(Math.pow(2, maxDepthSizePair.maxDepth)),
+  //   "\n",
+  // );
+
+  // // ensure the payer has enough balance to create the allocate the Merkle tree
+  // if (initBalance < storageCost) return console.error("Not enough SOL to allocate the merkle tree");
+  // printConsoleSeparator();
+
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+
+  /*
+    Actually allocate the tree on chain
+  */
+
+  // define the address the tree will live at
+  const treeKeypair = Keypair.generate();
+
+  // create and send the transaction to create the tree on chain
+  const tree = await createTree(connection, payer, treeKeypair, maxDepthSizePair, canopyDepth);
+
+  /*
+    Create the actual NFT collection (using the normal Metaplex method)
+    (nothing special about compression here)
+  */
+
+  // define the metadata to be used for creating the NFT collection
+  const collectionMetadataV3: CreateMetadataAccountArgsV3 = {
+    data: {
+      name,
+      symbol,
+      // specific json metadata for the collection
+      uri,
+      sellerFeeBasisPoints: 100,
+      creators: [
+        {
+          address: payer.publicKey,
+          verified: false,
+          share: 100,
+        },
+      ], // or set to `null`
+      collection: null,
+      uses: null,
+    },
+    isMutable: false,
+    collectionDetails: null,
+  };
+
+  // create a full token mint and initialize the collection (with the `payer` as the authority)
+  const collection = await createCollection(connection, payer, collectionMetadataV3);
+
+  /**
+   * INFO: NFT collection != tree
+   * ---
+   * NFTs collections can use multiple trees for their same collection.
+   * When minting any compressed NFT, simply pass the collection's addresses
+   * in the transaction using any valid tree the `payer` has authority over.
+   *
+   * These minted compressed NFTs should all still be apart of the same collection
+   * on marketplaces and wallets.
+   */
+
+  //////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  return collection.mint;
+}
+
+export async function mintCompressedNFT(
+  payer: Keypair, 
+  receiver: PublicKey, 
+  treeAddress: PublicKey,
+  collectionMint: PublicKey,
+  collectionMetadataAccount: PublicKey,
+  collectionMasterEditionAccount: PublicKey,
+  nftMetadata: NFTMetadata
+){
+  
+const compressedNFTMetadata = createCompressedNFTMetadata(nftMetadata, payer);
+const mintIxn = mintCompressedNFTIxn(
+  payer,
+  treeAddress,
+  collectionMint,
+  collectionMetadataAccount,
+  collectionMasterEditionAccount,
+  compressedNFTMetadata,
+  receiver,
+);
+
+try {
+  // construct the transaction with our instructions, making the `payer` the `feePayer`
+  const tx = new Transaction().add(
+    // We'll add a small amount of lamports to the TipLink account
+    SystemProgram.transfer({
+      fromPubkey: payer.publicKey,
+      toPubkey: receiver,
+      lamports: RECEIVER_MINIMUM_LAMPORTS,
+    }),
+    mintIxn,
+  );
+  tx.feePayer = payer.publicKey;
+
+  // send the transaction to the cluster
+  const txSignature = await sendAndConfirmTransaction(SOLANA_CONNECTION2, tx, [payer], {
+    commitment: "confirmed",
+    skipPreflight: true,
   });
 
-  console.log(`✅ - Minted Collection NFT: ${collectionNft.address.toString()}`);
-  console.log(`     https://explorer.solana.com/address/${collectionNft.address.toString()}?cluster=devnet`);
+  console.log("\nSuccessfully minted the compressed NFT!");
+  // console.log(explorerURL({ txSignature, cluster: "mainnet-beta" }));
 
-  return [collectionNft.address.toString(), merkleTools.getMerkleRoot().toString('hex')];
+  return txSignature;
+} catch (err) {
+  console.error("\nFailed to mint compressed NFT:", err);
 
+  // log a block explorer link for the failed transaction
+  // await extractSignatureFromFailedTransaction(connection, err);
+
+  throw err;
 }
+}
+
 
 export async function generateCandyMachine(WALLET: Keypair, COLLECTION_NFT_MINT: string): Promise<string> {
   try {
