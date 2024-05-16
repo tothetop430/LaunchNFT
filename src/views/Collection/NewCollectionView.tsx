@@ -325,8 +325,7 @@ export const NewCollectionView: FC = ({ }) => {
 
     const handleDeploy = async () => {
         toast("Deploying is pending..") // play notification
-        // const hash = uploadedRes["IpfsHash"];
-        const hash = uploadedRes;
+        const hash = uploadedRes["IpfsHash"];
 
         // if (switch1) {
         //     const image_url1 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json";
@@ -392,8 +391,6 @@ export const NewCollectionView: FC = ({ }) => {
 
             toast("Deploying has been completed!") // delete notificatoin
         }
-        
-        toast.error("Failed to create project!") // delete notificatoin
         
     }
 
