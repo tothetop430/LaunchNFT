@@ -26,6 +26,7 @@ import {
   createCreateMasterEditionV3Instruction,
   createSetCollectionSizeInstruction,
 } from "@metaplex-foundation/mpl-token-metadata";
+import { WalletContextState } from "@solana/wallet-adapter-react";
 
 
 /*
@@ -256,7 +257,7 @@ export async function createCollection(
  * Mint a single compressed NFTs to any address
  */
 export function mintCompressedNFTIxn(
-  payer: Keypair,
+  payer: WalletContextState,
   treeAddress: PublicKey,
   collectionMint: PublicKey,
   collectionMetadata: PublicKey,

@@ -328,20 +328,19 @@ export const NewCollectionView: FC = ({ }) => {
         toast("Deploying is pending..") // play notification
         console.log("uploadedRes: ", uploadedRes)
         const hash = uploadedRes;
-
-
         const project_id = await CreateProject(wallet, switch1);
         if(project_id.length>0){
             if (switch1) {
                 const _items = [];
                 for (let i = 0; i < images_to_upload.length; i++) {
-                    _items.push(hash + "/" + i.toString() + ".json");
+                    _items.push({ uri : 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/" + i.toString() + ".json", name : collection_name + "#" + (i + 1).toString()});
                 }
-    
                 const data = {
-                    metadatas: _items,
-                    items: [],
-                    project_id: project_id
+                    metadata: 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json",
+                    items: _items,
+                    project_id: project_id,
+                    name: collection_name,
+                    symbol : "TEST"
                 }
                 await fetch("/api/createCnftCollection", {
                     method: "POST",
