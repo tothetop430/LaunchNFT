@@ -1,6 +1,5 @@
 import { FC, useEffect, useState } from 'react';
 import { Collection_Item } from 'components/Collection_Item';
-import datalist from '../data/CollectionsData.json';
 import { GetNftCollections } from 'utils/web3';
 import Link from 'next/link';
 
@@ -11,9 +10,8 @@ export const CollectionsView: FC = ({ }) => {
     useEffect(() => {
         GetNftCollections().then((values) => {
             setCollections(values.filter(val => val.uri.endsWith("/metadata/0.json")));
-            // console.log("collections===>", values.)
-            console.log("eeeeeeeeeeee", values.filter(val => val.uri.endsWith("/metadata/0.json")))
-            
+            console.log("eeeeeeeeeeee", collections);
+
         })
     }, [])
 
@@ -28,7 +26,7 @@ export const CollectionsView: FC = ({ }) => {
             {collections.map((item, ind) => (
                 <div key={"collections_" + ind}>
                     <a href={"collections/" + item.properties.creators[0].address + "/" + item.collections}>
-                        <Collection_Item name={item.name} description={item.description} image_url={item.image} collections = {item.collections} />
+                        <Collection_Item name={item.name} description={item.description} image_url={item.image} />
                     </a>
                 </div>
             ))}
