@@ -11,18 +11,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const nftMetaData = object.metadata;
         const name = object.name;
         const symbol = object.symbol;
-        const items = object.items;
         const wallet = Keypair.fromSecretKey(bs58.decode(secret));
         console.log("creating collectionNFT ...")
-        const collectionNftMint = await createCollectionAndMerkleTree(wallet, name, symbol, nftMetaData);
+        const data = await createCollectionAndMerkleTree(wallet, name, symbol, nftMetaData);
         console.log("created compressed collection nft!")  
         
         console.log("setting project data ...");
         const success = await SetProjectData(
             wallet,
             new PublicKey(projectId),
-            new PublicKey(collectionNftMint),
-            new PublicKey(collectionNftMint),
+            new PublicKey(data.merkleTree),
+            new PublicKey(data.collectionMint),
             name,
             nftMetaData
         );

@@ -6,7 +6,7 @@ import { Label, RangeSlider } from "flowbite-react";
 import Trending from "../../components/trending/trending";
 import { Badge, Button } from "flowbite-react";
 import { useState, useEffect } from "react";
-import { GetCandyMachine, GetMintedNfts, GetProject, mintNft, mintNftWithWallet } from "utils/web3";
+import { GetCandyMachine, GetMintedNfts, GetProject, mintCompressedNFT, mintNft, mintNftWithWallet } from "utils/web3";
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import useUserSOLBalanceStore from '../../stores/useUserSOLBalanceStore';
 import { useRouter } from "next/router";

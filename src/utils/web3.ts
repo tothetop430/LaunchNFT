@@ -346,11 +346,11 @@ export async function createCollectionAndMerkleTree(payer: Keypair, name: string
 
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
-  return collection.mint;
+  return {collectionMint : collection.mint, merkleTree : tree};
 }
 
 export async function mintCompressedNFT(
-  payer: Keypair, 
+  payer: WalletContextState, 
   receiver: PublicKey, 
   treeAddress: PublicKey,
   collectionMint: PublicKey,
@@ -374,20 +374,22 @@ try {
   // construct the transaction with our instructions, making the `payer` the `feePayer`
   const tx = new Transaction().add(
     // We'll add a small amount of lamports to the TipLink account
-    SystemProgram.transfer({
-      fromPubkey: payer.publicKey,
-      toPubkey: receiver,
-      lamports: RECEIVER_MINIMUM_LAMPORTS,
-    }),
+    // SystemProgram.transfer({
+    //   fromPubkey: payer.publicKey,
+    //   toPubkey: receiver,
+    //   lamports: RECEIVER_MINIMUM_LAMPORTS,
+    // }),
     mintIxn,
   );
   tx.feePayer = payer.publicKey;
 
   // send the transaction to the cluster
-  const txSignature = await sendAndConfirmTransaction(SOLANA_CONNECTION2, tx, [payer], {
-    commitment: "confirmed",
-    skipPreflight: true,
-  });
+  // const txSignature = await sendAndConfirmTransaction(SOLANA_CONNECTION2, tx, [payer], {
+  //   commitment: "confirmed",
+  //   skipPreflight: true,
+  // });
+
+  const txSignature = await payer.sendTransaction(tx,SOLANA_CONNECTION1);
 
   console.log("\nSuccessfully minted the compressed NFT!");
   // console.log(explorerURL({ txSignature, cluster: "mainnet-beta" }));
