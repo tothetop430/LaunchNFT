@@ -16,20 +16,22 @@ export const CollectionsView: FC = ({ }) => {
     }, [])
 
     const image_url = './NFT.svg'; //have to get from url
-
+    const description = "GetNftCollections Err->16 UnexpectedAccountError: The account at the provided address [11111111111111111111111111111111] is not of the expected type [CandyMachine].Source: SDK Caused By: RangeError: Trying to access beyond buffer length";
 
     //Read this:
 
     //All information can be find in item.image_url
     return (
         <div className='flex flex-row flex-wrap justify-start items-center m-4 w-full gap-5'>
-            {collections.map((item, ind) => (
+            {/* {collections.map((item, ind) => (
                 <div key={"collections_" + ind}>
                     <a href={"collection_detail"}>
                         <Collection_Item name={item.name} description={item.description} image_url={item.image} />
                     </a>
                 </div>
-            ))}
+            ))} */}
+
+            <Collection_Item name={"item.name"} description={description} image_url={"item.image"} price={0} sold={0} />
 
             {/* {collections.map((item, ind) => (
                 <div key = {"collections_" + ind}>
