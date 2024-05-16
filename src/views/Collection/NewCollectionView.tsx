@@ -349,47 +349,49 @@ export const NewCollectionView: FC = ({ }) => {
         // }
 
         const project_id = await CreateProject(wallet, switch1);
-
-        if (switch1) {
-            const _items = [];
-            for (let i = 0; i < images_to_upload.length; i++) {
-                _items.push(hash + "/" + i.toString() + ".json");
+        if(project_id.length>0){
+            if (switch1) {
+                const _items = [];
+                for (let i = 0; i < images_to_upload.length; i++) {
+                    _items.push(hash + "/" + i.toString() + ".json");
+                }
+    
+                const data = {
+                    metadatas: _items,
+                    items: [],
+                    project_id: project_id
+                }
+    
+                await fetch("/api/createCnftCollection", {
+                    method: "POST",
+                    body: JSON.stringify(data),
+                }).then(res => {
+                    console.log("Great Done!!! ", res);
+                });
+    
+            } else {
+    
+                const _items = [];
+                for (let i = 0; i < images_to_upload.length; i++) {
+                    _items.push({ uri : 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/" + i.toString() + ".json", name : collection_name + "#" + (i + 1).toString()});
+                }
+                const data = {
+                    metadata: 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json",
+                    items: _items,
+                    projectId: project_id,
+                    name: collection_name
+                }
+                await fetch("/api/createNftCollection", {
+                    method: "POST",
+                    body: JSON.stringify(data),
+                }).then(res => {
+                    console.log("Great Done!!! ", res);
+                });
             }
 
-            const data = {
-                metadatas: _items,
-                items: [],
-                project_id: project_id
-            }
-
-            await fetch("/api/createCnftCollection", {
-                method: "POST",
-                body: JSON.stringify(data),
-            }).then(res => {
-                console.log("Great Done!!! ", res);
-            });
-
-        } else {
-
-            const _items = [];
-            for (let i = 0; i < images_to_upload.length; i++) {
-                _items.push({ uri : 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/" + i.toString() + ".json", name : collection_name + "#" + (i + 1).toString()});
-            }
-            const data = {
-                metadata: 'http://gateway.pinata.cloud/ipfs/' + hash,
-                items: _items,
-                projectId: project_id,
-                name: collection_name
-            }
-            await fetch("/api/createNftCollection", {
-                method: "POST",
-                body: JSON.stringify(data),
-            }).then(res => {
-                console.log("Great Done!!! ", res);
-            });
+            toast("Deploying has been completed!") // delete notificatoin
         }
-
-        toast("Deploying has been completed!") // delete notificatoin
+        
     }
 
     useEffect(() => {
