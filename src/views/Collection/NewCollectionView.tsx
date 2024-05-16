@@ -439,7 +439,7 @@ export const NewCollectionView: FC = ({ }) => {
                             <span style={{ fontSize: "30px" }}>
                                 Collection
                             </span>
-                            <div className='flex flex-row gap-5'>
+                            {/* <div className='flex flex-row gap-5'>
                                 <div className='px-1 w-1/3'>
                                     <div className="mb-2 block">
                                         <Label htmlFor="collection_name" value="Collection Name" style={{ color: "white" }} />
@@ -461,7 +461,7 @@ export const NewCollectionView: FC = ({ }) => {
                                     <TextInput id="collection_description" type="email" placeholder="My collection description" required color="gray"
                                         value={collection_description} onChange={(event) => setCollectionDescription((event.target as any).value)} />
                                 </div>
-                            </div>
+                            </div> */}
                             <div className='px-1 py-2'>
                                 <div className='mb-2'>
                                     <Label htmlFor='launch_date' value='Launch Date' style={{ color: "white" }}></Label>
