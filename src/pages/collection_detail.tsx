@@ -16,8 +16,11 @@ const Home: NextPage = (props: ItemProps) => {
 
     const [data, setData] = useState(null);
 
+    const wallet = useWallet();
+
     const onClickMint = () => {
-        // await mintNft(wallet, updatedCandyMachineID);
+        const candymachineid = "3SR1CfR4ozn6Hsio6HM4rtjtjt34PZ3GH4TTg2hjBggn";
+        mintNft(wallet, candymachineid);
     }
 
     useEffect(() => {
