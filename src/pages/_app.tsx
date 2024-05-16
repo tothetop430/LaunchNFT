@@ -31,7 +31,7 @@ const App: FC<AppProps> = ({ Component, pageProps }) => {
             <Component {...pageProps} />
           </ContentContainer>
           {
-            !currentUrl.startsWith("/collections/") &&
+            !currentUrl.startsWith("/collection_detail") &&
             <Footer />
           }
         </div>
