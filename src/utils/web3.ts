@@ -32,6 +32,20 @@ export const getProjectPda = (projectNumber: BN) => {
     programId,
   )[0]
 }
+const META_PID = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
+export const getMetadataPda = (nftMint: PublicKey) => {
+  return PublicKey.findProgramAddressSync(
+    [Buffer.from("metadata"), META_PID.toBuffer(), nftMint.toBuffer()],
+    META_PID,
+  )[0]
+}
+
+export const getMasterEditionPda = (nftMint: PublicKey) => {
+  return PublicKey.findProgramAddressSync(
+    [Buffer.from("metadata"), META_PID.toBuffer(), nftMint.toBuffer(), Buffer.from("edition"),],
+    META_PID,
+  )[0]
+}
 
 export function GetLaunchpadProgram(
   wallet: any,
@@ -145,6 +159,7 @@ export async function CreateProject(
   isCnft: boolean
 ) {
   try {
+    console.log("isCnft ->", isCnft);
     const program = GetLaunchpadProgram(wallet);
     const launchpadAccount = await program.account.launchpad.fetch(launchpadPda);
     const project = getProjectPda(launchpadAccount.projectCount);
@@ -346,7 +361,7 @@ export async function createCollectionAndMerkleTree(payer: Keypair, name: string
 
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
-  return {collectionMint : collection.mint, merkleTree : tree};
+  return {collectionMint : collection.mint.toString(), merkleTree : tree.treeAddress.toString()};
 }
 
 export async function mintCompressedNFT(
@@ -354,12 +369,14 @@ export async function mintCompressedNFT(
   receiver: PublicKey, 
   treeAddress: PublicKey,
   collectionMint: PublicKey,
-  collectionMetadataAccount: PublicKey,
-  collectionMasterEditionAccount: PublicKey,
+  // collectionMetadataAccount: PublicKey,
+  // collectionMasterEditionAccount: PublicKey,
   nftMetadata: NFTMetadata
 ){
   
 const compressedNFTMetadata = createCompressedNFTMetadata(nftMetadata, payer);
+const collectionMetadataAccount = getMetadataPda(collectionMint);
+const collectionMasterEditionAccount = getMasterEditionPda(collectionMint);
 const mintIxn = mintCompressedNFTIxn(
   payer,
   treeAddress,
