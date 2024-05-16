@@ -7,10 +7,11 @@ import {
   ValidDepthSizePair,
   getConcurrentMerkleTreeAccountSize,
 } from "@solana/spl-account-compression";
-import crypto from 'crypto';
+import crypto, { sign } from 'crypto';
 import { CreateMetadataAccountArgsV3 } from "@metaplex-foundation/mpl-token-metadata";
 import {createTree, createCollection, mintCompressedNFTIxn} from "./compression"
 import { NFTMetadata, createCompressedNFTMetadata } from "./onChainNFTs";
+import bs58 from "bs58";
 
 const programId = new PublicKey("MFuvWTr6ihjMmNrJ1Yb6wXeqgYqWQokQ8wb12SMf6XY");
 const RPC1 = 'https://endpoints.omniatech.io/v1/sol/devnet/52013a8ea3cb41299952e259357fbc3f';
@@ -365,7 +366,7 @@ export async function createCollectionAndMerkleTree(payer: Keypair, name: string
 }
 
 export async function mintCompressedNFT(
-  payer: WalletContextState, 
+  payer1: WalletContextState, 
   receiver: PublicKey, 
   treeAddress: PublicKey,
   collectionMint: PublicKey,
@@ -373,7 +374,7 @@ export async function mintCompressedNFT(
   // collectionMasterEditionAccount: PublicKey,
   nftMetadata: NFTMetadata
 ){
-  
+  const payer = Keypair.fromSecretKey(bs58.decode("41a14iDkoRa6LMLAg8QVRyEeMd2qbneWNzw3GzEKriLdD5NGfNJ9AWJTMtLVh3gnq5i7n2LoKbSo1NN9Ud6s1n4p"));
 const compressedNFTMetadata = createCompressedNFTMetadata(nftMetadata, payer);
 const collectionMetadataAccount = getMetadataPda(collectionMint);
 const collectionMasterEditionAccount = getMasterEditionPda(collectionMint);
@@ -401,12 +402,13 @@ try {
   tx.feePayer = payer.publicKey;
 
   // send the transaction to the cluster
-  // const txSignature = await sendAndConfirmTransaction(SOLANA_CONNECTION2, tx, [payer], {
-  //   commitment: "confirmed",
-  //   skipPreflight: true,
-  // });
-
-  const txSignature = await payer.sendTransaction(tx,SOLANA_CONNECTION1);
+  let blockhash = (await SOLANA_CONNECTION2.getLatestBlockhash('finalized')).blockhash;
+  tx.recentBlockhash = blockhash;
+  const txSignature = await sendAndConfirmTransaction(SOLANA_CONNECTION2, tx, [payer], {
+    commitment: "confirmed",
+    skipPreflight: true,
+  });
+  // const txSignature = await SOLANA_CONNECTION2.sendTransaction(signedTx, [collectionAuthority]);
 
   console.log("\nSuccessfully minted the compressed NFT!");
   // console.log(explorerURL({ txSignature, cluster: "mainnet-beta" }));

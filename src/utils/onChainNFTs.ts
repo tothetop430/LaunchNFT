@@ -33,7 +33,7 @@ export const nftMetadatas: NFTMetadata[] = [
 
 
 
-export const createCompressedNFTMetadata = (nftMetadata: NFTMetadata, payer: WalletContextState): MetadataArgs => {
+export const createCompressedNFTMetadata = (nftMetadata: NFTMetadata, payer: any): MetadataArgs => {
   return {
     name: nftMetadata.name,
     symbol: nftMetadata.symbol,

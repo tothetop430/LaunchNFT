@@ -56,19 +56,21 @@ const Home: NextPage = (props: ItemProps) => {
             GetProject(project_id as string).then((value) => {
                 setProject(value)
                 setMintedNfts([]);
+                
                 setCandyMachineId(value.candyMachineId)
                 console.log("project", value);
-                GetCandyMachine(value.candyMachineId).then((value2) => {
-                    setCandyMachine(value2)
-                    console.log("candyMachine", value2);
-                    changeUrl(value2, value)
-                    setMintLimit(value2.candyGuard.guards.mintLimit.limit);
-                    setMintCost(parseFloat(value2.candyGuard.guards.solPayment.amount.basisPoints) / 1000000000);
-                    setLaunchDateTime(formatDateToUTC(value2.candyGuard.guards.startDate.date as number))
-                })
-
-                changeUrlForImg(value);
-
+                if(!value.isCnft){
+                    GetCandyMachine(value.candyMachineId).then((value2) => {
+                        setCandyMachine(value2)
+                        console.log("candyMachine", value2);
+                        changeUrl(value2, value)
+                        setMintLimit(value2.candyGuard.guards.mintLimit.limit);
+                        setMintCost(parseFloat(value2.candyGuard.guards.solPayment.amount.basisPoints) / 1000000000);
+                        setLaunchDateTime(formatDateToUTC(value2.candyGuard.guards.startDate.date as number))
+                    })
+    
+                    changeUrlForImg(value);
+                }
             })
         }
 

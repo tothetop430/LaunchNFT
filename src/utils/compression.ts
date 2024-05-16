@@ -257,7 +257,7 @@ export async function createCollection(
  * Mint a single compressed NFTs to any address
  */
 export function mintCompressedNFTIxn(
-  payer: WalletContextState,
+  payer: any,
   treeAddress: PublicKey,
   collectionMint: PublicKey,
   collectionMetadata: PublicKey,
@@ -281,6 +281,7 @@ export function mintCompressedNFTIxn(
   /*
     Return a single mint instruction 
   */
+    
   return createMintToCollectionV1Instruction(
     {
       payer: payer.publicKey,
