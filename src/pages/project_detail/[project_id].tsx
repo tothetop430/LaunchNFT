@@ -11,7 +11,7 @@ import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import useUserSOLBalanceStore from '../../stores/useUserSOLBalanceStore';
 import { useRouter } from "next/router";
 import { formatDateToUTC } from '../../utils/formatData';
-import { convertResponseToJson } from "utils/convertResponseToJson";
+import { convertResponseToJson, convertResponseToImageURL } from "utils/convertResponse";
 // import axios, { AxiosResponse } from 'axios';
 // import { CollectionDetailView } from "../../views/CollectionDetailView";
 
@@ -28,14 +28,27 @@ const Home: NextPage = (props: ItemProps) => {
     const [project, setProject] = useState<{ name: string, createAt: Date }>({ name: '', createAt: new Date() });
     const [candyMachineId, setCandyMachineId] = useState(null)
     const [candyMachine, setCandyMachine] = useState(null)
-    const [collectionImgUrl, setColImgUrl] = useState('');
+    const [collectionImgUrl, setColImgUrl] = useState('')
 
-    const [mintedNfts, setMintedNfts] = useState([])
+    const [mintedNfts, setMintedNfts] = useState([
+        // {name: 'NFT1', image: 'https://ivory-patient-leopard-375.mypinata.cloud/ipfs/QmXxTEwqeG2NyKAaeKKvtMqKG9YB8iNyJ7r7RDwkFY3ssF/images/0.jpeg?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c'},
+        // {name: 'NFT2', image: 'https://ivory-patient-leopard-375.mypinata.cloud/ipfs/QmXxTEwqeG2NyKAaeKKvtMqKG9YB8iNyJ7r7RDwkFY3ssF/images/1.jpeg?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c'},
+        // {name: 'NFT3', image: 'https://ivory-patient-leopard-375.mypinata.cloud/ipfs/QmXxTEwqeG2NyKAaeKKvtMqKG9YB8iNyJ7r7RDwkFY3ssF/images/2.jpeg?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c'},
+        // {name: 'NFT4', image: 'https://ivory-patient-leopard-375.mypinata.cloud/ipfs/QmXxTEwqeG2NyKAaeKKvtMqKG9YB8iNyJ7r7RDwkFY3ssF/images/0.jpeg?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c'},
+        // {name: 'NFT5', image: 'https://ivory-patient-leopard-375.mypinata.cloud/ipfs/QmXxTEwqeG2NyKAaeKKvtMqKG9YB8iNyJ7r7RDwkFY3ssF/images/1.jpeg?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c'},
+        // {name: 'NFT6', image: 'https://ivory-patient-leopard-375.mypinata.cloud/ipfs/QmXxTEwqeG2NyKAaeKKvtMqKG9YB8iNyJ7r7RDwkFY3ssF/images/2.jpeg?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c'},
+        // {name: 'NFT7', image: 'https://ivory-patient-leopard-375.mypinata.cloud/ipfs/QmXxTEwqeG2NyKAaeKKvtMqKG9YB8iNyJ7r7RDwkFY3ssF/images/0.jpeg?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c'},
+        // {name: 'NFT8', image: 'https://ivory-patient-leopard-375.mypinata.cloud/ipfs/QmXxTEwqeG2NyKAaeKKvtMqKG9YB8iNyJ7r7RDwkFY3ssF/images/1.jpeg?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c'},
+        // {name: 'NFT9', image: 'https://ivory-patient-leopard-375.mypinata.cloud/ipfs/QmXxTEwqeG2NyKAaeKKvtMqKG9YB8iNyJ7r7RDwkFY3ssF/images/2.jpeg?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c'},
+    
+    ])
+
+
 
     useEffect(() => {
         if (candyMachineId != null) {
             GetMintedNfts(candyMachineId).then((values) => {
-                setMintedNfts(values)
+                // setMintedNfts(values)
                 console.log("mintedNFTs", values)
             })
         }
@@ -43,6 +56,8 @@ const Home: NextPage = (props: ItemProps) => {
     }, [candyMachineId, project, candyMachine])
 
     useEffect(() => {
+        const url = "https://gateway.pinata.cloud/ipfs/QmXxTEwqeG2NyKAaeKKvtMqKG9YB8iNyJ7r7RDwkFY3ssF/images/0.jpeg"
+
         if (project_id != null) {
             GetProject(project_id as string).then((value) => {
                 setProject(value)
@@ -53,19 +68,13 @@ const Home: NextPage = (props: ItemProps) => {
                     console.log("candyMachine", value2);
                 })
 
-                //to get img_url of collection
-                const data = {
-                    url: value.metadataUri
-                }
-                fetch("/api/getCollectionImgUrl", {
-                    method: "POST",
-                    body: JSON.stringify(data),
-                }).then(res => {
+                const temp_url = value.metadataUri.replace("gateway.pinata.cloud", "ivory-patient-leopard-375.mypinata.cloud") + '?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c';
+                fetch(temp_url).then(res => {
                     convertResponseToJson(res).then(jsonRes => {
-                        // console.log(jsonRes);
-                        setColImgUrl(jsonRes.result.image)
-                    });
-                });
+                        const img_temp_url = jsonRes.image.toString();
+                        setColImgUrl(img_temp_url.replace("gateway.pinata.cloud", "ivory-patient-leopard-375.mypinata.cloud") + '?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c')
+                    })
+                })
 
             })
         }
@@ -93,6 +102,8 @@ const Home: NextPage = (props: ItemProps) => {
         fetchData();
     }, []);
 
+    // https://ivory-patient-leopard-375.mypinata.cloud/ipfs/QmXxTEwqeG2NyKAaeKKvtMqKG9YB8iNyJ7r7RDwkFY3ssF/images/0.jpeg?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c
+    // https://gateway.pinata.cloud/ipfs/QmXxTEwqeG2NyKAaeKKvtMqKG9YB8iNyJ7r7RDwkFY3ssF/images/0.jpeg
     return (
         <div className="pb-10">
             <div className="flex flex-row m-4">
@@ -101,9 +112,9 @@ const Home: NextPage = (props: ItemProps) => {
             <div className="w-full px-10 justify-center items-center flex flex-col">
                 <h1 className="text-sm flex text-4xl">Minted NFTs</h1>
                 <div className="flex">
-                    <Trending displayMode={'dark'} data={data && [data, data, data, data, data, data]} />
+                    <Trending displayMode={'dark'} data={[...mintedNfts]} />
                 </div>
-                <div className="fixed bottom-10 z-40 flex flex-col w-30 gap-2 justify-center items-center bg-gray-50 px-6 py-3 rounded-lg bg-gray-600 shadow-xl border border-gray-500">
+                <div className="fixed bottom-30 z-40 flex flex-col w-30 gap-2 justify-center items-center bg-gray-50 px-6 py-3 rounded-lg bg-gray-600 shadow-xl border border-gray-500">
 
                     <div className="flex flex-row w-full justify-center items-center">
                         <div className="flex flex-row justify-center w-3/4">

@@ -4,10 +4,10 @@ import NFT from "./images/NFT.svg"
 import Image from "next/image"
 
 const Card = ({
-        title, displayMode, image, floor_price
-    }:{
-        title?: string, displayMode: string, image?: string, floor_price?: string
-    }) => {
+    title, displayMode, image, floor_price
+}: {
+    title?: string, displayMode: string, image?: string, floor_price?: string
+}) => {
 
     let cardContainerClass
 
@@ -16,27 +16,16 @@ const Card = ({
     } else {
         cardContainerClass = "card--container-lm"
     }
-    
+
     return (
         <div className="flex flex-col w-30">
             <div className="w-full">
-                <Image width={200} height={150} src={'./NFT.svg'} alt="nft"></Image>
+                <img src={image} alt="" style={{ width: "200px", height: "200px" }} />
+                {/* <Image width={200} height={150} src={image} alt="nft"></Image> */}
             </div>
-            <div id = "title">{title}</div>
+            <div id="title">{title}</div>
             <div className="vals">TTT</div>
         </div>
-        // <div className={cardContainerClass}>
-        //     <div className="
-        //         self-center
-        //         rounded-lg
-        //         h-150px
-        //         w-150px
-        //     ">
-        //         <Image width={125} height={125} src={(image) ? image : NFT} alt="nft"/>
-        //     </div>
-        //     <div id="title">{title}</div>
-        //     <div className="vals">TTT</div>
-        // </div>
     )
 }
 
