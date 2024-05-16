@@ -13,7 +13,6 @@ import { add } from "date-fns";
 const CollectionDetail: NextPage = (props) => {
   const router = useRouter();
   const { collectionName, address } = router.query;
-  console.log("collectionName, address", collectionName, address);
   const image_url = './NFT.svg';
   const description = 'Created at 05.13.2024';
   // const itemProps = {
@@ -42,6 +41,8 @@ const CollectionDetail: NextPage = (props) => {
       } catch (error) {
         console.log(error.message);
       }
+      console.log(">>> data : ", data);
+      // console.log("collectionName, address", data.name, address);
     };
 
     fetchData();
@@ -51,7 +52,7 @@ const CollectionDetail: NextPage = (props) => {
     <div>
       <div className="flex flex-col">
         <div className="flex flex-row mx-10 my-10">
-          <CollectionDetailView name={"n"} description={"dd"} image_url={data && data.image} />
+          <CollectionDetailView name={"data.name"} description={"data.description"} image_url={data && data.image} />
         </div>
 
         <div className="w-full px-10 justify-center items-center flex flex-col">

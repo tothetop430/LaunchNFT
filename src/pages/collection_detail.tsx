@@ -10,7 +10,7 @@ import { mintNft } from "utils/web3";
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import useUserSOLBalanceStore from '../stores/useUserSOLBalanceStore';
 
-const Home: NextPage = (props : ItemProps) => {
+const Home: NextPage = (props: ItemProps) => {
 
     const [slider_value, setSliderValue] = useState<number>(1);
 
@@ -47,21 +47,20 @@ const Home: NextPage = (props : ItemProps) => {
                 <div className="flex">
                     <Trending displayMode={'dark'} data={data && [data, data, data, data, data, data]} />
                 </div>
-                <div className="fixed bottom-10 z-40 flex bg-gray-50">
-                    <div className="flex flex-col justify-center gap-1 items-center ">
-                        <div>
-                            <RangeSlider id="default-range" min={1} max={100} onChange={(e) => setSliderValue(Number(e.target.value))} value={slider_value} />
-                        </div>
-                        <div className="flex gap-1">
-                            <Button outline onClick={onClickMint}>
-                                Mint
-                            </Button>
-                            <p className="h-5 m-3 items-center text-gray-700">{slider_value}</p>
-                        </div>
+                <div className="fixed bottom-10 z-40 flex flex-col gap-2 justify-center items-center bg-gray-50 px-6 py-3 rounded-lg bg-gray-700">
+
+                    <div>
+                        <RangeSlider id="default-range" min={1} max={100} onChange={(e) => setSliderValue(Number(e.target.value))} value={slider_value} />
                     </div>
+                    <div className="flex gap-1">
+                        <Button outline onClick={onClickMint}>
+                            Mint
+                        </Button>
+                        <p className="h-5 m-3 items-center text-gray-700">{slider_value}</p>
+                    </div>
+
                 </div>
             </div>
-
         </div>
     );
 };
