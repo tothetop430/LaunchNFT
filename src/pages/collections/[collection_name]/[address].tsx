@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useState, useEffect } from 'react';
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import Home from '../../collection_detail';
 import ItemProps from "interfaces/ItemProps";
 import { Badge, Button } from "flowbite-react";
@@ -8,6 +9,7 @@ import { AiOutlineTwitter, AiOutlineHeart, AiFillUnlock } from "react-icons/ai";
 import { CollectionDetailView } from "views/CollectionDetailView";
 import { Label, RangeSlider } from "flowbite-react";
 import Trending from "components/trending/trending";
+import { mintNft } from "utils/web3";
 
 const CollectionDetail: NextPage = (props) => {
   const router = useRouter();
@@ -23,9 +25,10 @@ const CollectionDetail: NextPage = (props) => {
 
   const [slider_value, setSliderValue] = useState<number>(1);
   const [data, setData] = useState(null);
+  const wallet = useWallet();
 
   const onClickMint = () => {
-    // await mintNft(wallet, updatedCandyMachineID);
+    mintNft(wallet, address[0]);
   }
 
   useEffect(() => {
