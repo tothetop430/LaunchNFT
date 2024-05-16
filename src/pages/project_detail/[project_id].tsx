@@ -26,7 +26,7 @@ const Home: NextPage = (props: ItemProps) => {
 
     const router = useRouter();
     const { project_id } = router.query;
-    const [project, setProject] = useState<{ isCnft:boolean, name: string, createAt: number , candyMachineId : PublicKey, collectionMint : PublicKey}>({isCnft: false, name: '', createAt: 0, candyMachineId: null, collectionMint: null });
+    const [project, setProject] = useState(null);
     const [candyMachineId, setCandyMachineId] = useState(null)
     const [candyMachine, setCandyMachine] = useState(null)
     const [collectionImgUrl, setColImgUrl] = useState('')
@@ -65,8 +65,8 @@ const Home: NextPage = (props: ItemProps) => {
                         console.log("candyMachine", value2);
                         changeUrl(value2, value)
                         setMintLimit(value2.candyGuard.guards.mintLimit.limit);
-                        setMintCost(parseFloat(value2.candyGuard.guards.solPayment.amount.basisPoints) / 1000000000);
-                        setLaunchDateTime(formatDateToUTC(value2.candyGuard.guards.startDate.date as number))
+                        setMintCost(parseFloat(value2.candyGuard.guards.solPayment.amount.basisPoints.toString()) / 1000000000);
+                        setLaunchDateTime(formatDateToUTC(value2.candyGuard.guards.startDate.date.toNumber()))
                     })
     
                     changeUrlForImg(value);
