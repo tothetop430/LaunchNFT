@@ -14,10 +14,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const items = object.items;
         const wallet = Keypair.fromSecretKey(bs58.decode(secret));
         const collectionNftMint = await createCollectionNft(name, nftMetaData, wallet);
-        const candyMachineId = await generateCandyMachine(wallet,collectionNftMint);
-        await SetCandyMachineId(wallet,new PublicKey(projectId),new PublicKey(candyMachineId));
-        await addItems(wallet,candyMachineId,items);
-        res.status(200).json({ result: candyMachineId });
+        if(collectionNftMint.length>0){
+            const candyMachineId = await generateCandyMachine(wallet,collectionNftMint);
+            await SetCandyMachineId(wallet,new PublicKey(projectId),new PublicKey(candyMachineId));
+            await addItems(wallet,candyMachineId,items);
+            res.status(200).json({ result: candyMachineId });
+        }
+        else{
+            res.status(500).json({ error: "createCollectionNft failed" })    
+        }        
     } catch (err) {
         res.status(500).json({ error: err })
     }

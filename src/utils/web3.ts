@@ -63,33 +63,21 @@ export async function GetLaunchpad(
 export async function GetNftCollections() {
   const wallet = Keypair.generate();
   const program = GetLaunchpadProgram(wallet);
-  console.log("ssssss");
   const project = await program.account.project.all();
-  console.log("projects-->" + project.length);
   const nftCollections = [];
   for (let i = 0; i < project.length; i++) {
     try {
       const candyMachineId = project[i].account.candyMachineId;
-      // console.log("good candyMachineId", candyMachineId);
       const candyMachine = await Metaplex.make(SOLANA_CONNECTION2).candyMachines().findByAddress({ address: candyMachineId });
-      // console.log("good candyMachine", candyMachine);
       const collectionNftMint = candyMachine.collectionMintAddress;
-      // console.log("good collectionNftMint", collectionNftMint);
       const collectionNft = await Metaplex.make(SOLANA_CONNECTION2).nfts().findByMint({ mintAddress: collectionNftMint });
-      console.log("good collectionNft", collectionNft);
-      nftCollections.push({ uri: collectionNft.uri, name: collectionNft.name, itemsAvailable: candyMachine.itemsAvailable, itemsMinted: candyMachine.itemsMinted, startDate: candyMachine.candyGuard.guards.startDate.date, price: candyMachine.candyGuard.guards.solPayment.amount });
+      console.log("collectionNft" + i, collectionNft);
+      nftCollections.push({ uri: collectionNft.uri, name: collectionNft.name, itemsAvailable: candyMachine.itemsAvailable, itemsMinted: candyMachine.itemsMinted, startDate: candyMachine.candyGuard.guards.startDate.date, price: candyMachine.candyGuard.guards.solPayment.amount , candyMachineId : candyMachineId.toString()});
     } catch (err) {
-      // console.log("Err in web3.ts", err);
+      console.log("GetNftCollections Err->" + i, err);
     }
-
-    // return nftCollections;
-
   }
   return nftCollections;
-  // project[0].account.candyMachineId
-  // Metaplex.make().nfts().findByMint()
-  // const launchpad = await program.account.launchpad.fetchNullable(launchpadPda);
-  // return launchpad;
 }
 
 export async function Update(
@@ -100,10 +88,8 @@ export async function Update(
   feeCollectionSol: number
 ) {
   if (!wallet.publicKey) return;
-
   try {
     const program = GetLaunchpadProgram(wallet);
-    console.log(">>>", feeCollectionSol);
     const feeCollection = new BN(feeCollectionSol);
     const transactionSignature = await program.methods
       .update({
@@ -118,16 +104,16 @@ export async function Update(
       })
       .rpc();
 
-
     console.log(
       `update tx id: ${transactionSignature}`,
     );
   } catch (error) {
-    console.log(error);
+    console.log("Update Error->", error);
   } finally {
-  }
 
+  }
 }
+
 export const [launchpadPda] = PublicKey.findProgramAddressSync(
   [Buffer.from("launchpad")],
   programId,
@@ -139,6 +125,7 @@ export const getProjectPda = (projectNumber: BN) => {
     programId,
   )[0]
 }
+
 export async function CreateProject(
   wallet: WalletContextState,
   isCnft: boolean
@@ -147,7 +134,6 @@ export async function CreateProject(
     const program = GetLaunchpadProgram(wallet);
     const launchpadAccount = await program.account.launchpad.fetch(launchpadPda);
     const project = getProjectPda(launchpadAccount.projectCount);
-
     const transactionSignature = await program.methods
       .createProject({
         isCnft
@@ -192,74 +178,11 @@ export async function SetCandyMachineId(
       `setCandyMachineId tx id: ${transactionSignature}`,
     );
   } catch (error) {
-    console.log("SetCandyMachineId Error->",error);
+    console.log("SetCandyMachineId Error->", error);
   } finally {
 
   }
 }
-
-
-// export async function uploadImage(filePath: string, fileName: string, WALLET: WalletContextState): Promise<string> {
-//   console.log(`Step 1 - Uploading Image`);
-//   const METAPLEX = Metaplex.make(SOLANA_CONNECTION)
-//     .use(walletAdapterIdentity(WALLET))
-//     .use(bundlrStorage({
-//       address: 'https://devnet.bundlr.network',
-//       providerUrl: RPC,
-//       timeout: 60000,
-//     }));
-//   const CONFIG = {
-//     uploadPath: 'uploads/',
-//     imgFileName: 'image.png',
-//     imgType: 'image/png',
-//     imgName: 'QuickNode Pixel',
-//     description: 'Pixel infrastructure for everyone!',
-//     attributes: [
-//       { trait_type: 'Speed', value: 'Quick' },
-//       { trait_type: 'Type', value: 'Pixelated' },
-//       { trait_type: 'Background', value: 'QuickNode Blue' }
-//     ],
-//     sellerFeeBasisPoints: 500,//500 bp = 5%
-//     symbol: 'QNPIX',
-//     creators: [
-//       { address: WALLET.publicKey, share: 100 }
-//     ]
-//   };
-//   const imgBuffer = fs.readFileSync(filePath + fileName);
-//   const imgMetaplexFile = toMetaplexFile(imgBuffer, fileName);
-//   const imgUri = await METAPLEX.storage().upload(imgMetaplexFile);
-//   console.log(`   Image URI:`, imgUri);
-//   return imgUri;
-// }
-
-// export async function uploadMetadata(imgUri: string, imgType: string, nftName: string, description: string, attributes: { trait_type: string, value: string }[], WALLET: Keypair) {
-//   console.log(`Step 2 - Uploading Metadata`);
-//   const METAPLEX = Metaplex.make(SOLANA_CONNECTION)
-//     .use(keypairIdentity(WALLET))
-//     .use(bundlrStorage({
-//       address: 'https://devnet.bundlr.network',
-//       providerUrl: RPC,
-//       timeout: 60000,
-//     }));
-//   const { uri } = await METAPLEX
-//     .nfts()
-//     .uploadMetadata({
-//       name: nftName,
-//       description: description,
-//       image: imgUri,
-//       attributes: attributes,
-//       properties: {
-//         files: [
-//           {
-//             type: imgType,
-//             uri: imgUri,
-//           },
-//         ]
-//       }
-//     });
-//   console.log('   Metadata URI:', uri);
-//   return uri;
-// }
 
 export async function createCollectionNft(name: string, metadataUri: string, WALLET: Keypair): Promise<string> {
   try {
@@ -279,8 +202,8 @@ export async function createCollectionNft(name: string, metadataUri: string, WAL
     return collectionNft.address.toString();
   }
   catch (err) {
-    console.log("CreateCollectionNft error->", err);
-    return "failed";
+    console.error("CreateCollectionNft error->", err);
+    return "";
   }
 }
 
@@ -316,7 +239,6 @@ export async function createCollectionCompressedNft(NFT_METADATAS: string[], WAL
 }
 
 export async function generateCandyMachine(WALLET: Keypair, COLLECTION_NFT_MINT: string): Promise<string> {
-  console.log("######### generateCandyMachine #############");
   try {
     const candyMachineSettings: CreateCandyMachineInput<DefaultCandyGuardSettings> =
     {
@@ -352,7 +274,6 @@ export async function generateCandyMachine(WALLET: Keypair, COLLECTION_NFT_MINT:
         },
       }
     };
-    console.log(">>>> Before making METAPLEX");
     const METAPLEX = Metaplex.make(SOLANA_CONNECTION2)
       .use(keypairIdentity(WALLET));
     const { candyMachine } = await METAPLEX.candyMachines().create(candyMachineSettings);
@@ -363,13 +284,9 @@ export async function generateCandyMachine(WALLET: Keypair, COLLECTION_NFT_MINT:
   catch (e) {
     console.log("Error in GenerateCandyMachine: ", e);
   }
-
-
-
 }
 
 export async function updateCandyMachine(WALLET: Keypair, CANDY_MACHINE_ID: string): Promise<string> {
-  console.log("############## updateCandyMachine ##################");
   const METAPLEX = Metaplex.make(SOLANA_CONNECTION2)
     .use(walletAdapterIdentity(WALLET));
   const candyMachine = await METAPLEX
