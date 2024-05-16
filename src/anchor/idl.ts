@@ -97,7 +97,7 @@ export type LaunchnftContract = {
       ]
     },
     {
-      "name": "setCandyMachineId",
+      "name": "setProjectData",
       "accounts": [
         {
           "name": "authority",
@@ -114,7 +114,7 @@ export type LaunchnftContract = {
         {
           "name": "params",
           "type": {
-            "defined": "SetCandyMachineIdParams"
+            "defined": "SetProjectDataParams"
           }
         }
       ]
@@ -179,6 +179,18 @@ export type LaunchnftContract = {
             "type": "publicKey"
           },
           {
+            "name": "collectionMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "metadataUri",
+            "type": "string"
+          },
+          {
             "name": "createAt",
             "type": "i64"
           }
@@ -236,13 +248,25 @@ export type LaunchnftContract = {
       }
     },
     {
-      "name": "SetCandyMachineIdParams",
+      "name": "SetProjectDataParams",
       "type": {
         "kind": "struct",
         "fields": [
           {
             "name": "candyMachineId",
             "type": "publicKey"
+          },
+          {
+            "name": "collectionMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "metadataUri",
+            "type": "string"
           }
         ]
       }
@@ -388,7 +412,7 @@ export const IDL: LaunchnftContract = {
       ]
     },
     {
-      "name": "setCandyMachineId",
+      "name": "setProjectData",
       "accounts": [
         {
           "name": "authority",
@@ -405,7 +429,7 @@ export const IDL: LaunchnftContract = {
         {
           "name": "params",
           "type": {
-            "defined": "SetCandyMachineIdParams"
+            "defined": "SetProjectDataParams"
           }
         }
       ]
@@ -470,6 +494,18 @@ export const IDL: LaunchnftContract = {
             "type": "publicKey"
           },
           {
+            "name": "collectionMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "metadataUri",
+            "type": "string"
+          },
+          {
             "name": "createAt",
             "type": "i64"
           }
@@ -527,13 +563,25 @@ export const IDL: LaunchnftContract = {
       }
     },
     {
-      "name": "SetCandyMachineIdParams",
+      "name": "SetProjectDataParams",
       "type": {
         "kind": "struct",
         "fields": [
           {
             "name": "candyMachineId",
             "type": "publicKey"
+          },
+          {
+            "name": "collectionMint",
+            "type": "publicKey"
+          },
+          {
+            "name": "name",
+            "type": "string"
+          },
+          {
+            "name": "metadataUri",
+            "type": "string"
           }
         ]
       }

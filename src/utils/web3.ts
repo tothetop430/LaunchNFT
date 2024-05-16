@@ -6,7 +6,7 @@ import { Metaplex, keypairIdentity, toBigNumber, CreateCandyMachineInput, Defaul
 import MerkleTools from 'merkle-tools';
 import crypto from 'crypto';
 
-const programId = new PublicKey("J15m8CpBepW7zWG73o5cao74YrLCjUBCDgtRXroFM3jw");
+const programId = new PublicKey("MFuvWTr6ihjMmNrJ1Yb6wXeqgYqWQokQ8wb12SMf6XY");
 const RPC1 = 'https://endpoints.omniatech.io/v1/sol/devnet/52013a8ea3cb41299952e259357fbc3f';
 const RPC2 = 'https://api.devnet.solana.com';
 const SOLANA_CONNECTION1 = new Connection(RPC1);
@@ -27,6 +27,7 @@ export const getProjectPda = (projectNumber: BN) => {
 export function GetLaunchpadProgram(
   wallet: any,
 ) {
+  
   const provider = new AnchorProvider(SOLANA_CONNECTION1, wallet, {});
   const program = new Program<LaunchnftContract>(IDL, programId, provider);
   return program;
@@ -82,23 +83,35 @@ export async function GetLaunchpad(
 export async function GetNftCollections() {
   const wallet = Keypair.generate();
   const program = GetLaunchpadProgram(wallet);
-  const project = await program.account.project.all();
-  const nftCollections = [];
-  for (let i = 0; i < project.length; i++) {
-    try {
-      const candyMachineId = project[i].account.candyMachineId;
-      const candyMachine = await Metaplex.make(SOLANA_CONNECTION2).candyMachines().findByAddress({ address: candyMachineId });
-      const collectionNftMint = candyMachine.collectionMintAddress;
-      const collectionNft = await Metaplex.make(SOLANA_CONNECTION2).nfts().findByMint({ mintAddress: collectionNftMint });
-      // console.log("collectionNft" + i, collectionNft.uri);
-      nftCollections.push({ uri: collectionNft.uri, name: collectionNft.name, itemsAvailable: candyMachine.itemsAvailable, itemsMinted: candyMachine.itemsMinted, startDate: candyMachine.candyGuard.guards.startDate.date, price: candyMachine.candyGuard.guards.solPayment.amount, candyMachineId: candyMachineId.toString() });
-    } catch (err) {
-      console.log("GetNftCollections Err->" + i, err);
-    }
-  }
-  return nftCollections;
+  const projects = await program.account.project.all();
+  // const nftCollections = [];
+  // for (let i = 0; i < project.length; i++) {
+  //   try {
+  //     const candyMachineId = project[i].account.candyMachineId;
+  //     const candyMachine = await Metaplex.make(SOLANA_CONNECTION2).candyMachines().findByAddress({ address: candyMachineId });
+  //     const collectionNftMint = candyMachine.collectionMintAddress;
+  //     const collectionNft = await Metaplex.make(SOLANA_CONNECTION2).nfts().findByMint({ mintAddress: collectionNftMint });
+  //     // console.log("collectionNft" + i, collectionNft.uri);
+  //     nftCollections.push({ uri: collectionNft.uri, name: collectionNft.name, itemsAvailable: candyMachine.itemsAvailable, itemsMinted: candyMachine.itemsMinted, startDate: candyMachine.candyGuard.guards.startDate.date, price: candyMachine.candyGuard.guards.solPayment.amount, candyMachineId: candyMachineId.toString() });
+  //   } catch (err) {
+  //     console.log("GetNftCollections Err->" + i, err);
+  //   }
+  // }
+  return projects;
 }
-
+export async function GetCandyMachine(candyMachineId){
+  const candyMachine = await Metaplex.make(SOLANA_CONNECTION2).candyMachines().findByAddress({ address: candyMachineId });
+  return candyMachine;
+}
+export async function GetProject(projectId: string) {
+  const wallet = Keypair.generate();
+  const program = GetLaunchpadProgram(wallet);
+  const project= await program.account.project.fetch(new PublicKey(projectId));
+  return project;
+}
+export async function GetMintedNfts(candyMachine) {
+  return await Metaplex.make(SOLANA_CONNECTION2).candyMachinesV2().findMintedNfts({candyMachine})
+}
 export async function Update(
   wallet: WalletContextState,
   adminWallet: PublicKey,
@@ -162,16 +175,22 @@ export async function CreateProject(
   }
 }
 
-export async function SetCandyMachineId(
+export async function SetProjectData(
   walletKeypair: Keypair,
   project: PublicKey,
   candyMachineId: PublicKey,
+  collectionMint: PublicKey,
+  name: string,
+  metadataUri: string,
 ) {
   try {
     const program = GetLaunchpadProgram(new Wallet(walletKeypair));
     const transactionSignature = await program.methods
-      .setCandyMachineId({
-        candyMachineId
+      .setProjectData({
+        candyMachineId,
+        collectionMint,
+        name,
+        metadataUri
       })
       .accounts({
         authority: walletKeypair.publicKey,
@@ -180,11 +199,11 @@ export async function SetCandyMachineId(
       .rpc();
 
     console.log(
-      `setCandyMachineId tx id: ${transactionSignature}`,
+      `SetProjectData tx id: ${transactionSignature}`,
     );
     return true;
   } catch (error) {
-    console.log("SetCandyMachineId Error->", error);
+    console.log("SetProjectData Error->", error);
     return false;
   }
 }

@@ -245,6 +245,7 @@ export const NewCollectionView: FC = ({ }) => {
             const MetaHash = resFile.data.IpfsHash;
 
             setUploadedRes(MetaHash);
+            console.log("meta hash", MetaHash)
             // sendJSONtoIPFS(MetaHash);
 
 
@@ -325,7 +326,8 @@ export const NewCollectionView: FC = ({ }) => {
 
     const handleDeploy = async () => {
         toast("Deploying is pending..") // play notification
-        const hash = uploadedRes["IpfsHash"];
+        console.log("uploadedRes: ", uploadedRes)
+        const hash = uploadedRes;
 
         // if (switch1) {
         //     const image_url1 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json";
