@@ -20,7 +20,7 @@ export const CollectionDetailView: FC<ItemProps> = ({ name, description, image_u
                         <img src="/solana-sol-logo.png" alt="" style={{ width: "20px", height: "20px" }} />
                     </div>
                     <div>
-                        <p>{launchdatetime}</p>
+                        <p>LaunchTime: {launchdatetime}</p>
                     </div>
                     <Badge color="red" icon={AiFillUnlock} size="sm" className="p-3" />
 
