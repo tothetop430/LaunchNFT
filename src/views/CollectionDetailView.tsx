@@ -4,7 +4,7 @@ import { Badge, Button } from "flowbite-react";
 import ItemProps from '../interfaces/ItemProps';
 
 
-export const CollectionDetailView: FC<ItemProps> = ({ name, description, image_url}) => {
+export const CollectionDetailView: FC<ItemProps> = ({ name, description, image_url, mint_cost, mint_limit, launchdatetime}) => {
     //const { name, description, image_url } = props;
     return (
         <div className="w-full flex flex-row justify-around items-start px-5 py-10">
@@ -18,6 +18,9 @@ export const CollectionDetailView: FC<ItemProps> = ({ name, description, image_u
                         <p>{description}</p>
                         &nbsp;
                         <img src="/solana-sol-logo.png" alt="" style={{ width: "20px", height: "20px" }} />
+                    </div>
+                    <div>
+                        <p>LaunchTime: {launchdatetime}</p>
                     </div>
                     <Badge color="red" icon={AiFillUnlock} size="sm" className="p-3" />
 
@@ -76,7 +79,7 @@ export const CollectionDetailView: FC<ItemProps> = ({ name, description, image_u
                         <div className="flex flex-row justify-start items-center">
                             <img src="/solana-sol-logo.png" alt="" style={{ width: "20px", height: "20px" }} />
                             &nbsp;&nbsp;
-                            <p style={{ color: "gray", fontSize: "15px" }}>0.06Max 20 mints per wallet</p>
+                            <p style={{ color: "gray", fontSize: "15px" }}>{mint_cost}sol Max {mint_limit} mints per wallet</p>
                         </div>
                     </div>
                 </div>
