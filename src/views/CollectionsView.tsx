@@ -32,13 +32,14 @@ export const CollectionsView: FC = ({ }) => {
                     </a>
                 </div>
             ))}
-            {collections.map((item, ind) => (
+
+            {/* {collections.map((item, ind) => (
                 <div key = {"collections_" + ind}>
                     <a href = {"collections/" + item.creators[0].address + "/" + item.name}>
                         <Collection_Item name = {item.name} description='Find yourself' image_url={image_url} creator='Find yourself'/>
                     </a>
                 </div>
-            ))}
+            ))} */}
         </div>
     );
 };

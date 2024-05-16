@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { GetNftCollections, SetCandyMachineId, addItems, createCollectionNft, generateCandyMachine } from "utils/web3";
+import { SetCandyMachineId, addItems, createCollectionNft, generateCandyMachine } from "utils/web3";
 import { Keypair, PublicKey } from "@solana/web3.js";
 import * as bs58 from "bs58";
 import { it } from "node:test";
@@ -15,9 +15,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const items = object.items;
         const wallet = Keypair.fromSecretKey(bs58.decode(secret));
         const collectionNftMint = await createCollectionNft(name, nftMetaData, wallet);
+<<<<<<< HEAD
         console.log("eeeeeee", projectId, nftMetaData, items);
+=======
+>>>>>>> d3f3b4b7d68965d3555b20fb46940f8d1e6432fb
         const candyMachineId = await generateCandyMachine(wallet,collectionNftMint);
-        
         await SetCandyMachineId(wallet,new PublicKey(projectId),new PublicKey(candyMachineId));
         await addItems(wallet,candyMachineId,items);
         res.status(200).json({ result: candyMachineId });

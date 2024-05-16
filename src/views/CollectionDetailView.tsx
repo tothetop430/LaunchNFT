@@ -4,7 +4,7 @@ import { Badge, Button } from "flowbite-react";
 import ItemProps from '../interfaces/ItemProps';
 
 
-export const CollectionDetailView: FC<ItemProps> = ({ name, description, image_url, creator }) => {
+export const CollectionDetailView: FC<ItemProps> = ({ name, description, image_url, collections }) => {
     //const { name, description, image_url } = props;
     return (
         <div className="w-full flex flex-row justify-around items-start px-5 py-10">
