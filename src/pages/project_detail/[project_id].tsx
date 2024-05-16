@@ -25,7 +25,7 @@ const Home: NextPage = (props: ItemProps) => {
 
     const router = useRouter();
     const { project_id } = router.query;
-    const [project, setProject] = useState<{ name: string, createAt: Date }>({ name: '', createAt: new Date() });
+    const [project, setProject] = useState<{ name: string, createAt: number }>({ name: '', createAt: 0 });
     const [candyMachineId, setCandyMachineId] = useState(null)
     const [candyMachine, setCandyMachine] = useState(null)
     const [collectionImgUrl, setColImgUrl] = useState('')
@@ -56,34 +56,45 @@ const Home: NextPage = (props: ItemProps) => {
                 GetCandyMachine(value.candyMachineId).then((value2) => {
                     setCandyMachine(value2)
                     console.log("candyMachine", value2);
-
-                    value2.items.filter((nft) => nft.minted).map((nft) => {
-                        fetch(nft.uri.replace("gateway.pinata.cloud", "ivory-patient-leopard-375.mypinata.cloud") + '?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c')
-                            .then(res => {
-                                convertResponseToJson(res).then(resJson => {
-                                    setMintedNfts([...mintedNfts, {
-                                        image: resJson.image.replace("gateway.pinata.cloud", "ivory-patient-leopard-375.mypinata.cloud") + '?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c',
-                                        name: nft.name,
-                                        id: nft.index,
-                                        collectionName: value.name
-                                    }])
-                                })
-                            });
-                    });
+                    changeUrl(value2, value)
+                    
                 })
 
-            const temp_url = value.metadataUri.replace("gateway.pinata.cloud", "ivory-patient-leopard-375.mypinata.cloud") + '?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c';
-            fetch(temp_url).then(res => {
-                convertResponseToJson(res).then(jsonRes => {
-                    const img_temp_url = jsonRes.image.toString();
-                    setColImgUrl(img_temp_url.replace("gateway.pinata.cloud", "ivory-patient-leopard-375.mypinata.cloud") + '?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c')
-                })
+                changeUrlForImg(value);
+
             })
-
-        })
-}
+        }
 
     }, [project_id])
+
+    const changeUrl = async (candyMachineData, projectData) =>{
+        console.log("fffff", candyMachineData.items);
+        const filteredItems = candyMachineData.items.filter((nft) => nft.minted);
+        let minted = []
+        for(let i = 0; i < filteredItems.length ; i++){
+            const nft = filteredItems[i];
+            const replacedUri = nft.uri.replace("gateway.pinata.cloud", "ivory-patient-leopard-375.mypinata.cloud") + '?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c';
+            const res = await fetch(replacedUri);
+            const resJson = await res.json();
+            minted.push({
+                image: resJson.image.replace("gateway.pinata.cloud", "ivory-patient-leopard-375.mypinata.cloud") + '?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c',
+                name: nft.name,
+                id: nft.index,
+                collectionName: projectData.name
+            });
+        }
+        
+        setMintedNfts(minted);
+    }
+    const changeUrlForImg = async (value) =>{
+        const temp_url = value.metadataUri.replace("gateway.pinata.cloud", "ivory-patient-leopard-375.mypinata.cloud") + '?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c';
+        console.log("hhh", temp_url, value.metadataUri);
+        const res = await fetch(temp_url);
+        const jsonRes = await res.json();
+        const img_temp_url = jsonRes.image.toString();
+        setColImgUrl(img_temp_url.replace("gateway.pinata.cloud", "ivory-patient-leopard-375.mypinata.cloud") + '?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c')
+        
+    }
 
 const onClickMint = async () => {
     mintNftWithWallet(wallet, candyMachineId.toString());
@@ -111,7 +122,7 @@ useEffect(() => {
 return (
     <div className="pb-10">
         <div className="flex flex-row m-4">
-            <CollectionDetailView name={project.name} description={"Created " + formatDateToUTC(project.createAt as Date)} image_url={collectionImgUrl} />
+            <CollectionDetailView name={project.name} description={"Created " + formatDateToUTC(project.createAt as number)} image_url={collectionImgUrl} />
         </div>
         <div className="w-full px-10 justify-center items-center flex flex-col">
             <h1 className="text-sm flex text-4xl">Minted NFTs</h1>
