@@ -25,9 +25,10 @@ const CollectionDetail: NextPage = (props) => {
 
   const [slider_value, setSliderValue] = useState<number>(1);
   const [data, setData] = useState(null);
+  const wallet = useWallet();
 
   const onClickMint = () => {
-    // await mintNft(wallet, updatedCandyMachineID);
+    mintNft(wallet, address[0]);
   }
 
   useEffect(() => {
