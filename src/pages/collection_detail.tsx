@@ -40,7 +40,7 @@ const Home: NextPage = (props : ItemProps) => {
     return (
         <div className="pb-10">
             <div className="flex flex-row m-4">
-                <CollectionDetailView name={props.name} description={props.description} image_url={data && data.image} creator={props.creator} />
+                <CollectionDetailView name={props.name} description={props.description} image_url={data && data.image} />
             </div>
             <div className="w-full px-10 justify-center items-center flex flex-col">
                 <h1 className="text-sm flex">Minted NFTs</h1>

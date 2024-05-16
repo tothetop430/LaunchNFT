@@ -8,10 +8,12 @@ import { AiOutlineTwitter, AiOutlineHeart, AiFillUnlock } from "react-icons/ai";
 import { CollectionDetailView } from "views/CollectionDetailView";
 import { Label, RangeSlider } from "flowbite-react";
 import Trending from "components/trending/trending";
+import { add } from "date-fns";
 
 const CollectionDetail: NextPage = (props) => {
   const router = useRouter();
   const { collectionName, address } = router.query;
+  console.log("collectionName, address", collectionName, address);
   const image_url = './NFT.svg';
   const description = 'Created at 05.13.2024';
   // const itemProps = {
@@ -47,50 +49,30 @@ const CollectionDetail: NextPage = (props) => {
 
   return (
     <div>
-      <div className="flex flex-row">
-        <div className="flex flex-row m-4">
-          <CollectionDetailView name={"dd"} description={"dd"} image_url={data && data.image} />
+      <div className="flex flex-col">
+        <div className="flex flex-row mx-10 my-10">
+          <CollectionDetailView name={"n"} description={"dd"} image_url={data && data.image} />
         </div>
-        <div className="w-full flex flex-row flex-start">
-          <div className="flex flex-row w-full">
-            <img src={image_url} alt="" className="w-40 h-40" />
-            <div className="flex flex-col m-x-3 pl-5">
-              <div className="flex flex-col">
-                <p style={{ fontSize: '48px' }}>{collectionName}</p>
-                <caption>CREATED Tue 06 Feb by <a href={'../../profile/' + address}>{address}</a> on </caption><span><img src="../../public/solana.avatar.svg" alt="" /></span>
-                <Badge color="red" icon={AiFillUnlock} className="w-7" />
-                <caption>{description}</caption>
+
+        <div className="w-full px-10 justify-center items-center flex flex-col">
+          <h1 className="text-sm flex">Minted NFTs</h1>
+          <div className="flex">
+            <Trending displayMode={'dark'} data={data && [data, data, data, data, data, data]} />
+          </div>
+          <div className="fixed bottom-10 z-40 flex bg-gray-50">
+            <div className="flex flex-col justify-center gap-1 items-center ">
+              <div>
+                <RangeSlider id="default-range" min={1} max={100} onChange={(e) => setSliderValue(Number(e.target.value))} value={slider_value} />
               </div>
-              <div className="flex flex-row">
-                <div className="items-center justify-center flex flex-row px-3">
-                  <AiOutlineHeart /> 0
-                </div>
-                <div className="items-center justify-center flex flex-row px-3">
-                  <AiOutlineTwitter />Verified
-                </div>
+              <div className="flex gap-1">
+                <Button outline onClick={onClickMint}>
+                  Mint
+                </Button>
+                <p className="h-5 m-3 items-center text-gray-700">{slider_value}</p>
               </div>
             </div>
           </div>
         </div>
-        <div className="w-full px-10 justify-center items-center flex flex-col">
-                <h1 className="text-sm flex">Minted NFTs</h1>
-                <div className="flex">
-                    <Trending displayMode={'dark'} data={data && [data, data, data, data, data, data]} />
-                </div>
-                <div className="fixed bottom-10 z-40 flex bg-gray-50">
-                    <div className="flex flex-col justify-center gap-1 items-center ">
-                        <div>
-                            <RangeSlider id="default-range" min={1} max={100} onChange={(e) => setSliderValue(Number(e.target.value))} value={slider_value} />
-                        </div>
-                        <div className="flex gap-1">
-                            <Button outline onClick={onClickMint}>
-                                Mint
-                            </Button>
-                            <p className="h-5 m-3 items-center text-gray-700">{slider_value}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
       </div>
     </div>
 

@@ -25,7 +25,7 @@ export const CollectionsView: FC = ({ }) => {
         <div className='flex flex-row flex-wrap justify-start items-center m-4 w-full gap-5'>
             {collections.map((item, ind) => (
                 <div key={"collections_" + ind}>
-                    <a href={"collections/" + item.properties.creators[0].address + "/" + item.collections}>
+                    <a href={"collections/" + item.collection_name + "/" + item.address}>
                         <Collection_Item name={item.name} description={item.description} image_url={item.image} />
                     </a>
                 </div>
