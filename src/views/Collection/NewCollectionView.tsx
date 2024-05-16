@@ -325,7 +325,8 @@ export const NewCollectionView: FC = ({ }) => {
 
     const handleDeploy = async () => {
         toast("Deploying is pending..") // play notification
-        const hash = uploadedRes["IpfsHash"];
+        // const hash = uploadedRes["IpfsHash"];
+        const hash = uploadedRes;
 
         // if (switch1) {
         //     const image_url1 = 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json";
@@ -376,7 +377,7 @@ export const NewCollectionView: FC = ({ }) => {
                 _items.push({ uri : 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/" + i.toString() + ".json", name : collection_name + "#" + (i + 1).toString()});
             }
             const data = {
-                metadata: 'http://gateway.pinata.cloud/ipfs/' + hash,
+                metadata: 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json",
                 items: _items,
                 projectId: project_id,
                 name: collection_name
