@@ -13,9 +13,9 @@ import { createTree, createCollection, mintCompressedNFTIxn } from "./compressio
 import { NFTMetadata, createCompressedNFTMetadata } from "./onChainNFTs";
 import bs58 from "bs58";
 
-const programId = new PublicKey("6foDgAivQKhJwiHkbW8X6gyoZ1PJi338AhffirgUA8Ym");
-const RPC1 = 'https://endpoints.omniatech.io/v1/sol/devnet/52013a8ea3cb41299952e259357fbc3f';
-const RPC2 = 'https://api.devnet.solana.com';
+const programId = new PublicKey("MFuvWTr6ihjMmNrJ1Yb6wXeqgYqWQokQ8wb12SMf6XY");
+const RPC1 = 'https://white-late-uranium.solana-devnet.quiknode.pro/dd0d46ae7809fdac680bca7d4c1562698f3d8920';
+const RPC2 = 'https://solana-devnet.rpc.extrnode.com/cbf7b3d8-8a10-43cf-a9a6-bade00e3a336';
 const SOLANA_CONNECTION1 = new Connection(RPC1);
 const SOLANA_CONNECTION2 = new Connection(RPC2);
 
