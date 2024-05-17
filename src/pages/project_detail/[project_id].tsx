@@ -62,8 +62,8 @@ const Home: NextPage = (props: ItemProps) => {
                     console.log("candyMachine", value2);
                     changeUrl(value2, value)
                     setMintLimit(value2.candyGuard.guards.mintLimit.limit);
-                    setMintCost(parseFloat(value2.candyGuard.guards.solPayment.amount.basisPoints) / 1000000000);
-                    setLaunchDateTime(formatDateToUTC(value2.candyGuard.guards.startDate.date as number))
+                    setMintCost(parseFloat(value2.candyGuard.guards.solPayment.amount.basisPoints.toString()) / 1000000000);
+                    setLaunchDateTime(formatDateToUTC(value2.candyGuard.guards.startDate.date.toNumber()))
                 })
 
                 changeUrlForImg(value);
