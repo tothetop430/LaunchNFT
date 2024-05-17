@@ -6,12 +6,13 @@ import { Label, RangeSlider } from "flowbite-react";
 import Trending from "../../components/trending/trending";
 import { Badge, Button } from "flowbite-react";
 import { useState, useEffect } from "react";
-import { GetCandyMachine, GetMintedNfts, GetProject, mintNft, mintNftWithWallet } from "utils/web3";
+import { GetCandyMachine, GetMintedNfts, GetProject, mintCompressedNFT, mintNft, mintNftWithWallet } from "utils/web3";
 import { useWallet, useConnection } from '@solana/wallet-adapter-react';
 import useUserSOLBalanceStore from '../../stores/useUserSOLBalanceStore';
 import { useRouter } from "next/router";
 import { formatDateToUTC } from '../../utils/formatData';
-import { convertResponseToJson } from "utils/convertResponse";
+import { convertResponseToJson} from "utils/convertResponse";
+import { PublicKey } from "@solana/web3.js";
 // import axios, { AxiosResponse } from 'axios';
 // import { CollectionDetailView } from "../../views/CollectionDetailView";
 
@@ -25,7 +26,7 @@ const Home: NextPage = (props: ItemProps) => {
 
     const router = useRouter();
     const { project_id } = router.query;
-    const [project, setProject] = useState<{ name: string, createAt: number }>({ name: '', createAt: 0 });
+    const [project, setProject] = useState(null);
     const [candyMachineId, setCandyMachineId] = useState(null)
     const [candyMachine, setCandyMachine] = useState(null)
     const [collectionImgUrl, setColImgUrl] = useState('')
@@ -52,11 +53,19 @@ const Home: NextPage = (props: ItemProps) => {
         // const url = "https://gateway.pinata.cloud/ipfs/QmXxTEwqeG2NyKAaeKKvtMqKG9YB8iNyJ7r7RDwkFY3ssF/images/0.jpeg"
 
         if (project_id != null) {
-            GetProject(project_id as string).then((value) => {
-                setProject(value)
-                setMintedNfts([]);
-                setCandyMachineId(value.candyMachineId)
-                console.log("project", value);
+            update();
+        }
+
+    }, [project_id])
+
+    const update = () => {
+        GetProject(project_id as string).then((value) => {
+            setProject(value)
+            setMintedNfts([]);
+            
+            setCandyMachineId(value.candyMachineId)
+            console.log("project", value);
+            if(!value.isCnft){
                 GetCandyMachine(value.candyMachineId).then((value2) => {
                     setCandyMachine(value2)
                     console.log("candyMachine", value2);
@@ -67,11 +76,9 @@ const Home: NextPage = (props: ItemProps) => {
                 })
 
                 changeUrlForImg(value);
-
-            })
-        }
-
-    }, [project_id])
+            }
+        })
+    }
 
     const changeUrl = async (candyMachineData, projectData) =>{
         console.log("fffff", candyMachineData.items);
@@ -106,7 +113,14 @@ const Home: NextPage = (props: ItemProps) => {
     }
 
 const onClickMint = async () => {
-    mintNftWithWallet(wallet, candyMachineId.toString());
+        console.log("eeeeeeeeee", project.isCnft);
+        if(project.isCnft){
+            await mintCompressedNFT(wallet,wallet.publicKey, new PublicKey(project.candyMachineId), new PublicKey(project.collectionMint) , {name: "test", uri:"https://shdw-drive.genesysgo.net/91uEGv2pFyc3nZPgya6L41FKaoD6GoTcGDHqhokHe7Hw/compressedNFT1.json", symbol:"test"});
+        }
+        else{
+            await mintNftWithWallet(wallet, candyMachineId.toString());
+        }
+        update();
 }
 
 useEffect(() => {
@@ -131,7 +145,7 @@ useEffect(() => {
 return (
     <div className="pb-10">
         <div className="flex flex-row m-4">
-            <CollectionDetailView name={project.name} description={"Created " + formatDateToUTC(project.createAt as number)} image_url={collectionImgUrl} 
+            <CollectionDetailView name={project?.name} description={"Created " + formatDateToUTC(project?.createAt as number)} image_url={collectionImgUrl} 
              mint_limit = {mintLimit} mint_cost = {mintCost} launchdatetime = {launchDateTime}/>
         </div>
         <div className="w-full px-10 justify-center items-center flex flex-col">

@@ -18,19 +18,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const wallet = Keypair.fromSecretKey(bs58.decode(secret));
         console.log("minting cNFT ...")
 
-        const collectionCNftMint = await mintCompressedNFT(
-            wallet, 
-            new PublicKey(receiver), 
-            new PublicKey(treeAddress), 
-            new PublicKey(collectionMint), 
-            new PublicKey(collectionMetadata),
-            new PublicKey(collectionMasterEditionAccount),
-            {
-                name,
-                symbol,
-                uri
-            }
-        );
+        // const collectionCNftMint = await mintCompressedNFT(
+        //     wallet, 
+        //     new PublicKey(receiver), 
+        //     new PublicKey(treeAddress), 
+        //     new PublicKey(collectionMint), 
+        //     new PublicKey(collectionMetadata),
+        //     new PublicKey(collectionMasterEditionAccount),
+        //     {
+        //         name,
+        //         symbol,
+        //         uri
+        //     }
+        // );
         console.log("successfully minted cNFT ...")
               
     } catch (err) {

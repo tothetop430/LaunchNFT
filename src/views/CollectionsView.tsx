@@ -16,9 +16,6 @@ export const CollectionsView: FC = ({ }) => {
             let temp_projects = [];
             for (let i = 0; i < values.length; i++) {
                 const value = values[i]
-                if(value.account.isCnft){
-                    continue;
-                }
                 let uri = value.account.metadataUri
 
                 if(uri == ''){

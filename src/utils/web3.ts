@@ -7,10 +7,11 @@ import {
   ValidDepthSizePair,
   getConcurrentMerkleTreeAccountSize,
 } from "@solana/spl-account-compression";
-import crypto from 'crypto';
+import crypto, { sign } from 'crypto';
 import { CreateMetadataAccountArgsV3 } from "@metaplex-foundation/mpl-token-metadata";
-import {createTree, createCollection, mintCompressedNFTIxn} from "./compression"
+import { createTree, createCollection, mintCompressedNFTIxn } from "./compression"
 import { NFTMetadata, createCompressedNFTMetadata } from "./onChainNFTs";
+import bs58 from "bs58";
 
 const programId = new PublicKey("MFuvWTr6ihjMmNrJ1Yb6wXeqgYqWQokQ8wb12SMf6XY");
 const RPC1 = 'https://white-late-uranium.solana-devnet.quiknode.pro/dd0d46ae7809fdac680bca7d4c1562698f3d8920';
@@ -30,6 +31,20 @@ export const getProjectPda = (projectNumber: BN) => {
   return PublicKey.findProgramAddressSync(
     [Buffer.from("project"), projectNumber.toArrayLike(Buffer, "le", 8)],
     programId,
+  )[0]
+}
+const META_PID = new PublicKey("metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s");
+export const getMetadataPda = (nftMint: PublicKey) => {
+  return PublicKey.findProgramAddressSync(
+    [Buffer.from("metadata"), META_PID.toBuffer(), nftMint.toBuffer()],
+    META_PID,
+  )[0]
+}
+
+export const getMasterEditionPda = (nftMint: PublicKey) => {
+  return PublicKey.findProgramAddressSync(
+    [Buffer.from("metadata"), META_PID.toBuffer(), nftMint.toBuffer(), Buffer.from("edition"),],
+    META_PID,
   )[0]
 }
 
@@ -145,6 +160,7 @@ export async function CreateProject(
   isCnft: boolean
 ) {
   try {
+    console.log("isCnft ->", isCnft);
     const program = GetLaunchpadProgram(wallet);
     const launchpadAccount = await program.account.launchpad.fetch(launchpadPda);
     const project = getProjectPda(launchpadAccount.projectCount);
@@ -226,9 +242,9 @@ export async function createCollectionNft(name: string, metadataUri: string, WAL
     return "";
   }
 }
-export async function createCollectionAndMerkleTree(payer: Keypair, name: string, symbol: string, uri: string){
+export async function createCollectionAndMerkleTree(payer: Keypair, name: string, symbol: string, uri: string) {
   console.log("Payer address:", payer.publicKey.toBase58());
- 
+
   const connection = SOLANA_CONNECTION2;
   /*
     Define our tree size parameters
@@ -239,8 +255,8 @@ export async function createCollectionAndMerkleTree(payer: Keypair, name: string
     maxBufferSize: 8,
 
     // max=16,384 nodes
-   //  maxDepth: 14,
-   //  maxBufferSize: 64,
+    //  maxDepth: 14,
+    //  maxBufferSize: 64,
 
     // max=131,072 nodes
     // maxDepth: 17,
@@ -346,20 +362,22 @@ export async function createCollectionAndMerkleTree(payer: Keypair, name: string
 
   //////////////////////////////////////////////////////////////////////////////
   //////////////////////////////////////////////////////////////////////////////
-  return collection.mint;
+  return {collectionMint : collection.mint.toString(), merkleTree : tree.treeAddress.toString()};
 }
 
 export async function mintCompressedNFT(
-  payer: Keypair, 
+  payer1: WalletContextState, 
   receiver: PublicKey, 
   treeAddress: PublicKey,
   collectionMint: PublicKey,
-  collectionMetadataAccount: PublicKey,
-  collectionMasterEditionAccount: PublicKey,
+  // collectionMetadataAccount: PublicKey,
+  // collectionMasterEditionAccount: PublicKey,
   nftMetadata: NFTMetadata
 ){
-  
+  const payer = Keypair.fromSecretKey(bs58.decode("41a14iDkoRa6LMLAg8QVRyEeMd2qbneWNzw3GzEKriLdD5NGfNJ9AWJTMtLVh3gnq5i7n2LoKbSo1NN9Ud6s1n4p"));
 const compressedNFTMetadata = createCompressedNFTMetadata(nftMetadata, payer);
+const collectionMetadataAccount = getMetadataPda(collectionMint);
+const collectionMasterEditionAccount = getMasterEditionPda(collectionMint);
 const mintIxn = mintCompressedNFTIxn(
   payer,
   treeAddress,
@@ -370,76 +388,81 @@ const mintIxn = mintCompressedNFTIxn(
   receiver,
 );
 
-try {
-  // construct the transaction with our instructions, making the `payer` the `feePayer`
-  const tx = new Transaction().add(
-    // We'll add a small amount of lamports to the TipLink account
-    SystemProgram.transfer({
-      fromPubkey: payer.publicKey,
-      toPubkey: receiver,
-      lamports: RECEIVER_MINIMUM_LAMPORTS,
-    }),
-    mintIxn,
-  );
-  tx.feePayer = payer.publicKey;
+  try {
+    // construct the transaction with our instructions, making the `payer` the `feePayer`
+    const tx = new Transaction().add(
+      // We'll add a small amount of lamports to the TipLink account
+      // SystemProgram.transfer({
+      //   fromPubkey: payer.publicKey,
+      //   toPubkey: receiver,
+      //   lamports: RECEIVER_MINIMUM_LAMPORTS,
+      // }),
+      mintIxn,
+    );
+    tx.feePayer = payer.publicKey;
 
   // send the transaction to the cluster
+  let blockhash = (await SOLANA_CONNECTION2.getLatestBlockhash('finalized')).blockhash;
+  tx.recentBlockhash = blockhash;
   const txSignature = await sendAndConfirmTransaction(SOLANA_CONNECTION2, tx, [payer], {
     commitment: "confirmed",
     skipPreflight: true,
   });
+  // const txSignature = await SOLANA_CONNECTION2.sendTransaction(signedTx, [collectionAuthority]);
 
-  console.log("\nSuccessfully minted the compressed NFT!");
-  // console.log(explorerURL({ txSignature, cluster: "mainnet-beta" }));
+    console.log("\nSuccessfully minted the compressed NFT!");
+    // console.log(explorerURL({ txSignature, cluster: "mainnet-beta" }));
 
-  return txSignature;
-} catch (err) {
-  console.error("\nFailed to mint compressed NFT:", err);
+    return txSignature;
+  } catch (err) {
+    console.error("\nFailed to mint compressed NFT:", err);
 
-  // log a block explorer link for the failed transaction
-  // await extractSignatureFromFailedTransaction(connection, err);
+    // log a block explorer link for the failed transaction
+    // await extractSignatureFromFailedTransaction(connection, err);
 
-  throw err;
+    throw err;
+  }
 }
-}
 
 
-export async function generateCandyMachine(WALLET: Keypair, COLLECTION_NFT_MINT: string): Promise<string> {
+export async function generateCandyMachine(WALLET: Keypair, COLLECTION_NFT_MINT: string, data: { uploadedCnt: number; royalty: number; symbol: string; creators: []; baseArtName: string; launchDate: string; mintCost: number; feeWallet: string }): Promise<string> {
+  console.log(" ### generateCandyMachine ### ", data);
   try {
     const candyMachineSettings: CreateCandyMachineInput<DefaultCandyGuardSettings> =
     {
-      itemsAvailable: toBigNumber(3), // Collection Size: 3
-      sellerFeeBasisPoints: 1000, // 10% Royalties on Collection
-      symbol: "DEMO",
+      itemsAvailable: toBigNumber(data.uploadedCnt), // Collection Size: 3
+      sellerFeeBasisPoints: data.royalty, // 1000, // 10% Royalties on Collection
+      symbol: data.symbol,
       maxEditionSupply: toBigNumber(0), // 0 reproductions of each NFT allowed
       isMutable: true,
-      creators: [
-        { address: WALLET.publicKey, share: 100 },
-      ],
+      creators: data.creators.map((item: any)=>{ return {address: new PublicKey(item.address), share: item.share}}), // [ { address: WALLET.publicKey, share: 100 }, ],
       collection: {
         address: new PublicKey(COLLECTION_NFT_MINT), // Can replace with your own NFT or upload a new one
         updateAuthority: WALLET,
       },
       itemSettings: {
         type: 'configLines',
-        prefixName: 'My NFT #',
+        prefixName: data.baseArtName,
         nameLength: 20,
         prefixUri: '',
         uriLength: 100,
         isSequential: false,
       },
       guards: {
-        startDate: { date: toDateTime("2022-10-17T16:00:00Z") },
+        startDate: { date: toDateTime(data.launchDate) }, // { date: toDateTime("2022-10-17T16:00:00Z") }
         mintLimit: {
           id: 1,
           limit: 20,
         },
         solPayment: {
-          amount: sol(0.1),
-          destination: WALLET.publicKey,
+          amount: sol(data.mintCost),
+          destination: new PublicKey(data.feeWallet), // WALLET.publicKey,
         },
       }
     };
+
+    console.log(" ### CandyMachineSettings : ", candyMachineSettings);
+
     const METAPLEX = Metaplex.make(SOLANA_CONNECTION2)
       .use(keypairIdentity(WALLET));
     const { candyMachine } = await METAPLEX.candyMachines().create(candyMachineSettings);

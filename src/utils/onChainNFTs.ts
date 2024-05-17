@@ -3,6 +3,7 @@ import {
   TokenProgramVersion,
   TokenStandard,
 } from "@metaplex-foundation/mpl-bubblegum";
+import { WalletContextState } from "@solana/wallet-adapter-react";
 import { Keypair, PublicKey } from "@solana/web3.js";
 
 export type NFTMetadata = {
@@ -32,7 +33,7 @@ export const nftMetadatas: NFTMetadata[] = [
 
 
 
-export const createCompressedNFTMetadata = (nftMetadata: NFTMetadata, payer: Keypair): MetadataArgs => {
+export const createCompressedNFTMetadata = (nftMetadata: NFTMetadata, payer: any): MetadataArgs => {
   return {
     name: nftMetadata.name,
     symbol: nftMetadata.symbol,

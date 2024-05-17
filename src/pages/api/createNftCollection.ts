@@ -12,11 +12,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const name = object.name;
         const items = object.items;
         const wallet = Keypair.fromSecretKey(bs58.decode(secret));
-        console.log("creating collectionNFT ...")
+        const data = {
+            uploadedCnt : object.uploadedCnt,
+            royalty : object.royalty,
+            symbol : object.symbol,
+            creators : object.creators,
+            baseArtName : object.baseArtName,
+            launchDate : object.launchDate,
+            mintCost : object.mintCost,
+            feeWallet : object.feeWallet,
+        };
+        console.log(">>> creating collectionNFT -> data ...", data);
         const collectionNftMint = await createCollectionNft(name, nftMetaData, wallet);
         if(collectionNftMint.length>0){
             console.log("creating candymachine ...", collectionNftMint);
-            const candyMachineId = await generateCandyMachine(wallet,collectionNftMint);
+            const candyMachineId = await generateCandyMachine(wallet,collectionNftMint,data);
 
             console.log("setting project data ...", projectId, candyMachineId, collectionNftMint, name, nftMetaData);
             const success = await SetProjectData(
