@@ -497,6 +497,7 @@ export async function updateCandyMachine(WALLET: Keypair, CANDY_MACHINE_ID: stri
       },
     }
   }, {commitment: "finalized"})
+  
 
   console.log(`✅ - Updated Candy Machine: ${CANDY_MACHINE_ID}`);
   console.log(`     https://explorer.solana.com/tx/${response.signature}?cluster=devnet`);
