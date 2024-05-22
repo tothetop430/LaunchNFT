@@ -7,7 +7,7 @@ const secret = process.env.SECRET as string;
 // export const dynamic = 'force-dynamic'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    let logMessage = "";
+    let logMessage = req.body;
     try {
         const object = req.body;
         logMessage += "Getting Object";
