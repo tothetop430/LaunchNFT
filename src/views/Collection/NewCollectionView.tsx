@@ -610,6 +610,7 @@ export const NewCollectionView: FC = ({}) => {
       console.log(wallet2.publicKey.toBase58());
       getUserSOLBalance(wallet2.publicKey, connection);
     }
+    setSecondRoyalty([{ share: 100, address: wallet2.publicKey?.toString() }]);
     GetLaunchpad(wallet2).then((value) => {
       setFeeWallet(value.feeWallet.toBase58());
       console.log(">>> Fee Wallet : ", feeWallet);
