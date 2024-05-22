@@ -1,9 +1,8 @@
 import type { NextPage } from "next";
-import Head from "next/head";
-import { CollectionsView } from '../views/CollectionsView';
+import { CollectionsView } from '../../views/CollectionsView';
 import "react-multi-carousel/lib/styles.css";
 
-const Home: NextPage = (props) => {
+const CollectionsPage: NextPage = (props) => {
     return (
         <div>
             <div className="flex flex-row w-full">
@@ -13,4 +12,4 @@ const Home: NextPage = (props) => {
     );
 };
 
-export default Home;
+export default CollectionsPage;

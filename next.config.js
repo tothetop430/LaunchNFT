@@ -4,6 +4,8 @@ const nextConfig = {
   env: {
     RPC_ENDPOINT: process.env.RPC_ENDPOINT,
     SECRET: process.env.SECRET,
+    REACT_APP_PINATA_API_KEY: process.env.REACT_APP_PINATA_API_KEY,
+    REACT_APP_PINATA_API_SECRET: process.env.REACT_APP_PINATA_API_SECRET
   },
   images: {
     domains: ['arweave.net', 'gateway.pinata.cloud']

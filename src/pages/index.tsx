@@ -1,9 +1,3 @@
-import type { NextPage } from "next";
-import Head from "next/head";
-import { HomeView } from "../views";
-import { redirect } from 'next/navigation'
-import { Router } from 'next/router'
-
 import { useRouter } from 'next/router'
 
 function RedirectPage() {
@@ -15,20 +9,3 @@ function RedirectPage() {
 }
 
 export default RedirectPage
-
-// const Home: NextPage = (props) => {
-//   return (
-//     <div>
-//       <Head>
-//         <title>SolPad</title>
-//         <meta
-//           name="description"
-//           content="Solana Scaffold"
-//         />
-//       </Head>
-//       <HomeView />
-//     </div>
-//   );
-// };
-
-// export default Home;
