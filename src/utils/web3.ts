@@ -472,6 +472,7 @@ export async function generateCandyMachine(WALLET: Keypair, COLLECTION_NFT_MINT:
   }
   catch (e) {
     console.log("Error in GenerateCandyMachine: ", e);
+    return "";
   }
 }
 
