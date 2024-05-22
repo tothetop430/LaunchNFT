@@ -10,11 +10,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     let logMessage = "";
     try {
         const object = req.body;
+        logMessage += "Getting Object";
         const projectId = object.projectId;
+        logMessage += "Getting projectId";
         const nftMetaData = object.metadata;
+        logMessage += "Getting nftMetaData";
         const name = object.name;
+        logMessage += "Getting name";
         const items = object.items;
+        logMessage += "Getting items";
         const wallet = Keypair.fromSecretKey(bs58.decode(secret));
+        logMessage += "Getting wallet";
         const data = {
             uploadedCnt : object.uploadedCnt,
             royalty : object.royalty,
@@ -25,6 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             mintCost : object.mintCost,
             feeWallet : object.feeWallet,
         };
+        logMessage += "Getting data";
         console.log(">>> creating collectionNFT -> data ...", data);
         logMessage += ">>> creating collectionNFT -> data ...";
         const collectionNftMint = await createCollectionNft(name, nftMetaData, wallet);
