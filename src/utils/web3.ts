@@ -520,9 +520,11 @@ export async function addItems(WALLET: Keypair, CANDY_MACHINE_ID: string, items:
 
     console.log(`✅ - Items added to Candy Machine: ${CANDY_MACHINE_ID}`);
     console.log(`     https://explorer.solana.com/tx/${response.signature}?cluster=devnet`);
+    return true;
   }
   catch (err) {
     console.log("addItems Error->", err);
+    return false;
   }
 }
 
