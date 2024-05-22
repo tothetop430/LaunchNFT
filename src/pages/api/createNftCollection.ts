@@ -4,6 +4,8 @@ import { Keypair, PublicKey } from "@solana/web3.js";
 import * as bs58 from "bs58";
 const secret = process.env.SECRET as string;
 
+export const dynamic = 'force-dynamic'
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
         const object = JSON.parse(req.body);
@@ -23,18 +25,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             feeWallet : object.feeWallet,
         };
         console.log(">>> creating collectionNFT -> data ...", data);
-        alert(">>> creating collectionNFT -> data ...");
         const collectionNftMint = await createCollectionNft(name, nftMetaData, wallet);
         if(collectionNftMint.length>0){
             console.log("creating candymachine ...", collectionNftMint);
-            alert("creating candymachine ...");
             const candyMachineId = await generateCandyMachine(wallet,collectionNftMint,data);
             if(candyMachineId.length == 0) {
                 res.status(200).json({error: "Generate Candy Machine failed!"});
             }
 
             console.log("setting project data ...", projectId, candyMachineId, collectionNftMint, name, nftMetaData);
-            alert("setting project data ...");
             const success = await SetProjectData(
                 wallet,
                 new PublicKey(projectId),
