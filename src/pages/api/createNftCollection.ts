@@ -27,6 +27,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         if(collectionNftMint.length>0){
             console.log("creating candymachine ...", collectionNftMint);
             const candyMachineId = await generateCandyMachine(wallet,collectionNftMint,data);
+            if(candyMachineId.length == 0) {
+                res.status(200).json({error: "Generate Candy Machine failed!"});
+            }
 
             console.log("setting project data ...", projectId, candyMachineId, collectionNftMint, name, nftMetaData);
             const success = await SetProjectData(
