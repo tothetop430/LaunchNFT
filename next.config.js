@@ -7,7 +7,18 @@ const nextConfig = {
   },
   images: {
     domains: ['arweave.net', 'gateway.pinata.cloud']
-  }
+  },
+  headers: [
+    {
+      sources: "/api/(.*)",
+      headers: [
+        {
+          key: "Access-Control-Allow-Origin",
+          value: "*"
+        }
+      ]
+    }
+  ]
 }
 
 module.exports = nextConfig
