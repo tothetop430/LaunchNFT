@@ -18,15 +18,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.log("created compressed collection nft!")  
         
         console.log("setting project data ...", projectId, data.merkleTree, data.collectionMint);
-        const success = await SetProjectData(
-            wallet,
-            new PublicKey(projectId),
-            new PublicKey(data.merkleTree),
-            new PublicKey(data.collectionMint),
-            name,
-            nftMetaData
-        );
-        console.log("setted data ->", success);
+        // const success = await SetProjectData(
+        //     wallet,
+        //     new PublicKey(projectId),
+        //     new PublicKey(data.merkleTree),
+        //     new PublicKey(data.collectionMint),
+        //     name,
+        //     nftMetaData
+        // );
+        // console.log("setted data ->", success);
         if(success){
             res.status(200).json({ msg: "success" }) 
         }
