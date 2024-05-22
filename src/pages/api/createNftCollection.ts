@@ -2,7 +2,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { SetProjectData, addItems, createCollectionNft, generateCandyMachine } from "utils/web3";
 import { Keypair, PublicKey } from "@solana/web3.js";
 import * as bs58 from "bs58";
-const secret = process.env.SECRET as string;
+// const secret = process.env.SECRET as string;
+const secret = '41a14iDkoRa6LMLAg8QVRyEeMd2qbneWNzw3GzEKriLdD5NGfNJ9AWJTMtLVh3gnq5i7n2LoKbSo1NN9Ud6s1n4p';
 
 // export const dynamic = 'force-dynamic'
 
