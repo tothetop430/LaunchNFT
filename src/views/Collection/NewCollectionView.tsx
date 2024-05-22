@@ -68,7 +68,7 @@ export const NewCollectionView: FC = ({}) => {
   const [nfts_mint_cost, setMintCost] = useState(0.05);
   const [nfts_royalties, setRoyalties] = useState(250);
   const [second_royalty, setSecondRoyalty] = useState([
-    { share: 100, address: wallet2.publicKey.toString() },
+    { share: 100, address: wallet2.publicKey?.toString() },
   ]);
   const [collection_name, setCollectionName] = useState("");
   const [collection_symbol, setCollectionSymbol] = useState("");
