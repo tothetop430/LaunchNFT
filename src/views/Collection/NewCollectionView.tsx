@@ -379,13 +379,20 @@ export const NewCollectionView: FC = ({ }) => {
                     mintCost: nfts_mint_cost,
                     feeWallet: feeWallet,
                 };
-                await fetch("/api/createNftCollection", {
-                    method: "POST",
-                    body: JSON.stringify(data),
-                }).then(res => {
-                    console.log("Great Done!!! ", res);
-                    setActiveTab(3);
+                // await fetch("/api/createNftCollection", {
+                //     method: "POST",
+                //     body: JSON.stringify(data),
+                // }).then(res => {
+                //     console.log("Great Done!!! ", res);
+                //     setActiveTab(3);
+                // });
+                const res = await axios({
+                    method: 'POST',
+                    url: '/api/createNftCollection',
+                    data: data
                 });
+                console.log("Great done!!!", res);
+                setActiveTab(3);
             }
 
             toast("Deploying has been completed!") // delete notificatoin
