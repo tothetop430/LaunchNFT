@@ -16,7 +16,14 @@ import {
 import { TbCurrencySolana } from "react-icons/tb";
 import { CgMathPercent } from "react-icons/cg";
 import { MdDelete } from "react-icons/md";
-import { addItems, createCollectionNft, CreateProject, generateCandyMachine, GetLaunchpad, SetProjectData } from "utils/web3";
+import {
+  addItems,
+  createCollectionNft,
+  CreateProject,
+  generateCandyMachine,
+  GetLaunchpad,
+  SetProjectData,
+} from "utils/web3";
 //ipfs
 import axios from "axios";
 import FormData from "form-data";
@@ -30,7 +37,8 @@ import { Modal } from "flowbite-react";
 import { fr } from "date-fns/locale";
 import { Keypair, PublicKey } from "@solana/web3.js";
 import bs58 from "bs58";
-const secret = "41a14iDkoRa6LMLAg8QVRyEeMd2qbneWNzw3GzEKriLdD5NGfNJ9AWJTMtLVh3gnq5i7n2LoKbSo1NN9Ud6s1n4p"
+const secret =
+  "41a14iDkoRa6LMLAg8QVRyEeMd2qbneWNzw3GzEKriLdD5NGfNJ9AWJTMtLVh3gnq5i7n2LoKbSo1NN9Ud6s1n4p";
 
 declare module "react" {
   interface InputHTMLAttributes<T> extends HTMLAttributes<T> {
@@ -60,7 +68,7 @@ export const NewCollectionView: FC = ({}) => {
   const [nfts_mint_cost, setMintCost] = useState(0.05);
   const [nfts_royalties, setRoyalties] = useState(250);
   const [second_royalty, setSecondRoyalty] = useState([
-    { share: 100, address: "EAoR5kUrSpDtU13denCHVWEYmjnW4MawFPACd1PSGA8M" },
+    { share: 100, address: wallet2.publicKey?.toString() },
   ]);
   const [collection_name, setCollectionName] = useState("");
   const [collection_symbol, setCollectionSymbol] = useState("");
@@ -88,7 +96,7 @@ export const NewCollectionView: FC = ({}) => {
     });
   };
 
-//   const [uploadedFileCnt, setUploadedFileCnt] = useState(0);
+  //   const [uploadedFileCnt, setUploadedFileCnt] = useState(0);
 
   // const isIncludeMetaData = (files: FileList) => {
   //     if(files.length > 0){
@@ -272,6 +280,7 @@ export const NewCollectionView: FC = ({}) => {
       const temp_files = [];
       if (metadatas_to_upload.length > 0) {
         // user input json data
+        console.log("eeeeeeee", metadatas_to_upload);
         for (let i = 0; i < metadatas_to_upload.length; i++) {
           let res = await parseJsonFile(metadatas_to_upload[i]);
           console.log("eeeeeeeeee >>>", res);
@@ -415,75 +424,88 @@ export const NewCollectionView: FC = ({}) => {
 
   const [deploySuccess, setDeploySuccess] = useState(false);
 
-  const createNftCollection = async (object)=>{
+  const createNftCollection = async (object) => {
     try {
-        let logMessage = "";
-        logMessage += "Getting Object";
-        const projectId = object.projectId;
-        logMessage += "Getting projectId";
-        const nftMetaData = object.metadata;
-        logMessage += "Getting nftMetaData";
-        const name = object.name;
-        logMessage += "Getting name";
-        const items = object.items;
-        logMessage += "Getting items";
-        const wallet = Keypair.fromSecretKey(bs58.decode(secret));
-        logMessage += "Getting wallet";
-        const data = {
-            uploadedCnt : object.uploadedCnt,
-            royalty : object.royalty,
-            symbol : object.symbol,
-            creators : object.creators,
-            baseArtName : object.baseArtName,
-            launchDate : object.launchDate,
-            mintCost : object.mintCost,
-            feeWallet : object.feeWallet,
-        };
-        logMessage += "Getting data";
-        console.log(">>> creating collectionNFT -> data ...", data);
-        logMessage += ">>> creating collectionNFT -> data ...";
-        const collectionNftMint = await createCollectionNft(name, nftMetaData, wallet);
-        if(collectionNftMint.length>0){
-            console.log("creating candymachine ...", collectionNftMint);
-            logMessage += "creating candymachine ...";
-            const candyMachineId = await generateCandyMachine(wallet,collectionNftMint,data);
-            if(candyMachineId.length == 0) {
-                console.log("error while create candymachine");
-            }
-
-            console.log("setting project data ...", projectId, candyMachineId, collectionNftMint, name, nftMetaData);
-            logMessage += "setting project data ...";
-            const success = await SetProjectData(
-                wallet2,
-                new PublicKey(projectId),
-                new PublicKey(candyMachineId),
-                new PublicKey(collectionNftMint),
-                name,
-                nftMetaData
-            );
-            if(success){
-                console.log("addint items ...", candyMachineId,items);
-                logMessage += "addint items ...";
-                const addItemsSuccess = await addItems(wallet,candyMachineId,items);
-                if(addItemsSuccess === false) {
-                    console.log("addItems failed")
-                }
-                return addItemsSuccess;
-            }
-            else{
-                console.log("SettingProjectData failed");
-                return false;
-            }
+      let logMessage = "";
+      logMessage += "Getting Object";
+      const projectId = object.projectId;
+      logMessage += "Getting projectId";
+      const nftMetaData = object.metadata;
+      logMessage += "Getting nftMetaData";
+      const name = object.name;
+      logMessage += "Getting name";
+      const items = object.items;
+      logMessage += "Getting items";
+      const wallet = Keypair.fromSecretKey(bs58.decode(secret));
+      logMessage += "Getting wallet";
+      const data = {
+        uploadedCnt: object.uploadedCnt,
+        royalty: object.royalty,
+        symbol: object.symbol,
+        creators: object.creators,
+        baseArtName: object.baseArtName,
+        launchDate: object.launchDate,
+        mintCost: object.mintCost,
+        feeWallet: object.feeWallet,
+      };
+      logMessage += "Getting data";
+      console.log(">>> creating collectionNFT -> data ...", data);
+      logMessage += ">>> creating collectionNFT -> data ...";
+      const collectionNftMint = await createCollectionNft(
+        name,
+        nftMetaData,
+        wallet
+      );
+      if (collectionNftMint.length > 0) {
+        console.log("creating candymachine ...", collectionNftMint);
+        logMessage += "creating candymachine ...";
+        const candyMachineId = await generateCandyMachine(
+          wallet,
+          collectionNftMint,
+          data
+        );
+        if (candyMachineId.length == 0) {
+          console.log("error while create candymachine");
         }
-        else{
-            console.log("createCollectionNft failed");
-            return false;
-        }        
-    } catch (err) {
-        console.log("err", err);
+
+        console.log(
+          "setting project data ...",
+          projectId,
+          candyMachineId,
+          collectionNftMint,
+          name,
+          nftMetaData
+        );
+        logMessage += "setting project data ...";
+        const success = await SetProjectData(
+          wallet2,
+          new PublicKey(projectId),
+          new PublicKey(candyMachineId),
+          new PublicKey(collectionNftMint),
+          name,
+          nftMetaData
+        );
+        if (success) {
+          console.log("addint items ...", candyMachineId, items);
+          logMessage += "addint items ...";
+          const addItemsSuccess = await addItems(wallet, candyMachineId, items);
+          if (addItemsSuccess === false) {
+            console.log("addItems failed");
+          }
+          return addItemsSuccess;
+        } else {
+          console.log("SettingProjectData failed");
+          return false;
+        }
+      } else {
+        console.log("createCollectionNft failed");
         return false;
+      }
+    } catch (err) {
+      console.log("err", err);
+      return false;
     }
-  }
+  };
 
   const handleDeploy = async () => {
     toast("Your NFT Collection is deploying now."); // play notification
@@ -588,6 +610,7 @@ export const NewCollectionView: FC = ({}) => {
       console.log(wallet2.publicKey.toBase58());
       getUserSOLBalance(wallet2.publicKey, connection);
     }
+    setSecondRoyalty([{ share: 100, address: wallet2.publicKey?.toString() }]);
     GetLaunchpad(wallet2).then((value) => {
       setFeeWallet(value.feeWallet.toBase58());
       console.log(">>> Fee Wallet : ", feeWallet);
@@ -631,7 +654,7 @@ export const NewCollectionView: FC = ({}) => {
         className="w-full"
       >
         {/* -------------------------- Details tab ------------------------------- */}
-        <Tabs.Item active title="Details">
+        <Tabs.Item active title="Details" disabled>
           <div className="flex flex-col gap-3 w-full">
             <span
               className="py-5 text-center w-full"
@@ -960,7 +983,17 @@ export const NewCollectionView: FC = ({}) => {
                 outline
                 gradientDuoTone="purpleToBlue"
                 pill
-                onClick={() => tabsRef.current?.setActiveTab(1)}
+                onClick={() => {
+                  if (
+                    collection_name.length == 0 ||
+                    collection_symbol.length == 0 ||
+                    collection_description.length == 0
+                  ) {
+                    toast("Please fill all the fileds");
+                    return;
+                  }
+                  tabsRef.current?.setActiveTab(1);
+                }}
                 style={{ textAlign: "center" }}
               >
                 Next &rarr;
@@ -970,7 +1003,7 @@ export const NewCollectionView: FC = ({}) => {
         </Tabs.Item>
 
         {/* -------------------------- Upload tab ------------------------------- */}
-        <Tabs.Item title="Upload">
+        <Tabs.Item title="Upload" disabled>
           <div className="flex flex-col items-center justify-center mt-10 gap-3 w-full">
             <div className="flex items-center justify-center mb-4 w-full">
               <Button
@@ -1112,7 +1145,7 @@ export const NewCollectionView: FC = ({}) => {
         </Tabs.Item>
 
         {/* -------------------------- Deploy tab ------------------------------- */}
-        <Tabs.Item title="Deploy">
+        <Tabs.Item title="Deploy" disabled>
           <div className="flex flex-col items-center justify-start mt-10 w-full h-full">
             <Button
               outline
@@ -1127,7 +1160,7 @@ export const NewCollectionView: FC = ({}) => {
         </Tabs.Item>
 
         {/* -------------------------- Success tab ------------------------------- */}
-        <Tabs.Item title="Success!">
+        <Tabs.Item title="Success!" disabled>
           <div className="flex flex-col items-center justify-start mt-10 gap-3 w-full h-full">
             {deploySuccess && (
               <p className="text-3xl text-gray-500 dark:text-gray-800">
@@ -1161,7 +1194,12 @@ export const NewCollectionView: FC = ({}) => {
                 <Checkbox className="" id="disabled" />
               </div>
               <div className="ml-4">
-                <TextInput type="number" onChange={(e)=>{setDuplicatedCnt(Number(e.target.value))}}></TextInput>
+                <TextInput
+                  type="number"
+                  onChange={(e) => {
+                    setDuplicatedCnt(Number(e.target.value));
+                  }}
+                ></TextInput>
               </div>
             </div>
           </div>
@@ -1179,9 +1217,31 @@ export const NewCollectionView: FC = ({}) => {
               // console.log(">>>>>>> front", front, "back", back)
               // setPictures([...front, ...back]);
               for (let i = 0; i < duplicatedCnt; i++) {
-                pictures.push({...selectedPic, index: pictures.length, nft_name : addCounter ? collection_name + " # "+ (selectedPic.index + i + 1) : selectedPic.name});
+                pictures.push({
+                  ...selectedPic,
+                  index: pictures.length,
+                  nft_name: addCounter
+                    ? collection_name + " # " + (selectedPic.index + i + 1)
+                    : selectedPic.name,
+                });
+
                 images_to_upload.push(images_to_upload[selectedPic.index]);
-                metadatas_to_upload.push(metadatas_to_upload[selectedPic.index]);
+                if (metadatas_to_upload.length > 0) {
+                  metadatas_to_upload.push(
+                    metadatas_to_upload[selectedPic.index]
+                  );
+                }
+
+                console.log(
+                  "eeeeeeeeee",
+                  selectedPic.index,
+                  images_to_upload,
+                  metadatas_to_upload
+                );
+              }
+              setImagesToUpload(images_to_upload);
+              if (metadatas_to_upload.length > 0) {
+                setMetadatasToUpload(metadatas_to_upload);
               }
               setOpenModal(false);
             }}
