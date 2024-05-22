@@ -38,9 +38,9 @@ export const AppBar: React.FC = () => {
           <div className="text-white">
             <a className="NavBar_navlink__BklVa" href="/create">Create</a>
           </div>
-          <div className="text-white">
+          {/* <div className="text-white">
             <a className="NavBar_navlink__BklVa" href="/admin">Admin</a>
-          </div>
+          </div> */}
           {/* <div className="relative group">
             <button className="text-white" data-dropdown-toggle="dropdownHover" data-dropdown-trigger="hover">Tools</button>
             <div id="dropdownHover" className="absolute hidden top-full left-0 mt-2 w-48 bg-black rounded-md shadow-lg">

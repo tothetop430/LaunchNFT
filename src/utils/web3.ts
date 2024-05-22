@@ -230,7 +230,7 @@ export async function createCollectionNft(name: string, metadataUri: string, WAL
       sellerFeeBasisPoints: 0,
       isCollection: true,
       updateAuthority: WALLET,
-    });
+    }, {commitment: "finalized"});
 
     console.log(`✅ - Minted Collection NFT: ${collectionNft.address.toString()}`);
     console.log(`     https://explorer.solana.com/address/${collectionNft.address.toString()}?cluster=devnet`);
@@ -465,7 +465,7 @@ export async function generateCandyMachine(WALLET: Keypair, COLLECTION_NFT_MINT:
 
     const METAPLEX = Metaplex.make(SOLANA_CONNECTION2)
       .use(keypairIdentity(WALLET));
-    const { candyMachine } = await METAPLEX.candyMachines().create(candyMachineSettings);
+    const { candyMachine } = await METAPLEX.candyMachines().create(candyMachineSettings, {commitment: "finalized"});
     console.log(`✅ - Created Candy Machine: ${candyMachine.address.toString()}`);
     console.log(`     https://explorer.solana.com/address/${candyMachine.address.toString()}?cluster=devnet`);
     return candyMachine.address.toString();
@@ -495,7 +495,7 @@ export async function updateCandyMachine(WALLET: Keypair, CANDY_MACHINE_ID: stri
         destination: METAPLEX.identity().publicKey,
       },
     }
-  })
+  }, {commitment: "finalized"})
 
   console.log(`✅ - Updated Candy Machine: ${CANDY_MACHINE_ID}`);
   console.log(`     https://explorer.solana.com/tx/${response.signature}?cluster=devnet`);
