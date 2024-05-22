@@ -27,12 +27,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         //     nftMetaData
         // );
         // console.log("setted data ->", success);
-        if(success){
-            res.status(200).json({ msg: "success" }) 
-        }
-        else {
-            res.status(200).json({ msg: "failed" }) 
-        }
+        // if(success){
+        //     res.status(200).json({ msg: "success" }) 
+        // }
+        // else {
+        //     res.status(200).json({ msg: "failed" }) 
+        // }
     } catch (err) {
         res.status(200).json({ msg: "failed" });
     }
