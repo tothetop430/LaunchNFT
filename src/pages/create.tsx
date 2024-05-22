@@ -1,9 +1,8 @@
 import type { NextPage } from "next";
 import Head from "next/head";
-import { HomeView } from "../views";
 import { CreateView } from '../views/CreateView';
 
-const Home: NextPage = (props) => {
+const CreateCollectionPage: NextPage = (props) => {
   return (
     <div>
       <Head>
@@ -18,4 +17,4 @@ const Home: NextPage = (props) => {
   );
 };
 
-export default Home;
+export default CreateCollectionPage;
