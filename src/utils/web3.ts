@@ -188,7 +188,7 @@ export async function CreateProject(
 }
 
 export async function SetProjectData(
-  walletKeypair: Keypair,
+  walletKeypair: WalletContextState,
   project: PublicKey,
   candyMachineId: PublicKey,
   collectionMint: PublicKey,
@@ -196,7 +196,7 @@ export async function SetProjectData(
   metadataUri: string,
 ) {
   try {
-    const program = GetLaunchpadProgram(new Wallet(walletKeypair));
+    const program = GetLaunchpadProgram(walletKeypair);
     const transactionSignature = await program.methods
       .setProjectData({
         candyMachineId,
@@ -497,7 +497,7 @@ export async function updateCandyMachine(WALLET: Keypair, CANDY_MACHINE_ID: stri
       },
     }
   }, {commitment: "finalized"})
-  
+
 
   console.log(`✅ - Updated Candy Machine: ${CANDY_MACHINE_ID}`);
   console.log(`     https://explorer.solana.com/tx/${response.signature}?cluster=devnet`);

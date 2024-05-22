@@ -46,26 +46,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
             console.log("setting project data ...", projectId, candyMachineId, collectionNftMint, name, nftMetaData);
             logMessage += "setting project data ...";
-            const success = await SetProjectData(
-                wallet,
-                new PublicKey(projectId),
-                new PublicKey(candyMachineId),
-                new PublicKey(collectionNftMint),
-                name,
-                nftMetaData
-            );
-            if(success){
-                console.log("addint items ...", candyMachineId,items);
-                logMessage += "addint items ...";
-                const addItemsSuccess = await addItems(wallet,candyMachineId,items);
-                if(addItemsSuccess === false) {
-                    res.status(200).json({ error: "addItems failed" }) 
-                }
-                res.status(200).json({ result: candyMachineId });
-            }
-            else{
-                res.status(200).json({ error: "SettingProjectData failed" }) 
-            }
+            // const success = await SetProjectData(
+            //     wallet,
+            //     new PublicKey(projectId),
+            //     new PublicKey(candyMachineId),
+            //     new PublicKey(collectionNftMint),
+            //     name,
+            //     nftMetaData
+            // );
+            // if(success){
+            //     console.log("addint items ...", candyMachineId,items);
+            //     logMessage += "addint items ...";
+            //     const addItemsSuccess = await addItems(wallet,candyMachineId,items);
+            //     if(addItemsSuccess === false) {
+            //         res.status(200).json({ error: "addItems failed" }) 
+            //     }
+            //     res.status(200).json({ result: candyMachineId });
+            // }
+            // else{
+            //     res.status(200).json({ error: "SettingProjectData failed" }) 
+            // }
         }
         else{
             res.status(200).json({ error: "createCollectionNft failed" })    

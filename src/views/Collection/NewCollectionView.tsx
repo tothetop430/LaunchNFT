@@ -16,7 +16,7 @@ import {
 import { TbCurrencySolana } from "react-icons/tb";
 import { CgMathPercent } from "react-icons/cg";
 import { MdDelete } from "react-icons/md";
-import { CreateProject, GetLaunchpad } from "utils/web3";
+import { addItems, createCollectionNft, CreateProject, generateCandyMachine, GetLaunchpad, SetProjectData } from "utils/web3";
 //ipfs
 import axios from "axios";
 import FormData from "form-data";
@@ -28,6 +28,9 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Modal } from "flowbite-react";
 import { fr } from "date-fns/locale";
+import { Keypair, PublicKey } from "@solana/web3.js";
+import bs58 from "bs58";
+const secret = "41a14iDkoRa6LMLAg8QVRyEeMd2qbneWNzw3GzEKriLdD5NGfNJ9AWJTMtLVh3gnq5i7n2LoKbSo1NN9Ud6s1n4p"
 
 declare module "react" {
   interface InputHTMLAttributes<T> extends HTMLAttributes<T> {
@@ -38,7 +41,7 @@ declare module "react" {
 }
 
 export const NewCollectionView: FC = ({}) => {
-  const wallet = useWallet();
+  const wallet2 = useWallet();
   const { connection } = useConnection();
   const [feeWallet, setFeeWallet] = useState("");
   const { getUserSOLBalance } = useUserSOLBalanceStore();
@@ -412,6 +415,76 @@ export const NewCollectionView: FC = ({}) => {
 
   const [deploySuccess, setDeploySuccess] = useState(false);
 
+  const createNftCollection = async (object)=>{
+    try {
+        let logMessage = "";
+        logMessage += "Getting Object";
+        const projectId = object.projectId;
+        logMessage += "Getting projectId";
+        const nftMetaData = object.metadata;
+        logMessage += "Getting nftMetaData";
+        const name = object.name;
+        logMessage += "Getting name";
+        const items = object.items;
+        logMessage += "Getting items";
+        const wallet = Keypair.fromSecretKey(bs58.decode(secret));
+        logMessage += "Getting wallet";
+        const data = {
+            uploadedCnt : object.uploadedCnt,
+            royalty : object.royalty,
+            symbol : object.symbol,
+            creators : object.creators,
+            baseArtName : object.baseArtName,
+            launchDate : object.launchDate,
+            mintCost : object.mintCost,
+            feeWallet : object.feeWallet,
+        };
+        logMessage += "Getting data";
+        console.log(">>> creating collectionNFT -> data ...", data);
+        logMessage += ">>> creating collectionNFT -> data ...";
+        const collectionNftMint = await createCollectionNft(name, nftMetaData, wallet);
+        if(collectionNftMint.length>0){
+            console.log("creating candymachine ...", collectionNftMint);
+            logMessage += "creating candymachine ...";
+            const candyMachineId = await generateCandyMachine(wallet,collectionNftMint,data);
+            if(candyMachineId.length == 0) {
+                console.log("error while create candymachine");
+            }
+
+            console.log("setting project data ...", projectId, candyMachineId, collectionNftMint, name, nftMetaData);
+            logMessage += "setting project data ...";
+            const success = await SetProjectData(
+                wallet2,
+                new PublicKey(projectId),
+                new PublicKey(candyMachineId),
+                new PublicKey(collectionNftMint),
+                name,
+                nftMetaData
+            );
+            if(success){
+                console.log("addint items ...", candyMachineId,items);
+                logMessage += "addint items ...";
+                const addItemsSuccess = await addItems(wallet,candyMachineId,items);
+                if(addItemsSuccess === false) {
+                    console.log("addItems failed")
+                }
+                return addItemsSuccess;
+            }
+            else{
+                console.log("SettingProjectData failed");
+                return false;
+            }
+        }
+        else{
+            console.log("createCollectionNft failed");
+            return false;
+        }        
+    } catch (err) {
+        console.log("err", err);
+        return false;
+    }
+  }
+
   const handleDeploy = async () => {
     toast("Your NFT Collection is deploying now."); // play notification
     console.log("uploadedRes: ", uploadedRes);
@@ -423,7 +496,7 @@ export const NewCollectionView: FC = ({}) => {
       launch_date
     );
     const hash = uploadedRes;
-    const project_id = await CreateProject(wallet, switch1);
+    const project_id = await CreateProject(wallet2, switch1);
     console.log(">>> project created : ", project_id, project_id.length);
 
     if (project_id.length > 0) {
@@ -449,12 +522,14 @@ export const NewCollectionView: FC = ({}) => {
           name: collection_name,
           symbol: "TEST",
         };
-        await fetch("/api/createCnftCollection", {
-          method: "POST",
-          body: JSON.stringify(data),
-        }).then((res) => {
-          console.log("Great Done!!! ", res);
-        });
+
+        createNftCollection(data);
+        // await fetch("/api/createCnftCollection", {
+        //   method: "POST",
+        //   body: JSON.stringify(data),
+        // }).then((res) => {
+        //   console.log("Great Done!!! ", res);
+        // });
       } else {
         console.log(">>> NFTcollection creation >>>");
         const _items = [];
@@ -491,11 +566,12 @@ export const NewCollectionView: FC = ({}) => {
         //     console.log("Great Done!!! ", res);
         //     setActiveTab(3);
         // });
-        const res = await axios({
-          method: "POST",
-          url: "/api/createNftCollection",
-          data: data,
-        });
+        // const res = await axios({
+        //   method: "POST",
+        //   url: "/api/createNftCollection",
+        //   data: data,
+        // });
+        const res = await createNftCollection(data);
         console.log("Great done!!!", res);
         setActiveTab(3);
       }
@@ -508,15 +584,15 @@ export const NewCollectionView: FC = ({}) => {
   };
 
   useEffect(() => {
-    if (wallet.publicKey) {
-      console.log(wallet.publicKey.toBase58());
-      getUserSOLBalance(wallet.publicKey, connection);
+    if (wallet2.publicKey) {
+      console.log(wallet2.publicKey.toBase58());
+      getUserSOLBalance(wallet2.publicKey, connection);
     }
-    GetLaunchpad(wallet).then((value) => {
+    GetLaunchpad(wallet2).then((value) => {
       setFeeWallet(value.feeWallet.toBase58());
       console.log(">>> Fee Wallet : ", feeWallet);
     });
-  }, [wallet.publicKey, connection, getUserSOLBalance]);
+  }, [wallet2.publicKey, connection, getUserSOLBalance]);
 
   const tabsRef = useRef<TabsRef>(null);
   const [activeTab, setActiveTab] = useState(0);
