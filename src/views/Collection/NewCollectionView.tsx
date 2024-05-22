@@ -343,10 +343,10 @@ export const NewCollectionView: FC = ({ }) => {
                 console.log(">>> cNFT creation >>>");
                 const _items = [];
                 for (let i = 0; i < images_to_upload.length; i++) {
-                    _items.push({ uri: 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/" + i.toString() + ".json", name: collection_name + "#" + (i + 1).toString() });
+                    _items.push({ uri: 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/" + i.toString() + ".json", name: collection_name + "#" + (i + 1).toString() });
                 }
                 const data = {
-                    metadata: 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json",
+                    metadata: 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json",
                     items: _items,
                     projectId: project_id,
                     name: collection_name,
@@ -363,10 +363,10 @@ export const NewCollectionView: FC = ({ }) => {
                 console.log(">>> NFTcollection creation >>>");
                 const _items = [];
                 for (let i = 0; i < images_to_upload.length; i++) {
-                    _items.push({ uri: 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/" + i.toString() + ".json", name: collection_name + "#" + (i + 1).toString() });
+                    _items.push({ uri: 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/" + i.toString() + ".json", name: collection_name + "#" + (i + 1).toString() });
                 }
                 const data = {
-                    metadata: 'http://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json",
+                    metadata: 'https://gateway.pinata.cloud/ipfs/' + hash + "/metadata/0.json",
                     items: _items,
                     projectId: project_id,
                     name: collection_name,
