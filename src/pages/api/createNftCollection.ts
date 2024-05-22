@@ -23,15 +23,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             feeWallet : object.feeWallet,
         };
         console.log(">>> creating collectionNFT -> data ...", data);
+        alert(">>> creating collectionNFT -> data ...");
         const collectionNftMint = await createCollectionNft(name, nftMetaData, wallet);
         if(collectionNftMint.length>0){
             console.log("creating candymachine ...", collectionNftMint);
+            alert("creating candymachine ...");
             const candyMachineId = await generateCandyMachine(wallet,collectionNftMint,data);
             if(candyMachineId.length == 0) {
                 res.status(200).json({error: "Generate Candy Machine failed!"});
             }
 
             console.log("setting project data ...", projectId, candyMachineId, collectionNftMint, name, nftMetaData);
+            alert("setting project data ...");
             const success = await SetProjectData(
                 wallet,
                 new PublicKey(projectId),
@@ -42,11 +45,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             );
             if(success){
                 console.log("addint items ...", candyMachineId,items);
-                await addItems(wallet,candyMachineId,items);
+                const addItemsSuccess = await addItems(wallet,candyMachineId,items);
+                if(addItemsSuccess === false) {
+                    res.status(200).json({ error: "addItems failed" }) 
+                }
                 res.status(200).json({ result: candyMachineId });
             }
             else{
-                res.status(200).json({ error: "createCollectionNft failed" }) 
+                res.status(200).json({ error: "SettingProjectData failed" }) 
             }
         }
         else{
