@@ -4,11 +4,11 @@ import { Keypair, PublicKey } from "@solana/web3.js";
 import * as bs58 from "bs58";
 const secret = process.env.SECRET as string;
 
-export const dynamic = 'force-dynamic'
+// export const dynamic = 'force-dynamic'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     try {
-        const object = JSON.parse(req.body);
+        const object = req.body;
         const projectId = object.projectId;
         const nftMetaData = object.metadata;
         const name = object.name;
