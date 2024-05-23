@@ -4,6 +4,7 @@ import { GetNftCollections } from "utils/web3";
 
 const PINATA_GATEWAY_TOKEN = process.env.PINATA_GATEWAY_TOKEN;
 const PINATA_GATEWAY_URL= process.env.PINATA_GATEWAY_URL;
+
 export const CollectionsView: FC = ({}) => {
   const [projects, setProjects] = useState([]);
   useEffect(() => {

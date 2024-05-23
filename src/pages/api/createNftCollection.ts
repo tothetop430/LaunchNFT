@@ -3,8 +3,8 @@ import { SetProjectData, addItems, createCollectionNft, generateCandyMachine } f
 import { Keypair, PublicKey } from "@solana/web3.js";
 import * as bs58 from "bs58";
 // const secret = process.env.SECRET as string;
-const secret = '41a14iDkoRa6LMLAg8QVRyEeMd2qbneWNzw3GzEKriLdD5NGfNJ9AWJTMtLVh3gnq5i7n2LoKbSo1NN9Ud6s1n4p';
-
+// const secret = '41a14iDkoRa6LMLAg8QVRyEeMd2qbneWNzw3GzEKriLdD5NGfNJ9AWJTMtLVh3gnq5i7n2LoKbSo1NN9Ud6s1n4p';
+const secret = process.env.SECRET;
 // export const dynamic = 'force-dynamic'
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
