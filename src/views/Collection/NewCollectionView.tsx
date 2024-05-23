@@ -141,7 +141,7 @@ export const NewCollectionView: FC = ({}) => {
       const formData = new FormData();
 
       const metadata = JSON.stringify({
-        name: "images",
+        name: "solpad",
       });
       formData.append("pinataMetadata", metadata);
       const temp_files = [];
@@ -187,7 +187,7 @@ export const NewCollectionView: FC = ({}) => {
         formData.append(
           "file",
           jsonBlob,
-          "folder_name" + "/metadata/" + index.toString() + ".json"
+          "solpad" + "/metadata/" + index.toString() + ".json"
         );
       });
 
@@ -228,11 +228,11 @@ export const NewCollectionView: FC = ({}) => {
         console.log(">>> Images: ", images_to_upload);
         const formData = new FormData();
         const metadata = JSON.stringify({
-          name: "folder_name",
+          name: "solpad",
         });
         formData.append("pinataMetadata", metadata);
         images_to_upload.map((dir_item) => {
-          formData.append("file", dir_item);
+          formData.append("file", dir_item, "solpad" + "/images/" + dir_item.name);
         });
 
         const options = JSON.stringify({
@@ -254,6 +254,7 @@ export const NewCollectionView: FC = ({}) => {
           }
         );
         const ImgHash = resFile.data.IpfsHash;
+        console.log(">>>>>>>> resFile", resFile)
         sendMetaToIPFS(ImgHash, images_to_upload.length);
       } catch (error) {
         console.log(">>> File to IPFS: ", error);
@@ -1047,14 +1048,6 @@ export const NewCollectionView: FC = ({}) => {
           <Button
             className="m-auto"
             onClick={() => {
-              // console.log("ddddddddd",pictures.length)
-              // const front = pictures.slice(0, selectedPic.index + 1);
-              // const back = pictures.length > selectedPic.index+1 ? pictures.slice(selectedPic.index + 1, pictures.length) : [];
-              // for(let i =0;i<3;i++){
-              //     front.push({...selectedPic, index : pictures.length + i});
-              // }
-              // console.log(">>>>>>> front", front, "back", back)
-              // setPictures([...front, ...back]);
               for (let i = 0; i < duplicatedCnt; i++) {
                 pictures.push({
                   ...selectedPic,
@@ -1070,13 +1063,6 @@ export const NewCollectionView: FC = ({}) => {
                     metadatas_to_upload[selectedPic.index]
                   );
                 }
-
-                console.log(
-                  "eeeeeeeeee",
-                  selectedPic.index,
-                  images_to_upload,
-                  metadatas_to_upload
-                );
               }
               setImagesToUpload(images_to_upload);
               if (metadatas_to_upload.length > 0) {
