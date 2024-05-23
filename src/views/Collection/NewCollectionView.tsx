@@ -509,14 +509,7 @@ export const NewCollectionView: FC = ({}) => {
 
   const handleDeploy = async () => {
     toast("Your NFT Collection is deploying now."); // play notification
-    console.log("uploadedRes: ", uploadedRes);
-    console.log(
-      ">>> collection info : ",
-      collection_name,
-      collection_symbol,
-      collection_description,
-      launch_date
-    );
+    console.log(">>> uploadedRes: ", uploadedRes);
     const hash = uploadedRes;
     const project_id = await CreateProject(wallet2, switch1);
     console.log(">>> project created : ", project_id, project_id.length);
@@ -595,7 +588,7 @@ export const NewCollectionView: FC = ({}) => {
         // });
         const res = await createNftCollection(data);
         console.log("Great done!!!", res);
-        setActiveTab(3);
+        tabsRef.current?.setActiveTab(3);
       }
 
       toast("Deploying has been completed!"); // delete notificatoin
@@ -618,7 +611,6 @@ export const NewCollectionView: FC = ({}) => {
   }, [wallet2.publicKey, connection, getUserSOLBalance]);
 
   const tabsRef = useRef<TabsRef>(null);
-  const [activeTab, setActiveTab] = useState(0);
 
   const on_clicked_cntf_toggle = () => {
     if (!switch1) {
@@ -650,7 +642,6 @@ export const NewCollectionView: FC = ({}) => {
         aria-label="Pills"
         style="pills"
         ref={tabsRef}
-        onActiveTabChange={(tab) => setActiveTab(tab)}
         className="w-full"
       >
         {/* -------------------------- Details tab ------------------------------- */}
