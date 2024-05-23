@@ -74,7 +74,6 @@ export const NewCollectionView: FC = ({}) => {
   const [collection_symbol, setCollectionSymbol] = useState("");
   const [collection_description, setCollectionDescription] = useState("");
   const [launch_date, setLaunchDate] = useState("2024-05-16T19:30");
-  const [folder_name, setFolderName] = useState("");
   const [uploadedRes, setUploadedRes] = useState("");
   const [images_to_upload, setImagesToUpload] = useState([]);
   const [metadatas_to_upload, setMetadatasToUpload] = useState([]);
@@ -82,6 +81,7 @@ export const NewCollectionView: FC = ({}) => {
   const [selectedPic, setSelectedPic] = useState(null);
   const [duplicatedCnt, setDuplicatedCnt] = useState(0);
   const [addCounter, setAddCounter] = useState(false);
+  const [confirmClicked, setConfirmClicked] = useState(0);
 
   const REACT_APP_PINATA_API_KEY = process.env.REACT_APP_PINATA_API_KEY;
   const REACT_APP_PINATA_API_SECRET = process.env.REACT_APP_PINATA_API_SECRET;
@@ -96,124 +96,33 @@ export const NewCollectionView: FC = ({}) => {
     });
   };
 
-  //   const [uploadedFileCnt, setUploadedFileCnt] = useState(0);
-
-  // const isIncludeMetaData = (files: FileList) => {
-  //     if(files.length > 0){
-  //         const dir = files[0].webkitRelativePath;
-  //         setFolderName(dir.split("/")[0]);
-  //     }
-  //     for(let i=0; i++; i<files.length){
-  //         if("application/json" == files[i].type){
-  //             return true;
-  //         }
-  //         break;
-  //     }
-  //     return false;
-  // };
-
   const handleFileInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log(">>> uploaded file list : ", event.target.files);
-    // const r = isIncludeMetaData(event.target.files);
+    console.log(">>> uploaded file list : ", event.target);
     const len = event.target.files.length;
-
+    // var fileURL = URL.createObjectURL(event.target.files[0]);
+    // console.log("fff",fileURL)
     if (len > 0) {
-      // setImagesToUpload(event.target.files.filter(val =>
-      //     val.webkitRelativePath.split('/')[1] == 'images'
-      // ).sort((a, b) => a.webkitDirectory.localeCompare(b.webkitDirectory, undefined, { sensitivity: 'base' })));
-      // setMetadatasToUpload(event.target.files.filter(val =>
-      //     val.webkitRelativePath.split('/')[1] == 'metadata'
-      // ).sort((a, b) => a.webkitDirectory.localeCompare(b.webkitDirectory, undefined, { sensitivity: 'base' })));
-      const folders = [];
       const temp_images = [];
       const temp_metas = [];
       for (let i = 0; i < len; i++) {
-        const dir = event.target.files[i].webkitRelativePath;
-        if (i == 0) {
-          setFolderName(dir.split("/")[0]);
-        }
-        console.log(">>> file dir : ", dir);
-        folders.push(
-          dir
-            .split("/")
-            .filter((val, ind) => ind != 0)
-            .join("/")
-        );
-        if (
-          dir
-            .split("/")
-            .filter((val, ind) => ind != 0)
-            .join("/")
-            .startsWith("images/")
-        ) {
+        const tempFile = event.target.files[i];
+        console.log(">>> file: ", tempFile);
+        if (tempFile.type.startsWith("image")) {
           temp_images.push(event.target.files[i]);
-        } else if (
-          dir
-            .split("/")
-            .filter((val, ind) => ind != 0)
-            .join("/")
-            .startsWith("metadata/")
-        ) {
+        } else if (tempFile.type.startsWith("application/json")) {
           temp_metas.push(event.target.files[i]);
         }
       }
       setImagesToUpload([...temp_images]);
       setMetadatasToUpload([...temp_metas]);
-      console.log(">>> folders", folders);
-      if (folders.filter((val) => val.startsWith("images/")).length == 0) {
-        alert("No Images folder. Must contain it!");
-        return;
-      } else if (
-        folders.filter((val) => val.startsWith("metadata/")).length == 0
-      ) {
-        // generate json
-        // setUploadedFileCnt(len);
-      } else {
-        // setUploadedFileCnt(len / 2);
-      }
-      const images = folders.filter((val) => val.startsWith("images/"));
-      //setImageName(event.target.files[0]);
       const newResults = [];
-      for (let i = 0; i < images.length; i++) {
-        // const newLines = [];
-        // for (let j = 0; j < image_count_in_line && i + j < images.length; j++) {
-        const img_name = images[i]
-          .split("/")
-          .filter((_: any, ind: number) => ind != 0)
-          .join("");
-        //   const json_path = folders
-        //     .filter((val) =>
-        //       val.endsWith(
-        //         "/" +
-        //           img_name
-        //             .split(".")
-        //             .reverse()
-        //             .filter((_: any, ind: number) => ind != 0)
-        //             .reverse()
-        //             .join(".") +
-        //           ".json"
-        //       )
-        //     )
-        //     .join("");
+      for (let i = 0; i < temp_images.length; i++) {
+        const img_name = temp_images[i].name;
         const nft_name = collection_name + " # " + i;
         const nft_desc = collection_description;
-        // console.log(folders.indexOf(images[i + j]));
-        // console.log(event.target.files[folders.indexOf(images[i + j])]);
-        //   newLines.push({
-        //     img_name: URL.createObjectURL(
-        //       event.target.files[folders.indexOf(images[i + j])]
-        //     ),
-        //     nft_name: nft_name,
-        //     nft_desc: nft_desc,
-        //     real_name: img_name,
-        //   });
-        // }
-        // console.log(">>> push to newResult : ", newLines);
         newResults.push({
           index: i,
-          img_name: URL.createObjectURL(
-            event.target.files[folders.indexOf(images[i])]
-          ),
+          img_name: URL.createObjectURL(event.target.files[i]),
           nft_name: nft_name,
           nft_desc: nft_desc,
           real_name: img_name,
@@ -221,69 +130,25 @@ export const NewCollectionView: FC = ({}) => {
       }
       setPictures(newResults);
       console.log("new result", newResults);
-      //setPictures(event.target.files);
-      //setPicture(URL.createObjectURL(event.target.files[0]));
     } else {
       setPictures([]);
     }
   };
 
-  // const loadDirectory = (item: any) => {
-  //     console.log(item);
-  // }
-
-  // const sendJSONtoIPFS = async (MetaHash) => {
-
-  //     try {
-
-  //         const resJSON = await axios({
-  //             method: "post",
-  //             url: "https://api.pinata.cloud/pinning/pinJsonToIPFS",
-  //             data: {
-  //                 "name": nfts_base_art_name,
-  //                 "description": collection_symbol,
-  //                 "image": MetaHash
-  //             },
-  //             headers: {
-  //                 'pinata_api_key': `${REACT_APP_PINATA_API_KEY}`,
-  //                 'pinata_secret_api_key': `${REACT_APP_PINATA_API_SECRET}`,
-  //             },
-  //         });
-
-  //         console.log("final ", `ipfs://${resJSON.data.IpfsHash}`)
-  //         const tokenURI = `ipfs://${resJSON.data.IpfsHash}`;
-  //         console.log("Token URI", tokenURI);
-  //         //mintNFT(tokenURI, currentAccount)   // pass the winner
-  //         alert("Thanks for pushing up!!!");
-  //         setUploadedRes(resJSON.data);
-  //         console.log("=== resJson ===");
-  //         console.log(resJSON.data);
-  //         // router.push('/collections');
-
-  //     } catch (error) {
-  //         console.log("JSON to IPFS: ")
-  //         console.log(error);
-  //     }
-
-  // }
-
-  const [confirmClicked, setConfirmClicked] = useState(0);
 
   const sendMetaToIPFS = async (ImgHash, len) => {
     try {
       const formData = new FormData();
 
       const metadata = JSON.stringify({
-        name: folder_name,
+        name: "images",
       });
       formData.append("pinataMetadata", metadata);
       const temp_files = [];
       if (metadatas_to_upload.length > 0) {
         // user input json data
-        console.log("eeeeeeee", metadatas_to_upload);
         for (let i = 0; i < metadatas_to_upload.length; i++) {
           let res = await parseJsonFile(metadatas_to_upload[i]);
-          console.log("eeeeeeeeee >>>", res);
           let mut_res = Object.assign({}, res, {
             image:
               "https://gateway.pinata.cloud/ipfs/" +
@@ -322,7 +187,7 @@ export const NewCollectionView: FC = ({}) => {
         formData.append(
           "file",
           jsonBlob,
-          folder_name + "/metadata/" + index.toString() + ".json"
+          "folder_name" + "/metadata/" + index.toString() + ".json"
         );
       });
 
@@ -360,13 +225,10 @@ export const NewCollectionView: FC = ({}) => {
 
     if (pictures.length > 0) {
       try {
-        console.log("Images: ");
-        console.log(images_to_upload);
-
+        console.log(">>> Images: ", images_to_upload);
         const formData = new FormData();
-
         const metadata = JSON.stringify({
-          name: folder_name,
+          name: "folder_name",
         });
         formData.append("pinataMetadata", metadata);
         images_to_upload.map((dir_item) => {
@@ -377,36 +239,28 @@ export const NewCollectionView: FC = ({}) => {
           cidVersion: 0,
         });
         formData.append("pinataOptions", options);
-        //formData.append("file", image_name);
+        console.log("formData", formData);
 
-        const resFile = await axios({
-          method: "post",
-          url: "https://api.pinata.cloud/pinning/pinFileToIPFS",
-          data: formData,
-          headers: {
-            pinata_api_key: `${REACT_APP_PINATA_API_KEY}`,
-            pinata_secret_api_key: `${REACT_APP_PINATA_API_SECRET}`,
-            "Content-Type": "multipart/form-data",
-          },
-        });
-
-        // const ImgHash = `ipfs://${resFile.data.IpfsHash}`;
+        const resFile = await axios.post(
+          "https://api.pinata.cloud/pinning/pinFileToIPFS",
+          formData,
+          {
+            maxBodyLength: Infinity,
+            headers: {
+              pinata_api_key: `${REACT_APP_PINATA_API_KEY}`,
+              pinata_secret_api_key: `${REACT_APP_PINATA_API_SECRET}`,
+              "Content-Type": "multipart/form-data",
+            },
+          }
+        );
         const ImgHash = resFile.data.IpfsHash;
-        // console.log(response.data.IpfsHash);
-        // sendJSONtoIPFS(ImgHash, dir_upload.length)
         sendMetaToIPFS(ImgHash, images_to_upload.length);
       } catch (error) {
-        console.log("File to IPFS: ");
-        console.log(error);
+        console.log(">>> File to IPFS: ", error);
       }
-
       setConfirmClicked(1);
     }
   };
-
-  // const onClickContinue = (event) => {
-  //     pinFileToIPFS(image_name);
-  // }
 
   const updateSecondRoyalty = (
     event: ChangeEvent<HTMLInputElement>,
@@ -638,12 +492,7 @@ export const NewCollectionView: FC = ({}) => {
         Launch Collection
       </h1>
 
-      <Tabs
-        aria-label="Pills"
-        style="pills"
-        ref={tabsRef}
-        className="w-full"
-      >
+      <Tabs aria-label="Pills" style="pills" ref={tabsRef} className="w-full">
         {/* -------------------------- Details tab ------------------------------- */}
         <Tabs.Item active title="Details" disabled>
           <div className="flex flex-col gap-3 w-full">
@@ -1044,10 +893,9 @@ export const NewCollectionView: FC = ({}) => {
                   // eslint-disable-next-line
                   <FileInput
                     className=""
-                    webkitdirectory="true"
+                    // webkitdirectory="true"
                     id="dropzone-file"
-                    multiple
-                    itemType="directory"
+                    itemType="file"
                     onChange={(event) => handleFileInputChange(event)}
                   />
                 }
