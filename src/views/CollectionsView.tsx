@@ -2,6 +2,9 @@ import { FC, useEffect, useState } from "react";
 import { Collection_Item } from "components/Collection_Item";
 import { GetNftCollections } from "utils/web3";
 
+const PINATA_GATEWAY_TOKEN = process.env.PINATA_GATEWAY_TOKEN;
+const PINATA_GATEWAY_URL= process.env.PINATA_GATEWAY_URL;
+
 export const CollectionsView: FC = ({}) => {
   const [projects, setProjects] = useState([]);
   useEffect(() => {
@@ -24,9 +27,9 @@ export const CollectionsView: FC = ({}) => {
             const temp_url =
               uri.replace(
                 "gateway.pinata.cloud",
-                "ivory-patient-leopard-375.mypinata.cloud"
+                PINATA_GATEWAY_URL
               ) +
-              "?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c";
+              `?pinataGatewayToken=${PINATA_GATEWAY_TOKEN}`;
             const result = await fetch(temp_url);
             res = await result.json();
           } catch (e) {
@@ -37,9 +40,9 @@ export const CollectionsView: FC = ({}) => {
           const temp_img_url =
             res.image.replace(
               "gateway.pinata.cloud",
-              "ivory-patient-leopard-375.mypinata.cloud"
+              PINATA_GATEWAY_URL
             ) +
-            "?pinataGatewayToken=UaktXIBvDQ5zAtjNkPqKlm1RzIkont4QC5B6sZequYh8zWQv_b6IyxW4Rvm2ig6c";
+            `?pinataGatewayToken=${PINATA_GATEWAY_TOKEN}`;
 
           temp_projects.push({
             ...value,
