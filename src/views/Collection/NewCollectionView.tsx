@@ -154,8 +154,7 @@ export const NewCollectionView: FC = ({}) => {
               "https://gateway.pinata.cloud/ipfs/" +
               ImgHash +
               "/images/" +
-              i.toString() +
-              ".jpeg",
+              images_to_upload[i].name 
           });
           temp_files.push(mut_res);
         }
@@ -173,8 +172,7 @@ export const NewCollectionView: FC = ({}) => {
               "https://gateway.pinata.cloud/ipfs/" +
               ImgHash +
               "/images/" +
-              i.toString() +
-              ".jpeg",
+              images_to_upload[i].name 
           };
           temp_files.push(metaData);
         }
