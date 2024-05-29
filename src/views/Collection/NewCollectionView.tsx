@@ -135,7 +135,6 @@ export const NewCollectionView: FC = ({}) => {
     }
   };
 
-
   const sendMetaToIPFS = async (ImgHash, len) => {
     try {
       const formData = new FormData();
@@ -154,7 +153,7 @@ export const NewCollectionView: FC = ({}) => {
               "https://gateway.pinata.cloud/ipfs/" +
               ImgHash +
               "/images/" +
-              images_to_upload[i].name 
+              images_to_upload[i].name,
           });
           temp_files.push(mut_res);
         }
@@ -172,7 +171,7 @@ export const NewCollectionView: FC = ({}) => {
               "https://gateway.pinata.cloud/ipfs/" +
               ImgHash +
               "/images/" +
-              images_to_upload[i].name 
+              images_to_upload[i].name,
           };
           temp_files.push(metaData);
         }
@@ -230,7 +229,11 @@ export const NewCollectionView: FC = ({}) => {
         });
         formData.append("pinataMetadata", metadata);
         images_to_upload.map((dir_item) => {
-          formData.append("file", dir_item, "solpad" + "/images/" + dir_item.name);
+          formData.append(
+            "file",
+            dir_item,
+            "solpad" + "/images/" + dir_item.name
+          );
         });
 
         const options = JSON.stringify({
@@ -252,7 +255,7 @@ export const NewCollectionView: FC = ({}) => {
           }
         );
         const ImgHash = resFile.data.IpfsHash;
-        console.log(">>>>>>>> resFile", resFile)
+        console.log(">>>>>>>> resFile", resFile);
         sendMetaToIPFS(ImgHash, images_to_upload.length);
       } catch (error) {
         console.log(">>> File to IPFS: ", error);
@@ -319,6 +322,7 @@ export const NewCollectionView: FC = ({}) => {
         );
         if (candyMachineId.length == 0) {
           console.log("error while create candymachine");
+          return false;
         }
 
         console.log(
@@ -329,6 +333,15 @@ export const NewCollectionView: FC = ({}) => {
           name,
           nftMetaData
         );
+
+        console.log("addint items ...", candyMachineId, items);
+        logMessage += "addint items ...";
+        const addItemsSuccess = await addItems(wallet, candyMachineId, items);
+        if (addItemsSuccess === false) {
+          console.log("addItems failed");
+          return false;
+        }
+
         logMessage += "setting project data ...";
         const success = await SetProjectData(
           wallet2,
@@ -339,13 +352,7 @@ export const NewCollectionView: FC = ({}) => {
           nftMetaData
         );
         if (success) {
-          console.log("addint items ...", candyMachineId, items);
-          logMessage += "addint items ...";
-          const addItemsSuccess = await addItems(wallet, candyMachineId, items);
-          if (addItemsSuccess === false) {
-            console.log("addItems failed");
-          }
-          return addItemsSuccess;
+          return true;
         } else {
           console.log("SettingProjectData failed");
           return false;
