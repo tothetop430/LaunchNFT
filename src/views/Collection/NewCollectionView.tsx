@@ -282,18 +282,11 @@ export const NewCollectionView: FC = ({}) => {
 
   const createNftCollection = async (object) => {
     try {
-      let logMessage = "";
-      logMessage += "Getting Object";
       const projectId = object.projectId;
-      logMessage += "Getting projectId";
       const nftMetaData = object.metadata;
-      logMessage += "Getting nftMetaData";
       const name = object.name;
-      logMessage += "Getting name";
       const items = object.items;
-      logMessage += "Getting items";
       const wallet = Keypair.fromSecretKey(bs58.decode(secret));
-      logMessage += "Getting wallet";
       const data = {
         uploadedCnt: object.uploadedCnt,
         royalty: object.royalty,
@@ -304,9 +297,7 @@ export const NewCollectionView: FC = ({}) => {
         mintCost: object.mintCost,
         feeWallet: object.feeWallet,
       };
-      logMessage += "Getting data";
       console.log(">>> creating collectionNFT -> data ...", data);
-      logMessage += ">>> creating collectionNFT -> data ...";
       const collectionNftMint = await createCollectionNft(
         name,
         nftMetaData,
@@ -314,7 +305,6 @@ export const NewCollectionView: FC = ({}) => {
       );
       if (collectionNftMint.length > 0) {
         console.log("creating candymachine ...", collectionNftMint);
-        logMessage += "creating candymachine ...";
         const candyMachineId = await generateCandyMachine(
           wallet,
           collectionNftMint,
@@ -322,6 +312,15 @@ export const NewCollectionView: FC = ({}) => {
         );
         if (candyMachineId.length == 0) {
           console.log("error while create candymachine");
+          return false;
+        }
+
+        
+
+        console.log("addint items ...", candyMachineId, items);
+        const addItemsSuccess = await addItems(wallet, candyMachineId, items);
+        if (addItemsSuccess === false) {
+          console.log("addItems failed");
           return false;
         }
 
@@ -333,16 +332,6 @@ export const NewCollectionView: FC = ({}) => {
           name,
           nftMetaData
         );
-
-        console.log("addint items ...", candyMachineId, items);
-        logMessage += "addint items ...";
-        const addItemsSuccess = await addItems(wallet, candyMachineId, items);
-        if (addItemsSuccess === false) {
-          console.log("addItems failed");
-          return false;
-        }
-
-        logMessage += "setting project data ...";
         const success = await SetProjectData(
           wallet2,
           new PublicKey(projectId),
